@@ -1,0 +1,1806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Auction Admin Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet" />
+<style>
+:root {
+    --bg-1: #071019;
+    --bg-2: #0d1730;
+    --panel: rgba(10, 18, 35, 0.84);
+    --panel-strong: rgba(11, 21, 42, 0.96);
+    --sidebar: rgba(7, 14, 29, 0.92);
+    --stroke: rgba(255, 255, 255, 0.12);
+    --text: #edf3ff;
+    --muted: #95a8c4;
+    --cyan: #3be2ff;
+    --gold: #f7c95b;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    font-family: 'Rajdhani', sans-serif;
+    color: var(--text);
+    background:
+        radial-gradient(1000px 520px at 8% 0%, rgba(59, 226, 255, 0.15), transparent 58%),
+        radial-gradient(1200px 700px at 100% 0%, rgba(247, 201, 91, 0.14), transparent 60%),
+        linear-gradient(160deg, var(--bg-1), var(--bg-2));
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    background-size: 44px 44px;
+    opacity: 0.22;
+}
+
+.app-shell {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    min-height: 100vh;
+}
+
+.sidebar {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    height: 100vh;
+    padding: 28px 22px;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 16%),
+        var(--sidebar);
+    border-right: 1px solid var(--stroke);
+    backdrop-filter: blur(18px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(59, 226, 255, 0.28) transparent;
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(59, 226, 255, 0.24);
+    border-radius: 999px;
+}
+
+.brand {
+    padding: 10px 12px;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.brand h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    line-height: 1.45;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+}
+
+.brand p {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 0.98rem;
+    line-height: 1.4;
+}
+
+.nav {
+    display: grid;
+    gap: 12px;
+}
+
+.nav-btn {
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    padding: 18px;
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--text);
+    text-align: left;
+    cursor: pointer;
+    transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.nav-btn:hover {
+    transform: translateX(2px);
+    border-color: rgba(59, 226, 255, 0.28);
+    background: rgba(59, 226, 255, 0.08);
+}
+
+.nav-btn.active {
+    border-color: rgba(59, 226, 255, 0.4);
+    background: linear-gradient(135deg, rgba(59, 226, 255, 0.14), rgba(247, 201, 91, 0.1));
+    box-shadow: 0 16px 30px rgba(0, 0, 0, 0.2);
+}
+
+.nav-btn strong {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.content {
+    padding: 28px;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    align-items: flex-start;
+    margin-bottom: 24px;
+}
+
+.topbar h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.6rem, 3vw, 2.7rem);
+    color: var(--gold);
+    letter-spacing: 0.12em;
+}
+
+.topbar p {
+    color: var(--muted);
+    margin-top: 10px;
+    font-size: 1.05rem;
+}
+
+.sheet-note {
+    color: var(--muted);
+    font-size: 1rem;
+    text-align: right;
+    padding-top: 8px;
+}
+
+.view {
+    display: none;
+}
+
+.view.active {
+    display: block;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.stat-card,
+.panel,
+.summary-card {
+    background: var(--panel);
+    border: 1px solid var(--stroke);
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(16px);
+}
+
+.stat-card {
+    padding: 22px 24px;
+}
+
+.stat-label {
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.88rem;
+}
+
+.stat-value {
+    margin-top: 12px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.9rem, 3vw, 2.8rem);
+}
+
+.stats-note {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 18px;
+    margin-top: 18px;
+}
+
+.summary-card {
+    padding: 24px;
+}
+
+.summary-card h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+    color: var(--cyan);
+}
+
+.summary-card p {
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 1.05rem;
+    line-height: 1.5;
+}
+
+.dashboard-tools {
+    margin-top: 18px;
+    padding: 24px;
+}
+
+.dashboard-tools h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+    color: var(--cyan);
+}
+
+.dashboard-tools p {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 1rem;
+}
+
+.dashboard-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 16px;
+    margin-top: 18px;
+    align-items: end;
+}
+
+.dashboard-status {
+    margin-top: 16px;
+    min-height: 1.5em;
+    color: var(--muted);
+    font-size: 1rem;
+}
+
+.dashboard-status.error {
+    color: #ff9fb0;
+}
+
+.team-layout {
+    display: grid;
+    grid-template-columns: minmax(320px, 440px) minmax(0, 1fr);
+    gap: 18px;
+}
+
+.team-form-card,
+.team-list-card {
+    padding: 22px;
+}
+
+.team-form {
+    display: grid;
+    gap: 16px;
+}
+
+.team-actions {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
+
+.team-status {
+    min-height: 1.5em;
+    color: var(--muted);
+    font-size: 1rem;
+}
+
+.team-status.error {
+    color: #ff9fb0;
+}
+
+.team-list-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.team-list-head h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    color: var(--cyan);
+}
+
+.team-count {
+    color: var(--muted);
+    font-size: 1rem;
+}
+
+.team-head-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.team-list {
+    display: grid;
+    gap: 14px;
+}
+
+.team-item {
+    padding: 18px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background:
+        linear-gradient(135deg, rgba(59, 226, 255, 0.07), rgba(247, 201, 91, 0.06)),
+        rgba(4, 10, 22, 0.72);
+}
+
+.team-item-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.team-delete-btn {
+    border: 0;
+    border-radius: 12px;
+    min-height: 40px;
+    padding: 0 14px;
+    background: linear-gradient(135deg, #ff8a70, #ff667c);
+    color: #fff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+}
+
+.team-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 54px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(59, 226, 255, 0.26);
+    background: rgba(59, 226, 255, 0.08);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+}
+
+.team-name {
+    margin-top: 14px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.15rem;
+    letter-spacing: 0.06em;
+    color: var(--text);
+}
+
+.team-owner {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 1rem;
+}
+
+.team-player-list {
+    display: grid;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.team-player-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text);
+    font-size: 0.96rem;
+    width: fit-content;
+    max-width: 100%;
+}
+
+.team-player-empty {
+    margin-top: 14px;
+    color: var(--muted);
+    font-size: 0.96rem;
+}
+
+.team-empty {
+    padding: 26px 18px;
+    border-radius: 20px;
+    border: 1px dashed rgba(255, 255, 255, 0.14);
+    background: rgba(4, 10, 22, 0.56);
+    color: var(--muted);
+    text-align: center;
+    font-size: 1rem;
+}
+
+.editor-grid {
+    display: grid;
+    gap: 18px;
+}
+
+.editor-header,
+.database-header {
+    padding: 20px 22px;
+}
+
+.editor-header h3,
+.database-header h3,
+.table-head h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    color: var(--cyan);
+}
+
+.editor-header p,
+.database-header p {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 1rem;
+}
+
+.editor-panel {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    padding: 22px;
+}
+
+.input-layout {
+    display: grid;
+    grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
+    gap: 18px;
+    align-items: start;
+    padding: 0 22px 22px;
+}
+
+.preview-card {
+    min-height: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 22px;
+    background:
+        radial-gradient(circle at top, rgba(59, 226, 255, 0.1), transparent 45%),
+        rgba(4, 10, 22, 0.82);
+    overflow: hidden;
+}
+
+.preview-image-wrap {
+    position: relative;
+    padding: 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+}
+
+.preview-image {
+    display: block;
+    width: 100%;
+    height: 270px;
+    object-fit: contain;
+    border-radius: 18px;
+    background: rgba(6, 12, 24, 0.92);
+    border: 2px solid rgba(247, 201, 91, 0.4);
+}
+
+.preview-image.is-empty {
+    display: none;
+}
+
+.preview-empty {
+    display: none;
+    height: 270px;
+    border-radius: 18px;
+    border: 2px dashed rgba(255, 255, 255, 0.14);
+    background: rgba(6, 12, 24, 0.55);
+    color: var(--muted);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    place-items: center;
+    text-align: center;
+    padding: 20px;
+}
+
+.preview-empty.show {
+    display: grid;
+}
+
+.preview-body {
+    padding: 20px 20px 22px;
+}
+
+.preview-label {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--cyan);
+    font-size: 0.82rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.preview-name {
+    margin-top: 10px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.35rem, 1.8vw, 2rem);
+    line-height: 1.15;
+    color: var(--text);
+}
+
+.preview-role {
+    display: inline-flex;
+    margin-top: 12px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(59, 226, 255, 0.14), rgba(247, 201, 91, 0.12));
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+}
+
+.preview-meta {
+    display: grid;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.preview-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    color: var(--muted);
+    font-size: 1rem;
+}
+
+.preview-row strong {
+    color: var(--gold);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.preview-price {
+    margin-top: 16px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.8rem;
+    color: var(--gold);
+}
+
+.field-group {
+    display: grid;
+    gap: 8px;
+}
+
+.field-group label {
+    color: var(--muted);
+    font-size: 0.95rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.toolbar {
+    display: grid;
+    grid-template-columns: 1.4fr 0.8fr auto;
+    gap: 14px;
+    padding: 22px;
+    margin-bottom: 18px;
+}
+
+.control {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--stroke);
+    border-radius: 16px;
+    background: rgba(4, 10, 22, 0.75);
+    overflow: hidden;
+}
+
+.control input,
+.control select {
+    width: 100%;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 1.1rem;
+    padding: 14px 16px;
+}
+
+.control input::placeholder {
+    color: #7f93b3;
+}
+
+.control select {
+    color: var(--text);
+    background-color: rgba(4, 10, 22, 0.92);
+}
+
+.control select option {
+    color: #09111f;
+    background: #f4f8ff;
+}
+
+.refresh-btn {
+    border: 0;
+    border-radius: 16px;
+    padding: 0 22px;
+    min-height: 54px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    color: #09111f;
+    background: linear-gradient(135deg, #ffe083, var(--gold));
+    cursor: pointer;
+}
+
+.editor-status {
+    margin: 0 22px 22px;
+    min-height: 1.5em;
+    color: var(--muted);
+    font-size: 1rem;
+}
+
+.editor-status.error {
+    color: #ff9fb0;
+}
+
+.action-btn {
+    border: 0;
+    border-radius: 16px;
+    padding: 0 22px;
+    min-height: 54px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    color: #09111f;
+    cursor: pointer;
+}
+
+.action-btn.primary {
+    background: linear-gradient(135deg, #ff8a70, #ff667c);
+    color: #fff;
+}
+
+.action-btn.secondary {
+    background: linear-gradient(135deg, #63d6ff, #3be2ff);
+}
+
+.editor-actions {
+    display: flex;
+    gap: 14px;
+    padding: 0 22px 22px;
+    flex-wrap: wrap;
+}
+
+.table-panel {
+    overflow: hidden;
+}
+
+.table-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--stroke);
+    background: var(--panel-strong);
+}
+
+.table-count {
+    color: var(--muted);
+    font-size: 1rem;
+}
+
+.table-wrap {
+    overflow: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1040px;
+}
+
+thead th {
+    padding: 16px 18px;
+    text-align: left;
+    color: var(--muted);
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+tbody td {
+    padding: 16px 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 1.08rem;
+}
+
+tbody tr:hover {
+    background: rgba(59, 226, 255, 0.04);
+}
+
+.id-pill {
+    display: inline-flex;
+    min-width: 54px;
+    justify-content: center;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(59, 226, 255, 0.26);
+    background: rgba(59, 226, 255, 0.08);
+    font-family: 'Orbitron', sans-serif;
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 92px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.88rem;
+    letter-spacing: 0.06em;
+}
+
+.status-pill.sold {
+    color: #fff1f4;
+    background: rgba(255, 102, 124, 0.2);
+    border: 1px solid rgba(255, 102, 124, 0.45);
+}
+
+.status-pill.unsold {
+    color: #eafff8;
+    background: rgba(49, 208, 161, 0.18);
+    border: 1px solid rgba(49, 208, 161, 0.4);
+}
+
+.empty-state,
+.error-state {
+    padding: 34px 22px 40px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 1.1rem;
+}
+
+.error-state {
+    color: #ff9fb0;
+}
+
+@media (max-width: 1120px) {
+    .app-shell {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        position: static;
+        height: auto;
+    }
+
+    .content {
+        padding-top: 18px;
+    }
+
+    .stats,
+    .stats-note,
+    .dashboard-form,
+    .toolbar,
+    .editor-panel,
+    .input-layout,
+    .team-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 720px) {
+    .content,
+    .sidebar {
+        padding: 20px 16px;
+    }
+
+    .topbar {
+        flex-direction: column;
+    }
+
+    .sheet-note {
+        text-align: left;
+    }
+
+    .editor-actions {
+        flex-direction: column;
+    }
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="brand">
+            <h1>AUCTION ADMIN PANEL</h1>
+        </div>
+
+        <nav class="nav" aria-label="Admin sections">
+            <button class="nav-btn active" type="button" data-view="dashboardView">
+                <strong>Dashboard</strong>
+            </button>
+            <button class="nav-btn" type="button" data-view="teamsView">
+                <strong>Add Team</strong>
+            </button>
+            <button class="nav-btn" type="button" data-view="inputView">
+                <strong>Input Data</strong>
+            </button>
+            <button class="nav-btn" type="button" data-view="databaseView">
+                <strong>Player Database</strong>
+            </button>
+        </nav>
+
+    </aside>
+
+    <main class="content">
+        <header class="topbar">
+            <div>
+                <h2 id="pageTitle">Dashboard</h2>
+                <p id="pageSubtitle">Overview of player totals and current auction progress.</p>
+            </div>
+            <div class="sheet-note" id="lastUpdated">Waiting for data...</div>
+        </header>
+
+        <section class="view active" id="dashboardView">
+            <div class="stats">
+                <article class="stat-card">
+                    <div class="stat-label">Total Players</div>
+                    <div class="stat-value" id="totalPlayers">0</div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-label">Sold Players</div>
+                    <div class="stat-value" id="soldPlayers">0</div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-label">Unsold Players</div>
+                    <div class="stat-value" id="unsoldPlayers">0</div>
+                </article>
+            </div>
+
+            <div class="stats-note">
+                <article class="summary-card">
+                    <h3>Dashboard Summary</h3>
+                    <p>This section shows the main auction counts only. Use the sidebar to switch into sold data input or open the full player database table.</p>
+                </article>
+                <article class="summary-card">
+                    <h3>Data Source</h3>
+                    <p>Player names, series, and category come from Google Sheets. Sold status and sold price are stored locally so the main spreadsheet stays unchanged.</p>
+                </article>
+            </div>
+
+            <section class="panel dashboard-tools">
+                <h3>Auction Countdown</h3>
+                <p>Set the auction start time and the message that should appear after the countdown ends on the stage screen.</p>
+
+                <div class="dashboard-form">
+                    <div class="field-group">
+                        <label for="auctionStartTimeInput">Auction Start Time</label>
+                        <div class="control">
+                            <input type="datetime-local" id="auctionStartTimeInput" />
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <label for="auctionEndMessageInput">Message After Countdown</label>
+                        <div class="control">
+                            <input type="text" id="auctionEndMessageInput" placeholder="Example: Auction has started." />
+                        </div>
+                    </div>
+
+                    <div class="team-actions">
+                        <button class="action-btn primary" id="saveAuctionSettingsBtn" type="button">SAVE TIME</button>
+                        <button class="action-btn secondary" id="showCountdownBtn" type="button">SHOW COUNTDOWN</button>
+                    </div>
+                </div>
+
+                <div class="dashboard-status" id="dashboardStatus">Configure the countdown for the home display here.</div>
+            </section>
+        </section>
+
+        <section class="view" id="teamsView">
+            <div class="team-layout">
+                <section class="panel team-form-card">
+                    <div class="editor-header">
+                        <h3>Add Team</h3>
+                        <p>Add team name and owner name. You can keep adding as many teams as you want.</p>
+                    </div>
+
+                    <div class="team-form">
+                        <div class="field-group">
+                            <label for="teamNameInput">Team Name</label>
+                            <div class="control">
+                                <input type="text" id="teamNameInput" placeholder="Enter team name" />
+                            </div>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="ownerPlayerIdInput">Owner Player ID</label>
+                            <div class="control">
+                                <input type="number" id="ownerPlayerIdInput" placeholder="Enter owner player ID" min="1" />
+                            </div>
+                        </div>
+
+                        <div class="team-actions">
+                            <button class="action-btn primary" id="saveTeamBtn" type="button">ADD TEAM</button>
+                            <button class="action-btn secondary" id="resetTeamBtn" type="button">CLEAR</button>
+                        </div>
+
+                        <div class="team-status" id="teamStatus">Create teams here for the auction panel.</div>
+                    </div>
+                </section>
+
+                <section class="panel team-list-card">
+                    <div class="team-list-head">
+                        <h3>Added Teams</h3>
+                        <div class="team-head-actions">
+                            <div class="team-count" id="teamCount">0 teams</div>
+                            <button class="action-btn secondary" id="showTeamsBtn" type="button">SHOW TEAMS</button>
+                        </div>
+                    </div>
+                    <div class="team-list" id="teamList">
+                        <div class="team-empty">No teams added yet.</div>
+                    </div>
+                </section>
+            </div>
+        </section>
+
+        <section class="view" id="inputView">
+            <div class="panel editor-grid">
+                <div class="editor-header">
+                    <h3>Input Data</h3>
+                    <p>Enter a player ID and sold price to save local sold data. Marking a player unsold removes the local sold price automatically.</p>
+                </div>
+
+                <div class="input-layout">
+                    <div class="editor-panel">
+                        <div class="field-group">
+                            <label for="soldPlayerIdInput">Player ID</label>
+                            <div class="control">
+                                <input type="number" id="soldPlayerIdInput" placeholder="Enter player ID" min="1" />
+                            </div>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="soldPriceInput">Sold Price</label>
+                            <div class="control">
+                                <input type="text" id="soldPriceInput" placeholder="Example 80k" />
+                            </div>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="soldTeamSelect">Team Name</label>
+                            <div class="control">
+                                <select id="soldTeamSelect">
+                                    <option value="">Select team</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="soldPlayerNameInput">Player Name</label>
+                            <div class="control">
+                                <input type="text" id="soldPlayerNameInput" placeholder="Player name auto-fills after ID" readonly />
+                            </div>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="soldPlayerStatusInput">Current Status</label>
+                            <div class="control">
+                                <input type="text" id="soldPlayerStatusInput" placeholder="Current status" readonly />
+                            </div>
+                        </div>
+                    </div>
+
+                    <article class="preview-card">
+                        <div class="preview-image-wrap">
+                            <img class="preview-image is-empty" id="previewImage" src="" alt="Player preview" />
+                            <div class="preview-empty show" id="previewEmpty">Enter Player ID</div>
+                        </div>
+                        <div class="preview-body">
+                            <div class="preview-label">Player Preview</div>
+                            <div class="preview-name" id="previewName">Waiting For Player</div>
+                            <div class="preview-role" id="previewRole">Role</div>
+
+                            <div class="preview-meta">
+                                <div class="preview-row"><strong>ID</strong><span id="previewId">-</span></div>
+                                <div class="preview-row"><strong>Series</strong><span id="previewSeries">-</span></div>
+                                <div class="preview-row"><strong>Status</strong><span id="previewStatus">-</span></div>
+                            </div>
+
+                            <div class="preview-price" id="previewPrice">50k</div>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="editor-actions">
+                    <button class="action-btn secondary" id="showPlayerBtn" type="button">SHOW</button>
+                    <button class="action-btn primary" id="saveSoldBtn" type="button">SAVE SOLD</button>
+                    <button class="action-btn secondary" id="clearSoldBtn" type="button">MARK UNSOLD</button>
+                </div>
+
+                <div class="editor-status" id="editorStatus">Use this section to save sold price locally without changing Google Sheets.</div>
+            </div>
+        </section>
+
+        <section class="view" id="databaseView">
+            <div class="panel database-header">
+                <h3>Player Database</h3>
+                <p>Search by ID, name, series, category, status, or sold price and review the local sold state beside the sheet data.</p>
+            </div>
+
+            <section class="panel toolbar">
+                <label class="control">
+                    <input type="search" id="searchInput" placeholder="Search by ID, name, series, category or sold price" />
+                </label>
+                <label class="control">
+                    <select id="statusFilter">
+                        <option value="all">All Status</option>
+                        <option value="sold">Sold</option>
+                        <option value="unsold">Unsold</option>
+                    </select>
+                </label>
+                <button class="action-btn secondary" id="showTableBtn" type="button">SHOW TABLE</button>
+                <button class="refresh-btn" id="refreshBtn" type="button">REFRESH</button>
+            </section>
+
+            <section class="panel table-panel">
+                <div class="table-head">
+                    <h3>Player List</h3>
+                    <div class="table-count" id="visibleCount">0 visible</div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Series</th>
+                                <th>Categories</th>
+                                <th>Status</th>
+                                <th>Sold Price</th>
+                            </tr>
+                        </thead>
+                        <tbody id="playerTableBody">
+                            <tr><td colspan="6" class="empty-state">Loading player data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </section>
+    </main>
+</div>
+
+<script>
+const playerTableBody = document.getElementById("playerTableBody");
+const searchInput = document.getElementById("searchInput");
+const statusFilter = document.getElementById("statusFilter");
+const showTableBtn = document.getElementById("showTableBtn");
+const refreshBtn = document.getElementById("refreshBtn");
+const totalPlayers = document.getElementById("totalPlayers");
+const soldPlayers = document.getElementById("soldPlayers");
+const unsoldPlayers = document.getElementById("unsoldPlayers");
+const auctionStartTimeInput = document.getElementById("auctionStartTimeInput");
+const auctionEndMessageInput = document.getElementById("auctionEndMessageInput");
+const saveAuctionSettingsBtn = document.getElementById("saveAuctionSettingsBtn");
+const showCountdownBtn = document.getElementById("showCountdownBtn");
+const dashboardStatus = document.getElementById("dashboardStatus");
+const teamNameInput = document.getElementById("teamNameInput");
+const ownerPlayerIdInput = document.getElementById("ownerPlayerIdInput");
+const saveTeamBtn = document.getElementById("saveTeamBtn");
+const resetTeamBtn = document.getElementById("resetTeamBtn");
+const showTeamsBtn = document.getElementById("showTeamsBtn");
+const teamStatus = document.getElementById("teamStatus");
+const teamCount = document.getElementById("teamCount");
+const teamList = document.getElementById("teamList");
+const visibleCount = document.getElementById("visibleCount");
+const lastUpdated = document.getElementById("lastUpdated");
+const soldPlayerIdInput = document.getElementById("soldPlayerIdInput");
+const soldPriceInput = document.getElementById("soldPriceInput");
+const soldTeamSelect = document.getElementById("soldTeamSelect");
+const soldPlayerNameInput = document.getElementById("soldPlayerNameInput");
+const soldPlayerStatusInput = document.getElementById("soldPlayerStatusInput");
+const showPlayerBtn = document.getElementById("showPlayerBtn");
+const saveSoldBtn = document.getElementById("saveSoldBtn");
+const clearSoldBtn = document.getElementById("clearSoldBtn");
+const editorStatus = document.getElementById("editorStatus");
+const previewImage = document.getElementById("previewImage");
+const previewEmpty = document.getElementById("previewEmpty");
+const previewName = document.getElementById("previewName");
+const previewRole = document.getElementById("previewRole");
+const previewId = document.getElementById("previewId");
+const previewSeries = document.getElementById("previewSeries");
+const previewStatus = document.getElementById("previewStatus");
+const previewPrice = document.getElementById("previewPrice");
+const navButtons = Array.from(document.querySelectorAll(".nav-btn"));
+const views = Array.from(document.querySelectorAll(".view"));
+const pageTitle = document.getElementById("pageTitle");
+const pageSubtitle = document.getElementById("pageSubtitle");
+
+const viewMeta = {
+    dashboardView: {
+        title: "Dashboard",
+        subtitle: "Overview of player totals and current auction progress."
+    },
+    teamsView: {
+        title: "Add Team",
+        subtitle: "Add unlimited teams with team name and owner name."
+    },
+    inputView: {
+        title: "Input Data",
+        subtitle: "Load a player by ID, preview the card, and save local sold data."
+    },
+    databaseView: {
+        title: "Player Database",
+        subtitle: "Browse, search, and filter all players from the current auction list."
+    }
+};
+
+let allPlayers = [];
+let ownerNameFromPlayerId = "";
+let allTeams = [];
+
+function setDashboardStatus(message, isError = false) {
+    dashboardStatus.textContent = message;
+    dashboardStatus.classList.toggle("error", Boolean(isError));
+}
+
+async function ensureAdminSession() {
+    try {
+        const response = await fetch("/api/auth/session", { cache: "no-store" });
+        const data = await response.json();
+
+        if (!data.authenticated) {
+            window.location.replace("/admin_login.html");
+            return false;
+        }
+
+        return true;
+    } catch (error) {
+        window.location.replace("/admin_login.html");
+        return false;
+    }
+}
+
+async function loadAuctionSettings() {
+    try {
+        const response = await fetch("/api/auction-settings", { cache: "no-store" });
+        const data = await response.json();
+
+        auctionStartTimeInput.value = data.startTime || "";
+        auctionEndMessageInput.value = data.endMessage || "Auction has started.";
+    } catch (error) {
+        setDashboardStatus("Could not load auction countdown settings.", true);
+    }
+}
+
+async function saveAuctionSettings() {
+    const startTime = auctionStartTimeInput.value.trim();
+    const endMessage = auctionEndMessageInput.value.trim();
+
+    if (startTime === "") {
+        setDashboardStatus("Enter auction start time first.", true);
+        return;
+    }
+
+    try {
+        const response = await fetch("/api/auction-settings", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                start_time: startTime,
+                end_message: endMessage
+            })
+        });
+
+        const data = await response.json();
+        if (data.error) {
+            setDashboardStatus(data.error, true);
+            return;
+        }
+
+        auctionEndMessageInput.value = data.endMessage || "";
+        setDashboardStatus("Auction countdown settings saved successfully.", false);
+    } catch (error) {
+        setDashboardStatus("Could not save auction countdown settings.", true);
+    }
+}
+
+async function showCountdownOnStage() {
+    if (auctionStartTimeInput.value.trim() === "") {
+        setDashboardStatus("Save auction start time first before showing countdown.", true);
+        return;
+    }
+
+    try {
+        const response = await fetch("/api/stage-view", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                mode: "countdown"
+            })
+        });
+
+        const data = await response.json();
+        if (data.error) {
+            setDashboardStatus(data.error, true);
+            return;
+        }
+
+        setDashboardStatus("Countdown is now shown on the stage screen.", false);
+    } catch (error) {
+        setDashboardStatus("Could not show countdown on the stage screen.", true);
+    }
+}
+
+function setTeamStatus(message, isError = false) {
+    teamStatus.textContent = message;
+    teamStatus.classList.toggle("error", Boolean(isError));
+}
+
+function renderTeams(teams) {
+    const teamItems = Array.isArray(teams) ? teams : [];
+    allTeams = teamItems;
+    teamCount.textContent = `${teamItems.length} team${teamItems.length === 1 ? "" : "s"}`;
+
+    if (!teamItems.length) {
+        teamList.innerHTML = `<div class="team-empty">No teams added yet.</div>`;
+        return;
+    }
+
+    teamList.innerHTML = teamItems.map(team => `
+        <article class="team-item">
+            <div class="team-item-top">
+                <span class="team-badge">TEAM ${team.id || "-"}</span>
+                <div class="team-head-actions">
+                    <button class="action-btn secondary team-show-btn" type="button" data-team-id="${team.id || 0}">SHOW</button>
+                    <button class="team-delete-btn" type="button" data-team-id="${team.id || 0}">DELETE</button>
+                </div>
+            </div>
+            <div class="team-name">${team.teamName || "-"}</div>
+            <div class="team-owner">Owner: ${team.ownerName || "-"}</div>
+            ${Array.isArray(team.players) && team.players.length ? `
+                <div class="team-player-list">
+                    ${team.players.map(player => `<div class="team-player-chip">${player.name || "-"}${player.soldPrice ? ` • ${player.soldPrice}` : ""}</div>`).join("")}
+                </div>
+            ` : `<div class="team-player-empty">No sold players assigned yet.</div>`}
+        </article>
+    `).join("");
+
+    Array.from(document.querySelectorAll(".team-show-btn")).forEach(button => {
+        button.addEventListener("click", () => {
+            showSingleTeamOnStage(Number(button.dataset.teamId));
+        });
+    });
+
+    Array.from(document.querySelectorAll(".team-delete-btn")).forEach(button => {
+        button.addEventListener("click", () => {
+            deleteTeam(Number(button.dataset.teamId));
+        });
+    });
+
+    soldTeamSelect.innerHTML = `<option value="">Select team</option>` + teamItems.map(team => `
+        <option value="${team.teamName || ""}">${team.teamName || "-"}</option>
+    `).join("");
+}
+
+async function loadTeams() {
+    try {
+        const response = await fetch("/api/teams-with-players", { cache: "no-store" });
+        const data = await response.json();
+        renderTeams(Array.isArray(data.teams) ? data.teams : []);
+    } catch (error) {
+        teamList.innerHTML = `<div class="team-empty">Could not load teams.</div>`;
+        teamCount.textContent = "0 teams";
+    }
+}
+
+async function saveTeam() {
+    const teamName = teamNameInput.value.trim();
+    const ownerPlayerId = Number(ownerPlayerIdInput.value);
+    const ownerName = ownerNameFromPlayerId.trim();
+
+    if (teamName === "" || ownerName === "") {
+        setTeamStatus("Enter team name and a valid owner player ID.", true);
+        return;
+    }
+
+    try {
+        const response = await fetch("/api/teams", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                team_name: teamName,
+                owner_name: ownerName,
+                owner_player_id: ownerPlayerId
+            })
+        });
+
+        const data = await response.json();
+        if (data.error) {
+            setTeamStatus(data.error, true);
+            return;
+        }
+
+        teamNameInput.value = "";
+        ownerPlayerIdInput.value = "";
+        ownerNameFromPlayerId = "";
+        setTeamStatus(`${data.team.teamName} added successfully.`, false);
+        await loadTeams();
+    } catch (error) {
+        setTeamStatus("Could not save team.", true);
+    }
+}
+
+async function deleteTeam(id) {
+    if (!id) {
+        setTeamStatus("Invalid team selected.", true);
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/team/${id}`, {
+            method: "DELETE"
+        });
+
+        const data = await response.json();
+        if (data.error) {
+            setTeamStatus(data.error, true);
+            return;
+        }
+
+        setTeamStatus("Team deleted successfully.", false);
+        await loadTeams();
+    } catch (error) {
+        setTeamStatus("Could not delete team.", true);
+    }
+}
+
+async function showTeamsOnStage() {
+    try {
+        const response = await fetch("/api/stage-view", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                mode: "teams"
+            })
+        });
+
+        const data = await response.json();
+        if (data.error) {
+            setTeamStatus(data.error, true);
+            return;
+        }
+
+        setTeamStatus("Teams are now shown on the stage screen.", false);
+    } catch (error) {
+        setTeamStatus("Could not send teams to stage screen.", true);
+    }
+}
+
+async function showSingleTeamOnStage(teamId) {
+    const team = allTeams.find(item => item.id === teamId);
+
+    if (!team) {
+        setTeamStatus("Team not found.", true);
+        return;
+    }
+
+    try {
+        const response = await fetch("/api/stage-view", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                mode: "team",
+                teamId: teamId
+            })
+        });
+
+        const data = await response.json();
+        if (data.error) {
+            setTeamStatus(data.error, true);
+            return;
+        }
+
+        setTeamStatus(`${team.teamName} is now shown on the stage screen.`, false);
+    } catch (error) {
+        setTeamStatus("Could not show team on stage screen.", true);
+    }
+}
+
+function resetTeamForm() {
+    teamNameInput.value = "";
+    ownerPlayerIdInput.value = "";
+    ownerNameFromPlayerId = "";
+    setTeamStatus("Form cleared. Add a new team anytime.", false);
+}
+
+async function syncOwnerNameFromPlayerId() {
+    const ownerPlayerId = Number(ownerPlayerIdInput.value);
+
+    if (!ownerPlayerId) {
+        ownerNameFromPlayerId = "";
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/players/${ownerPlayerId}`, { cache: "no-store" });
+        const data = await response.json();
+
+        if (data.error) {
+            ownerNameFromPlayerId = "";
+            setTeamStatus("Owner player ID not found.", true);
+            return;
+        }
+
+        ownerNameFromPlayerId = data.name || "";
+        setTeamStatus("Owner name loaded from player ID.", false);
+    } catch (error) {
+        ownerNameFromPlayerId = "";
+        setTeamStatus("Could not load owner name from player ID.", true);
+    }
+}
+
+function resetPreviewCard() {
+    previewImage.src = "";
+    previewImage.alt = "Player preview";
+    previewImage.classList.add("is-empty");
+    previewEmpty.classList.add("show");
+    previewName.textContent = "Waiting For Player";
+    previewRole.textContent = "Role";
+    previewId.textContent = "-";
+    previewSeries.textContent = "-";
+    previewStatus.textContent = "-";
+    previewPrice.textContent = "50k";
+}
+
+function updatePreviewCard(playerData, id) {
+    const soldPrice = (playerData.soldPrice || "").trim();
+    const statusText = playerData.sold ? `Sold${soldPrice ? ` (${soldPrice})` : ""}` : "Unsold";
+
+    previewImage.onerror = () => {
+        previewImage.onerror = null;
+        previewImage.src = "image.png";
+    };
+    previewImage.classList.remove("is-empty");
+    previewEmpty.classList.remove("show");
+    previewImage.src = playerData.image && playerData.image.trim() !== "" ? playerData.image : "image.png";
+    previewImage.alt = playerData.name || "Player preview";
+    previewName.textContent = playerData.name || `Player ${id}`;
+    previewRole.textContent = playerData.role || "Role";
+    previewId.textContent = String(id);
+    previewSeries.textContent = playerData.series || "-";
+    previewStatus.textContent = statusText;
+    previewPrice.textContent = soldPrice || playerData.price || "50k";
+}
+
+async function loadPlayerPreview(id) {
+    if (!id) {
+        resetPreviewCard();
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/players/${id}`, { cache: "no-store" });
+        const data = await response.json();
+
+        if (data.error) {
+            resetPreviewCard();
+            previewId.textContent = String(id);
+            previewStatus.textContent = data.error;
+            return;
+        }
+
+        updatePreviewCard(data, id);
+    } catch (error) {
+        resetPreviewCard();
+        previewId.textContent = String(id);
+        previewStatus.textContent = "Could not load";
+    }
+}
+
+function setActiveView(viewId) {
+    navButtons.forEach(button => {
+        button.classList.toggle("active", button.dataset.view === viewId);
+    });
+
+    views.forEach(view => {
+        view.classList.toggle("active", view.id === viewId);
+    });
+
+    pageTitle.textContent = viewMeta[viewId].title;
+    pageSubtitle.textContent = viewMeta[viewId].subtitle;
+}
+
+function setEditorStatus(message, isError = false) {
+    editorStatus.textContent = message;
+    editorStatus.classList.toggle("error", Boolean(isError));
+}
+
+function findPlayerById(id) {
+    return allPlayers.find(player => player.id === Number(id)) || null;
+}
+
+function syncEditorFields() {
+    const playerId = Number(soldPlayerIdInput.value);
+    const player = findPlayerById(playerId);
+
+    if (!player) {
+        soldPlayerNameInput.value = "";
+        soldPlayerStatusInput.value = "";
+        soldPriceInput.value = "";
+        soldTeamSelect.value = "";
+        loadPlayerPreview(playerId);
+        return;
+    }
+
+    soldPlayerNameInput.value = player.name || "-";
+    soldPlayerStatusInput.value = player.status + (player.soldPrice ? ` (${player.soldPrice})` : "");
+    soldPriceInput.value = player.soldPrice || "";
+    soldTeamSelect.value = player.teamName || "";
+    loadPlayerPreview(playerId);
+}
+
+function updateStats(players) {
+    const soldCount = players.filter(player => player.status === "Sold").length;
+    totalPlayers.textContent = String(players.length);
+    soldPlayers.textContent = String(soldCount);
+    unsoldPlayers.textContent = String(players.length - soldCount);
+}
+
+function renderRows(players) {
+    if (!players.length) {
+        playerTableBody.innerHTML = `<tr><td colspan="6" class="empty-state">No players match the current filter.</td></tr>`;
+        visibleCount.textContent = "0 visible";
+        return;
+    }
+
+    playerTableBody.innerHTML = players.map(player => `
+        <tr>
+            <td><span class="id-pill">${player.id}</span></td>
+            <td>${player.name || "-"}</td>
+            <td>${player.series || "-"}</td>
+            <td>${player.category || "-"}</td>
+            <td><span class="status-pill ${player.status.toLowerCase()}">${player.status}</span></td>
+            <td>${player.soldPrice || "-"}</td>
+        </tr>
+    `).join("");
+
+    visibleCount.textContent = `${players.length} visible`;
+}
+
+function applyFilters() {
+    const query = searchInput.value.trim().toLowerCase();
+    const statusValue = statusFilter.value;
+
+    const filtered = allPlayers.filter(player => {
+        const matchesSearch = query === "" || [
+            String(player.id),
+            player.name,
+            player.series,
+            player.category,
+            player.status,
+            player.soldPrice || ""
+        ].join(" ").toLowerCase().includes(query);
+
+        const matchesStatus = statusValue === "all" || player.status.toLowerCase() === statusValue;
+        return matchesSearch && matchesStatus;
+    });
+
+    renderRows(filtered);
+}
+
+async function loadAdminPlayers() {
+    playerTableBody.innerHTML = `<tr><td colspan="6" class="empty-state">Loading player data...</td></tr>`;
+
+    try {
+        const response = await fetch("/api/players", { cache: "no-store" });
+        const data = await response.json();
+
+        if (data.error) {
+            playerTableBody.innerHTML = `<tr><td colspan="6" class="error-state">${data.error}</td></tr>`;
+            visibleCount.textContent = "0 visible";
+            return;
+        }
+
+        allPlayers = Array.isArray(data.players) ? data.players : [];
+        updateStats(allPlayers);
+        applyFilters();
+        syncEditorFields();
+        lastUpdated.textContent = `Last updated: ${new Date().toLocaleString()}`;
+    } catch (error) {
+        playerTableBody.innerHTML = `<tr><td colspan="6" class="error-state">Could not load admin data.</td></tr>`;
+        visibleCount.textContent = "0 visible";
+    }
+}
+
+async function updateSoldState(isSold) {
+    const id = Number(soldPlayerIdInput.value);
+    const player = findPlayerById(id);
+
+    if (!id || !player) {
+        setEditorStatus("Enter a valid player ID from the table first.", true);
+        return;
+    }
+
+    const soldPrice = soldPriceInput.value.trim();
+    const teamName = soldTeamSelect.value.trim();
+    if (isSold && soldPrice === "") {
+        setEditorStatus("Enter the sold price before saving.", true);
+        return;
+    }
+
+    try {
+        const response = await fetch("/api/sold-status", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                id,
+                sold: isSold,
+                sold_price: isSold ? soldPrice : "",
+                team_name: isSold ? teamName : ""
+            })
+        });
+
+        const data = await response.json();
+        if (data.error) {
+            setEditorStatus(data.error, true);
+            return;
+        }
+
+        soldPriceInput.value = isSold ? soldPrice : "";
+        soldTeamSelect.value = isSold ? teamName : "";
+        setEditorStatus(
+            isSold
+                ? `${player.name} marked sold at ${soldPrice}${teamName ? ` for ${teamName}` : ""}. This is saved locally only.`
+                : `${player.name} marked unsold. Local sold price was removed.`,
+            false
+        );
+        await loadAdminPlayers();
+    } catch (error) {
+        setEditorStatus("Could not save sold data.", true);
+    }
+}
+
+async function showSelectedPlayer() {
+    const id = Number(soldPlayerIdInput.value);
+    const player = findPlayerById(id);
+
+    if (!id || !player) {
+        setEditorStatus("Enter a valid player ID before clicking show.", true);
+        return;
+    }
+
+    try {
+        const response = await fetch("/api/stage-view", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                mode: "player",
+                playerId: id
+            })
+        });
+
+        const data = await response.json();
+        if (data.error) {
+            setEditorStatus(data.error, true);
+            return;
+        }
+
+        setEditorStatus(`${player.name} is now sent to the stage screen.`, false);
+    } catch (error) {
+        setEditorStatus("Could not send player to stage screen.", true);
+    }
+}
+
+async function showDatabaseOnStage() {
+    try {
+        const response = await fetch("/api/stage-view", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                mode: "database",
+                search: searchInput.value.trim(),
+                status: statusFilter.value
+            })
+        });
+
+        const data = await response.json();
+        if (data.error) {
+            setEditorStatus(data.error, true);
+            return;
+        }
+
+        setEditorStatus("Player database is now shown on the stage screen.", false);
+    } catch (error) {
+        setEditorStatus("Could not send database to stage screen.", true);
+    }
+}
+
+navButtons.forEach(button => {
+    button.addEventListener("click", () => {
+        setActiveView(button.dataset.view);
+    });
+});
+
+searchInput.addEventListener("input", applyFilters);
+statusFilter.addEventListener("change", applyFilters);
+refreshBtn.addEventListener("click", loadAdminPlayers);
+saveAuctionSettingsBtn.addEventListener("click", saveAuctionSettings);
+showCountdownBtn.addEventListener("click", showCountdownOnStage);
+saveTeamBtn.addEventListener("click", saveTeam);
+resetTeamBtn.addEventListener("click", resetTeamForm);
+ownerPlayerIdInput.addEventListener("input", syncOwnerNameFromPlayerId);
+showTeamsBtn.addEventListener("click", showTeamsOnStage);
+soldPlayerIdInput.addEventListener("input", syncEditorFields);
+showPlayerBtn.addEventListener("click", showSelectedPlayer);
+showTableBtn.addEventListener("click", showDatabaseOnStage);
+saveSoldBtn.addEventListener("click", () => updateSoldState(true));
+clearSoldBtn.addEventListener("click", () => updateSoldState(false));
+
+window.addEventListener("load", async () => {
+    const isAuthenticated = await ensureAdminSession();
+    if (!isAuthenticated) {
+        return;
+    }
+
+    setActiveView("dashboardView");
+    loadAdminPlayers();
+    loadTeams();
+    loadAuctionSettings();
+});
+</script>
+</body>
+</html>

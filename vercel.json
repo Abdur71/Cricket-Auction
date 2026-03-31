@@ -1,0 +1,29 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/frontend/index.html"
+    },
+    {
+      "source": "/admin",
+      "destination": "/frontend/admin_login.html"
+    },
+    {
+      "source": "/admin.html",
+      "destination": "/frontend/admin.html"
+    },
+    {
+      "source": "/admin_app.html",
+      "destination": "/frontend/admin_app.html"
+    },
+    {
+      "source": "/admin_login.html",
+      "destination": "/frontend/admin_login.html"
+    },
+    {
+      "source": "/image.png",
+      "destination": "/frontend/image.png"
+    }
+  ]
+}

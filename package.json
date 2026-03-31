@@ -1,0 +1,14 @@
+{
+  "name": "cricket-auction-system-js",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^2.4.3"
+  },
+  "scripts": {
+    "local": "npx vercel dev",
+    "dev": "node -e \"console.log('Use npm run local for local development.')\"",
+    "start": "node -e \"console.log('Use Vercel deployment or npm run local.')\""
+  }
+}
