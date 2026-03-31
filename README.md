@@ -21,7 +21,6 @@ This project keeps the existing frontend visuals intact and replaces the PHP bac
 - `GET /api/teams-with-players`
 - `POST /api/admin/login`
 - `GET /api/auth/session`
-- `GET|POST /api/auth/logout`
 - `GET|POST /api/auction-settings`
 - `GET|POST /api/stage-view`
 - `POST /api/sold-status`
