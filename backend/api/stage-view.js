@@ -15,7 +15,8 @@ const VALID_STATUS = ["all", "sold", "unsold"];
 
 module.exports = async function handler(req, res) {
   if (req.method === "GET") {
-    const data = await readJsonFile("stage_view.json", DEFAULT_STAGE_VIEW);
+    const stored = await readJsonFile("stage_view.json", DEFAULT_STAGE_VIEW);
+    const data = stored && typeof stored === "object" ? stored : DEFAULT_STAGE_VIEW;
     sendJson(res, 200, {
       mode: VALID_MODES.includes(data.mode) ? data.mode : DEFAULT_STAGE_VIEW.mode,
       playerId: Number(data.playerId) || 0,

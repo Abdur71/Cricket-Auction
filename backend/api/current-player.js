@@ -4,7 +4,8 @@ const { readJsonFile, writeJsonFile } = require("../utils/storage");
 
 module.exports = async function handler(req, res) {
   if (req.method === "GET") {
-    const data = await readJsonFile("current_player.json", { id: 0 });
+    const stored = await readJsonFile("current_player.json", { id: 0 });
+    const data = stored && typeof stored === "object" ? stored : { id: 0 };
     sendJson(res, 200, {
       id: Number(data.id) || 0
     });

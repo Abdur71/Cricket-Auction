@@ -9,7 +9,8 @@ const DEFAULT_SETTINGS = {
 
 module.exports = async function handler(req, res) {
   if (req.method === "GET") {
-    const data = await readJsonFile("auction_settings.json", DEFAULT_SETTINGS);
+    const stored = await readJsonFile("auction_settings.json", DEFAULT_SETTINGS);
+    const data = stored && typeof stored === "object" ? stored : DEFAULT_SETTINGS;
     sendJson(res, 200, {
       startTime: String(data.startTime || "").trim(),
       endMessage: String(data.endMessage || "").trim() || DEFAULT_SETTINGS.endMessage
