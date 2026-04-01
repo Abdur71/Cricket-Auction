@@ -5,6 +5,7 @@ This setup keeps the players Google Sheet unchanged and moves only dynamic state
 ## What Moves To The New Spreadsheet
 
 - teams
+- groups
 - sold status
 - current player
 - stage view
@@ -55,6 +56,7 @@ npm run local
 The Apps Script will automatically create these tabs when needed:
 
 - `teams`
+- `groups`
 - `sold_states`
 - `current_player`
 - `stage_view`
