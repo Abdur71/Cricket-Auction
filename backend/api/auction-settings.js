@@ -6,7 +6,7 @@ const DEFAULT_SETTINGS = {
   startTime: "",
   endMessage: "Auction has started.",
   breakingNews: "",
-  countdownEnabled: true
+  countdownEnabled: false
 };
 
 module.exports = async function handler(req, res) {
