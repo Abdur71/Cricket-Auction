@@ -2252,12 +2252,21 @@ function renderResults(results) {
         <article class="result-item">
             <div class="group-item-top">
                 <span class="group-badge">MATCH ${result.fixtureId || result.id || "-"}</span>
+                <div class="team-head-actions">
+                    <button class="team-delete-btn result-delete-btn" type="button" data-result-id="${result.fixtureId || result.id || 0}">DELETE</button>
+                </div>
             </div>
             <div class="result-title">${result.matchTitle || `${result.teamAName || "-"} vs ${result.teamBName || "-"}`}</div>
             <div class="result-meta">${result.matchDate || "Date TBD"}${result.matchTime ? ` • ${result.matchTime}` : ""}${result.venue ? ` • ${result.venue}` : ""}</div>
             <div class="result-summary">${result.resultSummary || "Result pending"}</div>
         </article>
     `).join("");
+
+    Array.from(document.querySelectorAll(".result-delete-btn")).forEach(button => {
+        button.addEventListener("click", () => {
+            deleteResult(Number(button.dataset.resultId));
+        });
+    });
 }
 
 async function loadResults() {
@@ -2483,6 +2492,34 @@ function resetResultForm() {
     resultTeamBOversInput.value = "";
     syncResultFixtureSelection();
     setResultStatus("Form cleared. Select any fixture to add the score.", false);
+}
+
+async function deleteResult(resultId) {
+    if (!resultId) {
+        setResultStatus("Invalid result selected.", true);
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/group/${resultId}?resource=results`, {
+            method: "DELETE"
+        });
+
+        const data = await response.json();
+        if (data.error) {
+            setResultStatus(data.error, true);
+            return;
+        }
+
+        if (Number(resultFixtureSelect.value) === resultId) {
+            resetResultForm();
+        }
+
+        setResultStatus("Result deleted successfully.", false);
+        await loadResults();
+    } catch (error) {
+        setResultStatus("Could not delete result.", true);
+    }
 }
 
 function resetGroupForm() {
