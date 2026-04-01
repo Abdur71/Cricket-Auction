@@ -210,7 +210,7 @@ body::before {
     color: var(--white);
     font-size: clamp(0.95rem, 1.35vw, 1.2rem);
     letter-spacing: 0.08em;
-    animation: tickerScroll 180s linear infinite;
+    animation: tickerScroll 160s linear infinite;
 }
 
 @keyframes tickerScroll {
@@ -926,7 +926,7 @@ body::before {
     <section class="news-ticker" aria-label="Breaking news">
         <div class="news-label">BREAKING NEWS</div>
         <div class="news-track">
-            <div class="news-text" id="newsTickerText">Auction live: waiting for the next sold update.</div>
+            <div class="news-text" id="newsTickerText">Admin breaking news will appear here.</div>
         </div>
     </section>
 
@@ -1179,41 +1179,14 @@ function setStatus(message, isError) {
 }
 
 function updateBreakingNewsText(messages) {
-    const text = messages.length ? messages.join("  •  ") : "Auction live: waiting for the next sold update.";
+    const text = messages.length ? messages.join("  •  ") : "Admin breaking news will appear here.";
     newsTickerText.textContent = `${text}  •  ${text}`;
 }
 
 async function refreshBreakingNews() {
-    if (auctionSettings.breakingNews) {
-        updateBreakingNewsText([auctionSettings.breakingNews]);
-        return;
-    }
-
-    try {
-        const response = await fetch("/api/players", { cache: "no-store" });
-        const data = await response.json();
-
-        if (data.error || !Array.isArray(data.players)) {
-            updateBreakingNewsText([]);
-            return;
-        }
-
-        const soldMessages = data.players
-            .filter(player => player.status === "Sold")
-            .map(player => {
-                const teamText = player.teamName ? ` to ${player.teamName}` : "";
-
-                if (player.soldPrice) {
-                    return `${player.name} is sold${teamText} at ${player.soldPrice}`;
-                }
-
-                return `${player.name} is sold${teamText}`;
-            });
-
-        updateBreakingNewsText(soldMessages);
-    } catch (error) {
-        updateBreakingNewsText([]);
-    }
+    updateBreakingNewsText(
+        auctionSettings.breakingNews ? [auctionSettings.breakingNews] : []
+    );
 }
 
 function updateSoldUI(isSold) {

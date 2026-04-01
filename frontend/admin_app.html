@@ -962,7 +962,7 @@ tbody tr:hover {
 
                 <section class="panel dashboard-tools">
                     <h3>Breaking News</h3>
-                    <p>Write a custom ticker message for the stage screen. Leave it empty to fall back to automatic sold updates.</p>
+                    <p>Write a custom ticker message for the stage screen. Only this custom news will be shown in the ticker.</p>
 
                     <div class="dashboard-form news-form">
                         <div class="field-group">
@@ -1330,7 +1330,7 @@ async function saveBreakingNews(customNews) {
         setDashboardStatus(
             data.breakingNews
                 ? "Breaking news saved successfully. The stage ticker will use your custom message."
-                : "Breaking news cleared. The stage ticker will return to automatic sold updates.",
+                : "Breaking news cleared. The stage ticker is now waiting for a custom admin message.",
             false
         );
     } catch (error) {
