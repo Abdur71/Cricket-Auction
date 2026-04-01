@@ -98,6 +98,42 @@ body::before {
     text-align: center;
 }
 
+.site-nav {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+    padding: 14px;
+    border-radius: 20px;
+    background: rgba(8, 15, 31, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.site-nav-btn {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    padding: 12px 18px;
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--white);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.86rem;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+}
+
+.site-nav-btn:hover {
+    transform: translateY(-1px);
+    background: rgba(59, 226, 255, 0.08);
+    border-color: rgba(59, 226, 255, 0.35);
+}
+
+.site-nav-btn.active {
+    background: linear-gradient(135deg, rgba(59, 226, 255, 0.18), rgba(244, 201, 93, 0.14));
+    border-color: rgba(244, 201, 93, 0.4);
+    color: var(--gold);
+}
+
 .news-ticker {
     display: grid;
     grid-template-columns: auto 1fr;
@@ -113,6 +149,49 @@ body::before {
 
 .news-ticker.hidden {
     display: none;
+}
+
+.frontend-section.hidden {
+    display: none;
+}
+
+.placeholder-shell {
+    width: 100%;
+    max-width: 1680px;
+    min-height: 420px;
+    padding: 36px 30px;
+    border-radius: 28px;
+    background:
+        radial-gradient(circle at top left, rgba(0, 230, 255, 0.1), transparent 34%),
+        radial-gradient(circle at top right, rgba(244, 201, 93, 0.12), transparent 36%),
+        rgba(8, 15, 31, 0.78);
+    border: 1px solid var(--glass-stroke);
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.placeholder-kicker {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--neon);
+    font-size: 0.82rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.placeholder-shell h2 {
+    margin-top: 18px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(2rem, 4vw, 3.4rem);
+    color: var(--gold);
+}
+
+.placeholder-shell p {
+    margin-top: 16px;
+    max-width: 760px;
+    color: var(--muted);
+    font-size: clamp(1rem, 1.4vw, 1.15rem);
+    line-height: 1.6;
 }
 
 .countdown-banner {
@@ -909,6 +988,10 @@ body::before {
     #playerPrice {
         font-size: clamp(2rem, 8vw, 4rem);
     }
+
+    .site-nav {
+        justify-content: center;
+    }
 }
 
 </style>
@@ -923,6 +1006,13 @@ body::before {
         </div>
     </header>
 
+    <nav class="site-nav" aria-label="Frontend navigation">
+        <button class="site-nav-btn active" type="button" data-front-section="home">Home</button>
+        <button class="site-nav-btn" type="button" data-front-section="teamshowcase">TeamShowcase</button>
+        <button class="site-nav-btn" type="button" data-front-section="group">Group</button>
+        <button class="site-nav-btn" type="button" data-front-section="fixtures">Match Fixture</button>
+    </nav>
+
     <section class="news-ticker" aria-label="Breaking news">
         <div class="news-label">BREAKING NEWS</div>
         <div class="news-track">
@@ -930,110 +1020,136 @@ body::before {
         </div>
     </section>
 
-    <section class="countdown-banner stage-view" id="countdownStageView" aria-label="Auction countdown">
-        <div class="countdown-label">COUNTDOWN</div>
-        <div class="countdown-content">
-            <div class="countdown-message" id="countdownMessage">Auction countdown is waiting for admin setup.</div>
-            <div class="countdown-time" id="countdownTime">
-                <div class="countdown-box">
-                    <div class="countdown-value" id="countdownDays">00</div>
-                    <div class="countdown-unit">Days</div>
-                </div>
-                <div class="countdown-box">
-                    <div class="countdown-value" id="countdownHours">00</div>
-                    <div class="countdown-unit">Hours</div>
-                </div>
-                <div class="countdown-box">
-                    <div class="countdown-value" id="countdownMinutes">00</div>
-                    <div class="countdown-unit">Minutes</div>
-                </div>
-                <div class="countdown-box">
-                    <div class="countdown-value" id="countdownSeconds">00</div>
-                    <div class="countdown-unit">Seconds</div>
+    <section class="frontend-section" id="homeSection">
+        <section class="countdown-banner stage-view" id="countdownStageView" aria-label="Auction countdown">
+            <div class="countdown-label">COUNTDOWN</div>
+            <div class="countdown-content">
+                <div class="countdown-message" id="countdownMessage">Auction countdown is waiting for admin setup.</div>
+                <div class="countdown-time" id="countdownTime">
+                    <div class="countdown-box">
+                        <div class="countdown-value" id="countdownDays">00</div>
+                        <div class="countdown-unit">Days</div>
+                    </div>
+                    <div class="countdown-box">
+                        <div class="countdown-value" id="countdownHours">00</div>
+                        <div class="countdown-unit">Hours</div>
+                    </div>
+                    <div class="countdown-box">
+                        <div class="countdown-value" id="countdownMinutes">00</div>
+                        <div class="countdown-unit">Minutes</div>
+                    </div>
+                    <div class="countdown-box">
+                        <div class="countdown-value" id="countdownSeconds">00</div>
+                        <div class="countdown-unit">Seconds</div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <main class="stage">
-        <section class="card-shell stage-view hidden" id="playerStageView">
-            <article class="card show" id="card">
-                <div class="image-panel">
-                    <img id="playerImage" alt="Player Image" src="https://images.unsplash.com/photo-1543357480-c60d40007a3f?auto=format&fit=crop&w=1200&q=80" />
-                    <img id="soldSeal" class="sold-seal" src="image.png" alt="SOLD stamp" />
-                </div>
-
-                <div class="info-panel">
-                    <div class="label">Player Introduction</div>
-                    <h2 id="playerName">Waiting For Player</h2>
-                    <div class="role-badge" id="playerRole">Role</div>
-                    <div class="meta-line"><strong>Player ID</strong><span id="playerDisplayId">-</span></div>
-                    <div class="meta-line"><strong>Series</strong><span id="playerSeries">-</span></div>
-
-                    <div class="price-wrap">
-                        <div class="price-title" id="playerPriceTitle">Base Price</div>
-                        <div id="playerPrice">50k</div>
+        <main class="stage">
+            <section class="card-shell stage-view hidden" id="playerStageView">
+                <article class="card show" id="card">
+                    <div class="image-panel">
+                        <img id="playerImage" alt="Player Image" src="https://images.unsplash.com/photo-1543357480-c60d40007a3f?auto=format&fit=crop&w=1200&q=80" />
+                        <img id="soldSeal" class="sold-seal" src="image.png" alt="SOLD stamp" />
                     </div>
 
-                    <div class="status" id="statusText">Ready to start auction.</div>
-                </div>
-            </article>
-        </section>
+                    <div class="info-panel">
+                        <div class="label">Player Introduction</div>
+                        <h2 id="playerName">Waiting For Player</h2>
+                        <div class="role-badge" id="playerRole">Role</div>
+                        <div class="meta-line"><strong>Player ID</strong><span id="playerDisplayId">-</span></div>
+                        <div class="meta-line"><strong>Series</strong><span id="playerSeries">-</span></div>
 
-        <section class="table-shell stage-view hidden" id="databaseStageView">
-            <div class="table-header">
-                <div>
-                    <h2>PLAYER DATABASE</h2>
-                    <div class="table-subtitle" id="databaseStageSubtitle">Live stage table from admin panel.</div>
-                </div>
-                <div class="table-stage-count" id="databaseStageCount">0 visible</div>
-            </div>
-            <div class="table-stage-wrap">
-                <table class="table-stage">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Series</th>
-                            <th>Categories</th>
-                            <th>Status</th>
-                            <th>Sold Price</th>
-                        </tr>
-                    </thead>
-                    <tbody id="databaseStageBody">
-                        <tr><td colspan="6" class="table-empty">Waiting for admin to show the player database.</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
+                        <div class="price-wrap">
+                            <div class="price-title" id="playerPriceTitle">Base Price</div>
+                            <div id="playerPrice">50k</div>
+                        </div>
 
-        <section class="teams-shell stage-view hidden" id="teamsStageView">
-            <div class="teams-header">
-                <div>
-                    <h2>TEAMS SHOWCASE</h2>
-                    <div class="teams-subtitle" id="teamsStageSubtitle">Live team cards from admin panel.</div>
-                </div>
-                <div class="teams-count" id="teamsStageCount">0 teams</div>
-            </div>
-            <div class="teams-grid" id="teamsStageGrid">
-                <div class="teams-empty">No teams available to display.</div>
-            </div>
-        </section>
+                        <div class="status" id="statusText">Ready to start auction.</div>
+                    </div>
+                </article>
+            </section>
 
-        <section class="team-detail-shell stage-view hidden" id="teamDetailStageView">
-            <div class="team-detail-top">
-                <div class="team-detail-kicker">Team Spotlight</div>
-                <div class="team-detail-name" id="teamDetailName">Waiting For Team</div>
-                <div class="team-detail-owner" id="teamDetailOwner">Owner: -</div>
-            </div>
-            <div class="team-detail-body">
-                <div class="team-detail-section-title">Players</div>
-                <div class="team-detail-players" id="teamDetailPlayers">
-                    <div class="team-detail-empty">No players assigned yet.</div>
+            <section class="table-shell stage-view hidden" id="databaseStageView">
+                <div class="table-header">
+                    <div>
+                        <h2>PLAYER DATABASE</h2>
+                        <div class="table-subtitle" id="databaseStageSubtitle">Live stage table from admin panel.</div>
+                    </div>
+                    <div class="table-stage-count" id="databaseStageCount">0 visible</div>
                 </div>
-            </div>
-        </section>
-    </main>
+                <div class="table-stage-wrap">
+                    <table class="table-stage">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Series</th>
+                                <th>Categories</th>
+                                <th>Status</th>
+                                <th>Sold Price</th>
+                            </tr>
+                        </thead>
+                        <tbody id="databaseStageBody">
+                            <tr><td colspan="6" class="table-empty">Waiting for admin to show the player database.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="team-detail-shell stage-view hidden" id="teamDetailStageView">
+                <div class="team-detail-top">
+                    <div class="team-detail-kicker">Team Spotlight</div>
+                    <div class="team-detail-name" id="teamDetailName">Waiting For Team</div>
+                    <div class="team-detail-owner" id="teamDetailOwner">Owner: -</div>
+                </div>
+                <div class="team-detail-body">
+                    <div class="team-detail-section-title">Players</div>
+                    <div class="team-detail-players" id="teamDetailPlayers">
+                        <div class="team-detail-empty">No players assigned yet.</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </section>
+
+    <section class="frontend-section hidden" id="teamshowcaseSection">
+        <main class="stage">
+            <section class="teams-shell" id="teamsStageView">
+                <div class="teams-header">
+                    <div>
+                        <h2>TEAMS SHOWCASE</h2>
+                        <div class="teams-subtitle" id="teamsStageSubtitle">Live team cards from admin panel.</div>
+                    </div>
+                    <div class="teams-count" id="teamsStageCount">0 teams</div>
+                </div>
+                <div class="teams-grid" id="teamsStageGrid">
+                    <div class="teams-empty">No teams available to display.</div>
+                </div>
+            </section>
+        </main>
+    </section>
+
+    <section class="frontend-section hidden" id="groupSection">
+        <main class="stage">
+            <section class="placeholder-shell">
+                <div class="placeholder-kicker">Coming Soon</div>
+                <h2>Group Mode</h2>
+                <p>Group mode will live here. The navbar and breaking news ticker are ready, and we can shape the full design when you share the layout details.</p>
+            </section>
+        </main>
+    </section>
+
+    <section class="frontend-section hidden" id="fixturesSection">
+        <main class="stage">
+            <section class="placeholder-shell">
+                <div class="placeholder-kicker">Coming Soon</div>
+                <h2>Match Fixture</h2>
+                <p>Match fixture mode will live here. Once you tell me the design, I can build the full fixture board in this section.</p>
+            </section>
+        </main>
+    </section>
 </div>
 
 
@@ -1082,8 +1198,14 @@ const teamsStageSubtitle = document.getElementById("teamsStageSubtitle");
 const teamDetailName = document.getElementById("teamDetailName");
 const teamDetailOwner = document.getElementById("teamDetailOwner");
 const teamDetailPlayers = document.getElementById("teamDetailPlayers");
+const frontNavButtons = Array.from(document.querySelectorAll("[data-front-section]"));
+const homeSection = document.getElementById("homeSection");
+const teamshowcaseSection = document.getElementById("teamshowcaseSection");
+const groupSection = document.getElementById("groupSection");
+const fixturesSection = document.getElementById("fixturesSection");
 const stageScreenOpenedAt = Date.now();
 const expandedTeamCards = new Set();
+let currentFrontendSection = "home";
 
 function isCountdownActive() {
     if (!auctionSettings.countdownEnabled) {
@@ -1105,9 +1227,25 @@ function isCountdownActive() {
 function setStageMode(mode) {
     playerStageView.classList.toggle("hidden", mode !== "player");
     databaseStageView.classList.toggle("hidden", mode !== "database");
-    teamsStageView.classList.toggle("hidden", mode !== "teams");
     teamDetailStageView.classList.toggle("hidden", mode !== "team");
     countdownStageView.classList.toggle("hidden", mode !== "countdown");
+}
+
+function setFrontendSection(sectionName) {
+    currentFrontendSection = sectionName;
+
+    homeSection.classList.toggle("hidden", sectionName !== "home");
+    teamshowcaseSection.classList.toggle("hidden", sectionName !== "teamshowcase");
+    groupSection.classList.toggle("hidden", sectionName !== "group");
+    fixturesSection.classList.toggle("hidden", sectionName !== "fixtures");
+
+    frontNavButtons.forEach(button => {
+        button.classList.toggle("active", button.dataset.frontSection === sectionName);
+    });
+
+    if (sectionName === "teamshowcase") {
+        loadStageTeams();
+    }
 }
 
 function setCountdownValues(days, hours, minutes, seconds) {
@@ -1121,7 +1259,6 @@ function renderAuctionCountdown() {
     if (!auctionSettings.countdownEnabled) {
         countdownMessage.textContent = "Countdown is currently turned off by admin.";
         countdownTime.style.opacity = "0.45";
-        newsTicker.classList.remove("hidden");
         setCountdownValues(0, 0, 0, 0);
         return;
     }
@@ -1129,7 +1266,6 @@ function renderAuctionCountdown() {
     if (!auctionSettings.startTime) {
         countdownMessage.textContent = "Auction countdown is waiting for admin setup.";
         countdownTime.style.opacity = "0.45";
-        newsTicker.classList.remove("hidden");
         setCountdownValues(0, 0, 0, 0);
         return;
     }
@@ -1140,7 +1276,6 @@ function renderAuctionCountdown() {
     if (Number.isNaN(targetMs)) {
         countdownMessage.textContent = "Auction countdown time is invalid.";
         countdownTime.style.opacity = "0.45";
-        newsTicker.classList.remove("hidden");
         setCountdownValues(0, 0, 0, 0);
         return;
     }
@@ -1149,14 +1284,12 @@ function renderAuctionCountdown() {
     if (diffMs <= 0) {
         countdownMessage.textContent = auctionSettings.endMessage || "Auction has started.";
         countdownTime.style.opacity = "0.45";
-        newsTicker.classList.remove("hidden");
         setCountdownValues(0, 0, 0, 0);
         return;
     }
 
     countdownMessage.textContent = "Auction starts in";
     countdownTime.style.opacity = "1";
-    newsTicker.classList.add("hidden");
 
     const totalSeconds = Math.floor(diffMs / 1000);
     const days = Math.floor(totalSeconds / 86400);
@@ -1410,6 +1543,10 @@ async function loadSingleTeamStage(teamId) {
 }
 
 async function syncStageViewFromAdmin(forceRefresh = false) {
+    if (currentFrontendSection !== "home") {
+        return;
+    }
+
     try {
         const response = await fetch("/api/stage-view", { cache: "no-store" });
         const data = await response.json();
@@ -1449,8 +1586,7 @@ async function syncStageViewFromAdmin(forceRefresh = false) {
         }
 
         if (mode === "teams") {
-            await loadStageTeams();
-            setStatus("Showing teams from admin panel.", false);
+            setStatus("Team showcase is now available from the frontend navbar.", false);
             return;
         }
 
@@ -1556,11 +1692,22 @@ document.addEventListener("keydown", (event) => {
 
     if (key === "r" || key === "enter") {
         event.preventDefault();
-        syncStageViewFromAdmin();
+        if (currentFrontendSection === "teamshowcase") {
+            loadStageTeams();
+        } else {
+            syncStageViewFromAdmin();
+        }
     }
 });
 
+frontNavButtons.forEach(button => {
+    button.addEventListener("click", () => {
+        setFrontendSection(button.dataset.frontSection);
+    });
+});
+
 window.addEventListener("load", async () => {
+    setFrontendSection("home");
     refreshBreakingNews();
     await loadAuctionSettings();
     renderAuctionCountdown();

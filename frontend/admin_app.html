@@ -1020,7 +1020,6 @@ tbody tr:hover {
                         <h3>Added Teams</h3>
                         <div class="team-head-actions">
                             <div class="team-count" id="teamCount">0 teams</div>
-                            <button class="action-btn secondary" id="showTeamsBtn" type="button">SHOW TEAMS</button>
                         </div>
                     </div>
                     <div class="team-list" id="teamList">
@@ -1179,7 +1178,6 @@ const teamNameInput = document.getElementById("teamNameInput");
 const ownerPlayerIdInput = document.getElementById("ownerPlayerIdInput");
 const saveTeamBtn = document.getElementById("saveTeamBtn");
 const resetTeamBtn = document.getElementById("resetTeamBtn");
-const showTeamsBtn = document.getElementById("showTeamsBtn");
 const teamStatus = document.getElementById("teamStatus");
 const teamCount = document.getElementById("teamCount");
 const teamList = document.getElementById("teamList");
@@ -1550,30 +1548,6 @@ async function deleteTeam(id) {
     }
 }
 
-async function showTeamsOnStage() {
-    try {
-        const response = await fetch("/api/stage-view", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                mode: "teams"
-            })
-        });
-
-        const data = await response.json();
-        if (data.error) {
-            setTeamStatus(data.error, true);
-            return;
-        }
-
-        setTeamStatus("Teams are now shown on the stage screen.", false);
-    } catch (error) {
-        setTeamStatus("Could not send teams to stage screen.", true);
-    }
-}
-
 async function showSingleTeamOnStage(teamId) {
     const team = allTeams.find(item => item.id === teamId);
 
@@ -1939,7 +1913,6 @@ stopCountdownBtn.addEventListener("click", () => setCountdownEnabledState(false)
 saveTeamBtn.addEventListener("click", saveTeam);
 resetTeamBtn.addEventListener("click", resetTeamForm);
 ownerPlayerIdInput.addEventListener("input", syncOwnerNameFromPlayerId);
-showTeamsBtn.addEventListener("click", showTeamsOnStage);
 soldPlayerIdInput.addEventListener("input", syncEditorFields);
 showPlayerBtn.addEventListener("click", showSelectedPlayer);
 showTableBtn.addEventListener("click", showDatabaseOnStage);
