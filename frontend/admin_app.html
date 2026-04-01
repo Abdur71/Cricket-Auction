@@ -1695,7 +1695,7 @@ function renderTeams(teams) {
 
 async function loadTeams() {
     try {
-        const response = await fetch("/api/teams-with-players", { cache: "no-store" });
+        const response = await fetch("/api/teams", { cache: "no-store" });
         const data = await response.json();
         renderTeams(Array.isArray(data.teams) ? data.teams : []);
         if (allGroups.length) {
@@ -1942,7 +1942,7 @@ async function deleteTeam(id) {
     }
 
     try {
-        const response = await fetch(`/api/team/${id}`, {
+        const response = await fetch(`/api/teams?id=${id}`, {
             method: "DELETE"
         });
 

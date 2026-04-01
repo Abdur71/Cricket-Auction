@@ -1844,7 +1844,7 @@ function renderTeamsStage(teams) {
 
 async function loadStageTeams() {
     try {
-        const response = await fetch("/api/teams-with-players", { cache: "no-store" });
+        const response = await fetch("/api/teams", { cache: "no-store" });
         const data = await response.json();
         const teams = Array.isArray(data.teams) ? data.teams : [];
 
@@ -1891,7 +1891,7 @@ teamsStageGrid.addEventListener("click", (event) => {
 
 async function loadSingleTeamStage(teamId) {
     try {
-        const response = await fetch("/api/teams-with-players", { cache: "no-store" });
+        const response = await fetch("/api/teams", { cache: "no-store" });
         const data = await response.json();
         const teams = Array.isArray(data.teams) ? data.teams : [];
         const team = teams.find(item => Number(item.id) === Number(teamId));
