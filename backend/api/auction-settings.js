@@ -4,7 +4,8 @@ const { readJsonFile, writeJsonFile } = require("../utils/storage");
 
 const DEFAULT_SETTINGS = {
   startTime: "",
-  endMessage: "Auction has started."
+  endMessage: "Auction has started.",
+  breakingNews: ""
 };
 
 module.exports = async function handler(req, res) {
@@ -13,7 +14,8 @@ module.exports = async function handler(req, res) {
     const data = stored && typeof stored === "object" ? stored : DEFAULT_SETTINGS;
     sendJson(res, 200, {
       startTime: String(data.startTime || "").trim(),
-      endMessage: String(data.endMessage || "").trim() || DEFAULT_SETTINGS.endMessage
+      endMessage: String(data.endMessage || "").trim() || DEFAULT_SETTINGS.endMessage,
+      breakingNews: String(data.breakingNews || "").trim()
     });
     return;
   }
@@ -28,6 +30,7 @@ module.exports = async function handler(req, res) {
       const startTime = String(payload.start_time || "").trim();
       const endMessage =
         String(payload.end_message || "").trim() || DEFAULT_SETTINGS.endMessage;
+      const breakingNews = String(payload.breaking_news || "").trim();
 
       if (!startTime) {
         sendJson(res, 400, { error: "Auction start time is required" });
@@ -37,10 +40,11 @@ module.exports = async function handler(req, res) {
       await writeJsonFile("auction_settings.json", {
         startTime,
         endMessage,
+        breakingNews,
         updatedAt: new Date().toISOString()
       });
 
-      sendJson(res, 200, { success: true, startTime, endMessage });
+      sendJson(res, 200, { success: true, startTime, endMessage, breakingNews });
     } catch (error) {
       sendJson(res, 400, { error: error.message || "Invalid request" });
     }

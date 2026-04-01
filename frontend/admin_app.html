@@ -282,6 +282,32 @@ body::before {
     font-size: 1rem;
 }
 
+.dashboard-stack {
+    display: grid;
+    gap: 18px;
+}
+
+.dashboard-form.news-form {
+    grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.control textarea {
+    width: 100%;
+    min-height: 140px;
+    border: 0;
+    outline: none;
+    resize: vertical;
+    background: transparent;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 1.05rem;
+    padding: 14px 16px;
+}
+
+.control textarea::placeholder {
+    color: #7f93b3;
+}
+
 .dashboard-status.error {
     color: #ff9fb0;
 }
@@ -905,33 +931,54 @@ tbody tr:hover {
                 </article>
             </div>
 
-            <section class="panel dashboard-tools">
-                <h3>Auction Countdown</h3>
-                <p>Set the auction start time and the message that should appear after the countdown ends on the stage screen.</p>
+            <div class="dashboard-stack">
+                <section class="panel dashboard-tools">
+                    <h3>Auction Countdown</h3>
+                    <p>Set the auction start time and the message that should appear after the countdown ends on the stage screen.</p>
 
-                <div class="dashboard-form">
-                    <div class="field-group">
-                        <label for="auctionStartTimeInput">Auction Start Time</label>
-                        <div class="control">
-                            <input type="datetime-local" id="auctionStartTimeInput" />
+                    <div class="dashboard-form">
+                        <div class="field-group">
+                            <label for="auctionStartTimeInput">Auction Start Time</label>
+                            <div class="control">
+                                <input type="datetime-local" id="auctionStartTimeInput" />
+                            </div>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="auctionEndMessageInput">Message After Countdown</label>
+                            <div class="control">
+                                <input type="text" id="auctionEndMessageInput" placeholder="Example: Auction has started." />
+                            </div>
+                        </div>
+
+                        <div class="team-actions">
+                            <button class="action-btn primary" id="saveAuctionSettingsBtn" type="button">SAVE TIME</button>
+                            <button class="action-btn secondary" id="showCountdownBtn" type="button">SHOW COUNTDOWN</button>
                         </div>
                     </div>
 
-                    <div class="field-group">
-                        <label for="auctionEndMessageInput">Message After Countdown</label>
-                        <div class="control">
-                            <input type="text" id="auctionEndMessageInput" placeholder="Example: Auction has started." />
+                    <div class="dashboard-status" id="dashboardStatus">Configure the countdown for the home display here.</div>
+                </section>
+
+                <section class="panel dashboard-tools">
+                    <h3>Breaking News</h3>
+                    <p>Write a custom ticker message for the stage screen. Leave it empty to fall back to automatic sold updates.</p>
+
+                    <div class="dashboard-form news-form">
+                        <div class="field-group">
+                            <label for="breakingNewsInput">Ticker Message</label>
+                            <div class="control">
+                                <textarea id="breakingNewsInput" placeholder="Example: Final registration closes at 8:00 PM. Captains report to the stage."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="team-actions">
+                            <button class="action-btn primary" id="saveBreakingNewsBtn" type="button">SAVE NEWS</button>
+                            <button class="action-btn secondary" id="clearBreakingNewsBtn" type="button">CLEAR NEWS</button>
                         </div>
                     </div>
-
-                    <div class="team-actions">
-                        <button class="action-btn primary" id="saveAuctionSettingsBtn" type="button">SAVE TIME</button>
-                        <button class="action-btn secondary" id="showCountdownBtn" type="button">SHOW COUNTDOWN</button>
-                    </div>
-                </div>
-
-                <div class="dashboard-status" id="dashboardStatus">Configure the countdown for the home display here.</div>
-            </section>
+                </section>
+            </div>
         </section>
 
         <section class="view" id="teamsView">
@@ -1118,7 +1165,10 @@ const soldPlayers = document.getElementById("soldPlayers");
 const unsoldPlayers = document.getElementById("unsoldPlayers");
 const auctionStartTimeInput = document.getElementById("auctionStartTimeInput");
 const auctionEndMessageInput = document.getElementById("auctionEndMessageInput");
+const breakingNewsInput = document.getElementById("breakingNewsInput");
 const saveAuctionSettingsBtn = document.getElementById("saveAuctionSettingsBtn");
+const saveBreakingNewsBtn = document.getElementById("saveBreakingNewsBtn");
+const clearBreakingNewsBtn = document.getElementById("clearBreakingNewsBtn");
 const showCountdownBtn = document.getElementById("showCountdownBtn");
 const dashboardStatus = document.getElementById("dashboardStatus");
 const teamNameInput = document.getElementById("teamNameInput");
@@ -1205,6 +1255,7 @@ async function loadAuctionSettings() {
 
         auctionStartTimeInput.value = data.startTime || "";
         auctionEndMessageInput.value = data.endMessage || "Auction has started.";
+        breakingNewsInput.value = data.breakingNews || "";
     } catch (error) {
         setDashboardStatus("Could not load auction countdown settings.", true);
     }
@@ -1227,7 +1278,8 @@ async function saveAuctionSettings() {
             },
             body: JSON.stringify({
                 start_time: startTime,
-                end_message: endMessage
+                end_message: endMessage,
+                breaking_news: breakingNewsInput.value.trim()
             })
         });
 
@@ -1238,9 +1290,51 @@ async function saveAuctionSettings() {
         }
 
         auctionEndMessageInput.value = data.endMessage || "";
+        breakingNewsInput.value = data.breakingNews || "";
         setDashboardStatus("Auction countdown settings saved successfully.", false);
     } catch (error) {
         setDashboardStatus("Could not save auction countdown settings.", true);
+    }
+}
+
+async function saveBreakingNews(customNews) {
+    const startTime = auctionStartTimeInput.value.trim();
+    const endMessage = auctionEndMessageInput.value.trim();
+    const breakingNews = typeof customNews === "string" ? customNews.trim() : breakingNewsInput.value.trim();
+
+    if (startTime === "") {
+        setDashboardStatus("Save auction start time once before managing breaking news.", true);
+        return;
+    }
+
+    try {
+        const response = await fetch("/api/auction-settings", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                start_time: startTime,
+                end_message: endMessage,
+                breaking_news: breakingNews
+            })
+        });
+
+        const data = await response.json();
+        if (data.error) {
+            setDashboardStatus(data.error, true);
+            return;
+        }
+
+        breakingNewsInput.value = data.breakingNews || "";
+        setDashboardStatus(
+            data.breakingNews
+                ? "Breaking news saved successfully. The stage ticker will use your custom message."
+                : "Breaking news cleared. The stage ticker will return to automatic sold updates.",
+            false
+        );
+    } catch (error) {
+        setDashboardStatus("Could not save breaking news.", true);
     }
 }
 
@@ -1779,6 +1873,8 @@ searchInput.addEventListener("input", applyFilters);
 statusFilter.addEventListener("change", applyFilters);
 refreshBtn.addEventListener("click", loadAdminPlayers);
 saveAuctionSettingsBtn.addEventListener("click", saveAuctionSettings);
+saveBreakingNewsBtn.addEventListener("click", () => saveBreakingNews());
+clearBreakingNewsBtn.addEventListener("click", () => saveBreakingNews(""));
 showCountdownBtn.addEventListener("click", showCountdownOnStage);
 saveTeamBtn.addEventListener("click", saveTeam);
 resetTeamBtn.addEventListener("click", resetTeamForm);

@@ -1043,7 +1043,8 @@ let currentId = 1;
 let lastStageViewSignature = "";
 let auctionSettings = {
     startTime: "",
-    endMessage: "Auction has started."
+    endMessage: "Auction has started.",
+    breakingNews: ""
 };
 
 const players = {}; // Removed static data, now loaded from CSV via PHP
@@ -1160,9 +1161,11 @@ async function loadAuctionSettings() {
 
         auctionSettings = {
             startTime: data.startTime || "",
-            endMessage: data.endMessage || "Auction has started."
+            endMessage: data.endMessage || "Auction has started.",
+            breakingNews: data.breakingNews || ""
         };
         renderAuctionCountdown();
+        refreshBreakingNews();
     } catch (error) {
         countdownMessage.textContent = "Could not load auction countdown.";
         countdownTime.style.opacity = "0.45";
@@ -1181,6 +1184,11 @@ function updateBreakingNewsText(messages) {
 }
 
 async function refreshBreakingNews() {
+    if (auctionSettings.breakingNews) {
+        updateBreakingNewsText([auctionSettings.breakingNews]);
+        return;
+    }
+
     try {
         const response = await fetch("/api/players", { cache: "no-store" });
         const data = await response.json();
