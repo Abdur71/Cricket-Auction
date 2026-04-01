@@ -1231,6 +1231,20 @@ function setStageMode(mode) {
     countdownStageView.classList.toggle("hidden", mode !== "countdown");
 }
 
+function syncHomeCountdownVisibility() {
+    if (currentFrontendSection !== "home") {
+        countdownStageView.classList.add("hidden");
+        return;
+    }
+
+    if (!auctionSettings.countdownEnabled) {
+        countdownStageView.classList.add("hidden");
+        return;
+    }
+
+    countdownStageView.classList.remove("hidden");
+}
+
 function setFrontendSection(sectionName) {
     currentFrontendSection = sectionName;
 
@@ -1246,6 +1260,8 @@ function setFrontendSection(sectionName) {
     if (sectionName === "teamshowcase") {
         loadStageTeams();
     }
+
+    syncHomeCountdownVisibility();
 }
 
 function setCountdownValues(days, hours, minutes, seconds) {
@@ -1260,6 +1276,7 @@ function renderAuctionCountdown() {
         countdownMessage.textContent = "Countdown is currently turned off by admin.";
         countdownTime.style.opacity = "0.45";
         setCountdownValues(0, 0, 0, 0);
+        syncHomeCountdownVisibility();
         return;
     }
 
@@ -1267,6 +1284,7 @@ function renderAuctionCountdown() {
         countdownMessage.textContent = "Auction countdown is waiting for admin setup.";
         countdownTime.style.opacity = "0.45";
         setCountdownValues(0, 0, 0, 0);
+        syncHomeCountdownVisibility();
         return;
     }
 
@@ -1277,6 +1295,7 @@ function renderAuctionCountdown() {
         countdownMessage.textContent = "Auction countdown time is invalid.";
         countdownTime.style.opacity = "0.45";
         setCountdownValues(0, 0, 0, 0);
+        syncHomeCountdownVisibility();
         return;
     }
 
@@ -1285,11 +1304,13 @@ function renderAuctionCountdown() {
         countdownMessage.textContent = auctionSettings.endMessage || "Auction has started.";
         countdownTime.style.opacity = "0.45";
         setCountdownValues(0, 0, 0, 0);
+        syncHomeCountdownVisibility();
         return;
     }
 
     countdownMessage.textContent = "Auction starts in";
     countdownTime.style.opacity = "1";
+    syncHomeCountdownVisibility();
 
     const totalSeconds = Math.floor(diffMs / 1000);
     const days = Math.floor(totalSeconds / 86400);
@@ -1311,12 +1332,14 @@ async function loadAuctionSettings() {
             breakingNews: data.breakingNews || "",
             countdownEnabled: data.countdownEnabled !== false
         };
+        syncHomeCountdownVisibility();
         renderAuctionCountdown();
         refreshBreakingNews();
     } catch (error) {
         countdownMessage.textContent = "Could not load auction countdown.";
         countdownTime.style.opacity = "0.45";
         setCountdownValues(0, 0, 0, 0);
+        syncHomeCountdownVisibility();
     }
 }
 
