@@ -5,7 +5,8 @@ const { readJsonFile, writeJsonFile } = require("../utils/storage");
 const DEFAULT_SETTINGS = {
   startTime: "",
   endMessage: "Auction has started.",
-  breakingNews: ""
+  breakingNews: "",
+  countdownEnabled: true
 };
 
 module.exports = async function handler(req, res) {
@@ -15,7 +16,8 @@ module.exports = async function handler(req, res) {
     sendJson(res, 200, {
       startTime: String(data.startTime || "").trim(),
       endMessage: String(data.endMessage || "").trim() || DEFAULT_SETTINGS.endMessage,
-      breakingNews: String(data.breakingNews || "").trim()
+      breakingNews: String(data.breakingNews || "").trim(),
+      countdownEnabled: data.countdownEnabled !== false
     });
     return;
   }
@@ -31,8 +33,9 @@ module.exports = async function handler(req, res) {
       const endMessage =
         String(payload.end_message || "").trim() || DEFAULT_SETTINGS.endMessage;
       const breakingNews = String(payload.breaking_news || "").trim();
+      const countdownEnabled = payload.countdown_enabled !== false;
 
-      if (!startTime) {
+      if (countdownEnabled && !startTime) {
         sendJson(res, 400, { error: "Auction start time is required" });
         return;
       }
@@ -41,10 +44,17 @@ module.exports = async function handler(req, res) {
         startTime,
         endMessage,
         breakingNews,
+        countdownEnabled,
         updatedAt: new Date().toISOString()
       });
 
-      sendJson(res, 200, { success: true, startTime, endMessage, breakingNews });
+      sendJson(res, 200, {
+        success: true,
+        startTime,
+        endMessage,
+        breakingNews,
+        countdownEnabled
+      });
     } catch (error) {
       sendJson(res, 400, { error: error.message || "Invalid request" });
     }

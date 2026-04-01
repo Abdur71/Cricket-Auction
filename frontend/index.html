@@ -210,7 +210,7 @@ body::before {
     color: var(--white);
     font-size: clamp(0.95rem, 1.35vw, 1.2rem);
     letter-spacing: 0.08em;
-    animation: tickerScroll 160s linear infinite;
+    animation: tickerScroll 190s linear infinite;
 }
 
 @keyframes tickerScroll {
@@ -1044,7 +1044,8 @@ let lastStageViewSignature = "";
 let auctionSettings = {
     startTime: "",
     endMessage: "Auction has started.",
-    breakingNews: ""
+    breakingNews: "",
+    countdownEnabled: true
 };
 
 const players = {}; // Removed static data, now loaded from CSV via PHP
@@ -1085,6 +1086,10 @@ const stageScreenOpenedAt = Date.now();
 const expandedTeamCards = new Set();
 
 function isCountdownActive() {
+    if (!auctionSettings.countdownEnabled) {
+        return false;
+    }
+
     if (!auctionSettings.startTime) {
         return true;
     }
@@ -1113,6 +1118,14 @@ function setCountdownValues(days, hours, minutes, seconds) {
 }
 
 function renderAuctionCountdown() {
+    if (!auctionSettings.countdownEnabled) {
+        countdownMessage.textContent = "Countdown is currently turned off by admin.";
+        countdownTime.style.opacity = "0.45";
+        newsTicker.classList.remove("hidden");
+        setCountdownValues(0, 0, 0, 0);
+        return;
+    }
+
     if (!auctionSettings.startTime) {
         countdownMessage.textContent = "Auction countdown is waiting for admin setup.";
         countdownTime.style.opacity = "0.45";
@@ -1162,7 +1175,8 @@ async function loadAuctionSettings() {
         auctionSettings = {
             startTime: data.startTime || "",
             endMessage: data.endMessage || "Auction has started.",
-            breakingNews: data.breakingNews || ""
+            breakingNews: data.breakingNews || "",
+            countdownEnabled: data.countdownEnabled !== false
         };
         renderAuctionCountdown();
         refreshBreakingNews();
@@ -1441,6 +1455,11 @@ async function syncStageViewFromAdmin(forceRefresh = false) {
         }
 
         if (mode === "countdown") {
+            if (!auctionSettings.countdownEnabled) {
+                setStageMode("player");
+                setStatus("Countdown is turned off by admin.", false);
+                return;
+            }
             await loadAuctionSettings();
             setStatus("Showing countdown from admin panel.", false);
             return;

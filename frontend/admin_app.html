@@ -954,6 +954,8 @@ tbody tr:hover {
                         <div class="team-actions">
                             <button class="action-btn primary" id="saveAuctionSettingsBtn" type="button">SAVE TIME</button>
                             <button class="action-btn secondary" id="showCountdownBtn" type="button">SHOW COUNTDOWN</button>
+                            <button class="action-btn secondary" id="enableCountdownBtn" type="button">COUNTDOWN ON</button>
+                            <button class="action-btn secondary" id="stopCountdownBtn" type="button">STOP COUNTDOWN</button>
                         </div>
                     </div>
 
@@ -1170,6 +1172,8 @@ const saveAuctionSettingsBtn = document.getElementById("saveAuctionSettingsBtn")
 const saveBreakingNewsBtn = document.getElementById("saveBreakingNewsBtn");
 const clearBreakingNewsBtn = document.getElementById("clearBreakingNewsBtn");
 const showCountdownBtn = document.getElementById("showCountdownBtn");
+const enableCountdownBtn = document.getElementById("enableCountdownBtn");
+const stopCountdownBtn = document.getElementById("stopCountdownBtn");
 const dashboardStatus = document.getElementById("dashboardStatus");
 const teamNameInput = document.getElementById("teamNameInput");
 const ownerPlayerIdInput = document.getElementById("ownerPlayerIdInput");
@@ -1225,6 +1229,7 @@ const viewMeta = {
 let allPlayers = [];
 let ownerNameFromPlayerId = "";
 let allTeams = [];
+let countdownEnabled = true;
 
 function setDashboardStatus(message, isError = false) {
     dashboardStatus.textContent = message;
@@ -1256,6 +1261,7 @@ async function loadAuctionSettings() {
         auctionStartTimeInput.value = data.startTime || "";
         auctionEndMessageInput.value = data.endMessage || "Auction has started.";
         breakingNewsInput.value = data.breakingNews || "";
+        countdownEnabled = data.countdownEnabled !== false;
     } catch (error) {
         setDashboardStatus("Could not load auction countdown settings.", true);
     }
@@ -1279,7 +1285,8 @@ async function saveAuctionSettings() {
             body: JSON.stringify({
                 start_time: startTime,
                 end_message: endMessage,
-                breaking_news: breakingNewsInput.value.trim()
+                breaking_news: breakingNewsInput.value.trim(),
+                countdown_enabled: countdownEnabled
             })
         });
 
@@ -1291,6 +1298,7 @@ async function saveAuctionSettings() {
 
         auctionEndMessageInput.value = data.endMessage || "";
         breakingNewsInput.value = data.breakingNews || "";
+        countdownEnabled = data.countdownEnabled !== false;
         setDashboardStatus("Auction countdown settings saved successfully.", false);
     } catch (error) {
         setDashboardStatus("Could not save auction countdown settings.", true);
@@ -1316,7 +1324,8 @@ async function saveBreakingNews(customNews) {
             body: JSON.stringify({
                 start_time: startTime,
                 end_message: endMessage,
-                breaking_news: breakingNews
+                breaking_news: breakingNews,
+                countdown_enabled: countdownEnabled
             })
         });
 
@@ -1327,6 +1336,7 @@ async function saveBreakingNews(customNews) {
         }
 
         breakingNewsInput.value = data.breakingNews || "";
+        countdownEnabled = data.countdownEnabled !== false;
         setDashboardStatus(
             data.breakingNews
                 ? "Breaking news saved successfully. The stage ticker will use your custom message."
@@ -1339,6 +1349,11 @@ async function saveBreakingNews(customNews) {
 }
 
 async function showCountdownOnStage() {
+    if (!countdownEnabled) {
+        setDashboardStatus("Turn countdown on first before showing it on the stage screen.", true);
+        return;
+    }
+
     if (auctionStartTimeInput.value.trim() === "") {
         setDashboardStatus("Save auction start time first before showing countdown.", true);
         return;
@@ -1364,6 +1379,49 @@ async function showCountdownOnStage() {
         setDashboardStatus("Countdown is now shown on the stage screen.", false);
     } catch (error) {
         setDashboardStatus("Could not show countdown on the stage screen.", true);
+    }
+}
+
+async function setCountdownEnabledState(nextEnabled) {
+    const startTime = auctionStartTimeInput.value.trim();
+    const endMessage = auctionEndMessageInput.value.trim();
+
+    if (nextEnabled && startTime === "") {
+        setDashboardStatus("Enter and save auction start time before turning countdown on.", true);
+        return;
+    }
+
+    try {
+        const response = await fetch("/api/auction-settings", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                start_time: startTime,
+                end_message: endMessage,
+                breaking_news: breakingNewsInput.value.trim(),
+                countdown_enabled: nextEnabled
+            })
+        });
+
+        const data = await response.json();
+        if (data.error) {
+            setDashboardStatus(data.error, true);
+            return;
+        }
+
+        countdownEnabled = data.countdownEnabled !== false;
+        auctionEndMessageInput.value = data.endMessage || "";
+        breakingNewsInput.value = data.breakingNews || "";
+        setDashboardStatus(
+            countdownEnabled
+                ? "Countdown is now ON. It can appear on the frontend home mode."
+                : "Countdown is now OFF. It will stay hidden on the frontend home mode.",
+            false
+        );
+    } catch (error) {
+        setDashboardStatus("Could not update countdown state.", true);
     }
 }
 
@@ -1876,6 +1934,8 @@ saveAuctionSettingsBtn.addEventListener("click", saveAuctionSettings);
 saveBreakingNewsBtn.addEventListener("click", () => saveBreakingNews());
 clearBreakingNewsBtn.addEventListener("click", () => saveBreakingNews(""));
 showCountdownBtn.addEventListener("click", showCountdownOnStage);
+enableCountdownBtn.addEventListener("click", () => setCountdownEnabledState(true));
+stopCountdownBtn.addEventListener("click", () => setCountdownEnabledState(false));
 saveTeamBtn.addEventListener("click", saveTeam);
 resetTeamBtn.addEventListener("click", resetTeamForm);
 ownerPlayerIdInput.addEventListener("input", syncOwnerNameFromPlayerId);
