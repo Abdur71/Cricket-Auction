@@ -547,8 +547,12 @@ body::before {
 }
 
 .group-team-checkboxes {
-    display: grid;
+    display: none;
     gap: 10px;
+}
+
+.group-item.editing .group-team-checkboxes {
+    display: grid;
 }
 
 .group-team-option {
@@ -1729,6 +1733,7 @@ function renderGroups(groups) {
                 <div class="group-item-top">
                     <span class="group-badge">GROUP ${group.id || "-"}</span>
                     <div class="team-head-actions">
+                        <button class="action-btn secondary group-edit-btn" type="button" data-group-id="${group.id || 0}">EDIT TEAMS</button>
                         <button class="action-btn secondary group-save-btn" type="button" data-group-id="${group.id || 0}">SAVE TEAMS</button>
                         <button class="team-delete-btn group-delete-btn" type="button" data-group-id="${group.id || 0}">DELETE</button>
                     </div>
@@ -1736,6 +1741,7 @@ function renderGroups(groups) {
                 <div class="group-name">${group.groupName || "-"}</div>
                 <div class="group-meta">Capacity: ${capacity} teams • Assigned: ${assignedIds.length} • Free: ${remaining}</div>
                 <div class="group-assignment">
+                    <button class="action-btn secondary group-edit-btn" type="button" data-group-id="${group.id || 0}">Choose Teams</button>
                     <div class="group-team-checkboxes">
                         ${allTeams.length ? allTeams.map(team => {
                             const selected = assignedIds.includes(Number(team.id));
@@ -1766,6 +1772,15 @@ function renderGroups(groups) {
     Array.from(document.querySelectorAll(".group-save-btn")).forEach(button => {
         button.addEventListener("click", () => {
             saveGroupAssignments(Number(button.dataset.groupId));
+        });
+    });
+
+    Array.from(document.querySelectorAll(".group-edit-btn")).forEach(button => {
+        button.addEventListener("click", () => {
+            const groupCard = button.closest(".group-item");
+            if (groupCard) {
+                groupCard.classList.toggle("editing");
+            }
         });
     });
 
