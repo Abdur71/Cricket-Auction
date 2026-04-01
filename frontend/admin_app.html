@@ -877,6 +877,18 @@ body::before {
     color: #7f93b3;
 }
 
+.control input[type="date"],
+.control input[type="time"] {
+    color-scheme: dark;
+}
+
+.control input[type="date"]::-webkit-calendar-picker-indicator,
+.control input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: brightness(0) invert(1);
+    opacity: 1;
+    cursor: pointer;
+}
+
 .control select {
     color: var(--text);
     background-color: rgba(4, 10, 22, 0.92);
@@ -1336,7 +1348,7 @@ tbody tr:hover {
                         <div class="field-group">
                             <label for="fixtureVenueInput">Venue</label>
                             <div class="control">
-                                <input type="text" id="fixtureVenueInput" placeholder="Example: Learning Hub Ground" />
+                                <input type="text" id="fixtureVenueInput" value="RUET CENTER FIELD" placeholder="Example: Learning Hub Ground" />
                             </div>
                         </div>
 
@@ -2084,7 +2096,7 @@ async function saveFixture() {
     const teamBId = Number(fixtureTeamBSelect.value);
     const matchDate = fixtureDateInput.value.trim();
     const matchTime = fixtureTimeInput.value.trim();
-    const venue = fixtureVenueInput.value.trim();
+    const venue = fixtureVenueInput.value.trim() || "RUET CENTER FIELD";
 
     if (!teamAId || !teamBId || teamAId === teamBId) {
         setFixtureStatus("Select two different teams for the fixture.", true);
@@ -2116,7 +2128,7 @@ async function saveFixture() {
         fixtureTeamBSelect.value = "";
         fixtureDateInput.value = "";
         fixtureTimeInput.value = "";
-        fixtureVenueInput.value = "";
+        fixtureVenueInput.value = "RUET CENTER FIELD";
         setFixtureStatus("Fixture added successfully.", false);
         await loadFixtures();
     } catch (error) {
@@ -2129,7 +2141,7 @@ function resetFixtureForm() {
     fixtureTeamBSelect.value = "";
     fixtureDateInput.value = "";
     fixtureTimeInput.value = "";
-    fixtureVenueInput.value = "";
+    fixtureVenueInput.value = "RUET CENTER FIELD";
     setFixtureStatus("Form cleared. Add a fixture anytime.", false);
 }
 
