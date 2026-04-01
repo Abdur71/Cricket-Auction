@@ -386,6 +386,88 @@ body::before {
     font-family: 'Orbitron', sans-serif;
 }
 
+.team-stage-action {
+    position: relative;
+    margin-top: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 18px;
+    border: 1px solid rgba(59, 226, 255, 0.34);
+    border-radius: 999px;
+    background: rgba(59, 226, 255, 0.1);
+    color: var(--white);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.team-stage-action:hover {
+    background: rgba(59, 226, 255, 0.18);
+    border-color: rgba(59, 226, 255, 0.52);
+    transform: translateY(-1px);
+}
+
+.team-stage-action:focus-visible {
+    outline: 2px solid rgba(244, 201, 93, 0.65);
+    outline-offset: 3px;
+}
+
+.team-stage-players {
+    position: relative;
+    display: none;
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.team-stage-card.expanded .team-stage-players {
+    display: block;
+}
+
+.team-stage-players-title {
+    color: var(--muted);
+    font-size: 0.86rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.team-stage-player-list {
+    margin-top: 14px;
+    display: grid;
+    gap: 10px;
+}
+
+.team-stage-player-item {
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.team-stage-player-item-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.92rem;
+    line-height: 1.3;
+}
+
+.team-stage-player-item-meta {
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 0.88rem;
+}
+
+.team-stage-player-empty {
+    margin-top: 14px;
+    padding: 14px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--muted);
+    text-align: center;
+}
+
 .teams-empty {
     padding: 48px 24px 56px;
     text-align: center;
@@ -999,6 +1081,7 @@ const teamDetailName = document.getElementById("teamDetailName");
 const teamDetailOwner = document.getElementById("teamDetailOwner");
 const teamDetailPlayers = document.getElementById("teamDetailPlayers");
 const stageScreenOpenedAt = Date.now();
+const expandedTeamCards = new Set();
 
 function isCountdownActive() {
     if (!auctionSettings.startTime) {
@@ -1215,29 +1298,86 @@ function renderTeamsStage(teams) {
         return;
     }
 
-    teamsStageGrid.innerHTML = teamItems.map(team => `
-        <article class="team-stage-card">
+    teamsStageGrid.innerHTML = teamItems.map(team => {
+        const teamId = Number(team.id) || 0;
+        const isExpanded = expandedTeamCards.has(teamId);
+        const players = Array.isArray(team.players) ? team.players : [];
+
+        return `
+        <article class="team-stage-card ${isExpanded ? "expanded" : ""}" data-team-id="${teamId}">
             <div class="team-stage-badge">TEAM ${team.id || "-"}</div>
             <div class="team-stage-name">${team.teamName || "-"}</div>
             <div class="team-stage-owner-label">Owner</div>
             <div class="team-stage-owner">${team.ownerName || "-"}</div>
+            <button class="team-stage-action" type="button" data-team-toggle="${teamId}">
+                ${isExpanded ? "Hide Players" : "Show All"}
+            </button>
+            <div class="team-stage-players">
+                <div class="team-stage-players-title">Player Names</div>
+                ${players.length ? `
+                    <div class="team-stage-player-list">
+                        ${players.map(player => `
+                            <article class="team-stage-player-item">
+                                <div class="team-stage-player-item-name">${player.name || "-"}</div>
+                                <div class="team-stage-player-item-meta">Player ID: ${player.id || "-"}${player.soldPrice ? ` • ${player.soldPrice}` : ""}</div>
+                            </article>
+                        `).join("")}
+                    </div>
+                ` : `
+                    <div class="team-stage-player-empty">No players assigned yet.</div>
+                `}
+            </div>
         </article>
-    `).join("");
+    `;
+    }).join("");
 }
 
 async function loadStageTeams() {
     try {
-        const response = await fetch("/api/teams", { cache: "no-store" });
+        const response = await fetch("/api/teams-with-players", { cache: "no-store" });
         const data = await response.json();
         const teams = Array.isArray(data.teams) ? data.teams : [];
 
-        teamsStageSubtitle.textContent = "Live team cards from admin panel.";
+        teamsStageSubtitle.textContent = "Live team cards from admin panel. Use Show All to view players.";
         renderTeamsStage(teams);
     } catch (error) {
         teamsStageGrid.innerHTML = `<div class="teams-empty">Could not load teams.</div>`;
         teamsStageCount.textContent = "0 teams";
     }
 }
+
+teamsStageGrid.addEventListener("click", (event) => {
+    const toggleButton = event.target.closest("[data-team-toggle]");
+
+    if (!toggleButton) {
+        return;
+    }
+
+    const teamId = Number(toggleButton.dataset.teamToggle);
+    if (!teamId) {
+        return;
+    }
+
+    if (expandedTeamCards.has(teamId)) {
+        expandedTeamCards.delete(teamId);
+    } else {
+        expandedTeamCards.add(teamId);
+    }
+
+    const cardElement = toggleButton.closest(".team-stage-card");
+    const playersElement = cardElement ? cardElement.querySelector(".team-stage-players") : null;
+    const shouldExpand = expandedTeamCards.has(teamId);
+
+    if (cardElement) {
+        cardElement.classList.toggle("expanded", shouldExpand);
+    }
+
+    toggleButton.textContent = shouldExpand ? "Hide Players" : "Show All";
+
+    if (playersElement) {
+        playersElement.style.display = shouldExpand ? "block" : "none";
+    }
+});
 
 async function loadSingleTeamStage(teamId) {
     try {
