@@ -318,8 +318,19 @@ body::before {
     gap: 18px;
 }
 
+.group-layout {
+    display: grid;
+    grid-template-columns: minmax(340px, 460px) minmax(0, 1fr);
+    gap: 18px;
+}
+
 .team-form-card,
 .team-list-card {
+    padding: 22px;
+}
+
+.group-form-card,
+.group-list-card {
     padding: 22px;
 }
 
@@ -468,6 +479,142 @@ body::before {
     color: var(--muted);
     text-align: center;
     font-size: 1rem;
+}
+
+.group-status {
+    min-height: 1.5em;
+    color: var(--muted);
+    font-size: 1rem;
+}
+
+.group-status.error {
+    color: #ff9fb0;
+}
+
+.group-list {
+    display: grid;
+    gap: 16px;
+}
+
+.group-item {
+    padding: 20px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background:
+        linear-gradient(135deg, rgba(59, 226, 255, 0.07), rgba(247, 201, 91, 0.06)),
+        rgba(4, 10, 22, 0.72);
+}
+
+.group-item-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.group-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 72px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(59, 226, 255, 0.26);
+    background: rgba(59, 226, 255, 0.08);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+}
+
+.group-name {
+    margin-top: 14px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.18rem;
+    letter-spacing: 0.06em;
+}
+
+.group-meta {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 0.98rem;
+}
+
+.group-assignment {
+    margin-top: 16px;
+    display: grid;
+    gap: 14px;
+}
+
+.group-team-checkboxes {
+    display: grid;
+    gap: 10px;
+}
+
+.group-team-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.group-team-option input {
+    margin-top: 3px;
+}
+
+.group-team-option strong {
+    display: block;
+    font-size: 1rem;
+    color: var(--text);
+}
+
+.group-team-option span {
+    display: block;
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+.group-team-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.group-team-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.05);
+    font-size: 0.95rem;
+}
+
+.group-empty {
+    padding: 26px 18px;
+    border-radius: 20px;
+    border: 1px dashed rgba(255, 255, 255, 0.14);
+    background: rgba(4, 10, 22, 0.56);
+    color: var(--muted);
+    text-align: center;
+    font-size: 1rem;
+}
+
+.team-group-tag {
+    margin-top: 12px;
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: rgba(247, 201, 91, 0.12);
+    border: 1px solid rgba(247, 201, 91, 0.24);
+    color: var(--gold);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.74rem;
+    letter-spacing: 0.08em;
 }
 
 .editor-grid {
@@ -846,7 +993,8 @@ tbody tr:hover {
     .toolbar,
     .editor-panel,
     .input-layout,
-    .team-layout {
+    .team-layout,
+    .group-layout {
         grid-template-columns: 1fr;
     }
 }
@@ -884,6 +1032,9 @@ tbody tr:hover {
             </button>
             <button class="nav-btn" type="button" data-view="teamsView">
                 <strong>Add Team</strong>
+            </button>
+            <button class="nav-btn" type="button" data-view="groupsView">
+                <strong>Groups</strong>
             </button>
             <button class="nav-btn" type="button" data-view="inputView">
                 <strong>Input Data</strong>
@@ -1024,6 +1175,52 @@ tbody tr:hover {
                     </div>
                     <div class="team-list" id="teamList">
                         <div class="team-empty">No teams added yet.</div>
+                    </div>
+                </section>
+            </div>
+        </section>
+
+        <section class="view" id="groupsView">
+            <div class="group-layout">
+                <section class="panel group-form-card">
+                    <div class="editor-header">
+                        <h3>Add Group</h3>
+                        <p>Create unlimited groups, set how many teams belong in each group, and assign teams by your choice.</p>
+                    </div>
+
+                    <div class="team-form">
+                        <div class="field-group">
+                            <label for="groupNameInput">Group Name</label>
+                            <div class="control">
+                                <input type="text" id="groupNameInput" placeholder="Example: Group A" />
+                            </div>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="groupTeamLimitInput">Group Team Number</label>
+                            <div class="control">
+                                <input type="number" id="groupTeamLimitInput" placeholder="Example: 4" min="1" />
+                            </div>
+                        </div>
+
+                        <div class="team-actions">
+                            <button class="action-btn primary" id="saveGroupBtn" type="button">ADD GROUP</button>
+                            <button class="action-btn secondary" id="resetGroupBtn" type="button">CLEAR</button>
+                        </div>
+
+                        <div class="group-status" id="groupStatus">Create groups here and assign teams below.</div>
+                    </div>
+                </section>
+
+                <section class="panel group-list-card">
+                    <div class="team-list-head">
+                        <h3>Added Groups</h3>
+                        <div class="team-head-actions">
+                            <div class="team-count" id="groupCount">0 groups</div>
+                        </div>
+                    </div>
+                    <div class="group-list" id="groupList">
+                        <div class="group-empty">No groups added yet.</div>
                     </div>
                 </section>
             </div>
@@ -1181,6 +1378,13 @@ const resetTeamBtn = document.getElementById("resetTeamBtn");
 const teamStatus = document.getElementById("teamStatus");
 const teamCount = document.getElementById("teamCount");
 const teamList = document.getElementById("teamList");
+const groupNameInput = document.getElementById("groupNameInput");
+const groupTeamLimitInput = document.getElementById("groupTeamLimitInput");
+const saveGroupBtn = document.getElementById("saveGroupBtn");
+const resetGroupBtn = document.getElementById("resetGroupBtn");
+const groupStatus = document.getElementById("groupStatus");
+const groupCount = document.getElementById("groupCount");
+const groupList = document.getElementById("groupList");
 const visibleCount = document.getElementById("visibleCount");
 const lastUpdated = document.getElementById("lastUpdated");
 const soldPlayerIdInput = document.getElementById("soldPlayerIdInput");
@@ -1214,6 +1418,10 @@ const viewMeta = {
         title: "Add Team",
         subtitle: "Add unlimited teams with team name and owner name."
     },
+    groupsView: {
+        title: "Groups",
+        subtitle: "Create unlimited groups, choose team count, and assign teams by your choice."
+    },
     inputView: {
         title: "Input Data",
         subtitle: "Load a player by ID, preview the card, and save local sold data."
@@ -1227,6 +1435,7 @@ const viewMeta = {
 let allPlayers = [];
 let ownerNameFromPlayerId = "";
 let allTeams = [];
+let allGroups = [];
 let countdownEnabled = false;
 
 function setDashboardStatus(message, isError = false) {
@@ -1428,6 +1637,15 @@ function setTeamStatus(message, isError = false) {
     teamStatus.classList.toggle("error", Boolean(isError));
 }
 
+function setGroupStatus(message, isError = false) {
+    groupStatus.textContent = message;
+    groupStatus.classList.toggle("error", Boolean(isError));
+}
+
+function getGroupForTeam(teamId) {
+    return allGroups.find(group => Array.isArray(group.teamIds) && group.teamIds.map(Number).includes(Number(teamId))) || null;
+}
+
 function renderTeams(teams) {
     const teamItems = Array.isArray(teams) ? teams : [];
     allTeams = teamItems;
@@ -1449,6 +1667,7 @@ function renderTeams(teams) {
             </div>
             <div class="team-name">${team.teamName || "-"}</div>
             <div class="team-owner">Owner: ${team.ownerName || "-"}</div>
+            <div class="team-group-tag">${getGroupForTeam(team.id)?.groupName || "No Group"}</div>
             ${Array.isArray(team.players) && team.players.length ? `
                 <div class="team-player-list">
                     ${team.players.map(player => `<div class="team-player-chip">${player.name || "-"}${player.soldPrice ? ` • ${player.soldPrice}` : ""}</div>`).join("")}
@@ -1479,9 +1698,94 @@ async function loadTeams() {
         const response = await fetch("/api/teams-with-players", { cache: "no-store" });
         const data = await response.json();
         renderTeams(Array.isArray(data.teams) ? data.teams : []);
+        if (allGroups.length) {
+            renderGroups(allGroups);
+        }
     } catch (error) {
         teamList.innerHTML = `<div class="team-empty">Could not load teams.</div>`;
         teamCount.textContent = "0 teams";
+    }
+}
+
+function renderGroups(groups) {
+    const groupItems = Array.isArray(groups) ? groups : [];
+    allGroups = groupItems;
+    groupCount.textContent = `${groupItems.length} group${groupItems.length === 1 ? "" : "s"}`;
+
+    if (!groupItems.length) {
+        groupList.innerHTML = `<div class="group-empty">No groups added yet.</div>`;
+        renderTeams(allTeams);
+        return;
+    }
+
+    groupList.innerHTML = groupItems.map(group => {
+        const assignedIds = Array.isArray(group.teamIds) ? group.teamIds.map(Number) : [];
+        const assignedTeams = Array.isArray(group.teams) ? group.teams : [];
+        const capacity = Number(group.teamLimit) || 0;
+        const remaining = Math.max(capacity - assignedIds.length, 0);
+
+        return `
+            <article class="group-item">
+                <div class="group-item-top">
+                    <span class="group-badge">GROUP ${group.id || "-"}</span>
+                    <div class="team-head-actions">
+                        <button class="action-btn secondary group-save-btn" type="button" data-group-id="${group.id || 0}">SAVE TEAMS</button>
+                        <button class="team-delete-btn group-delete-btn" type="button" data-group-id="${group.id || 0}">DELETE</button>
+                    </div>
+                </div>
+                <div class="group-name">${group.groupName || "-"}</div>
+                <div class="group-meta">Capacity: ${capacity} teams • Assigned: ${assignedIds.length} • Free: ${remaining}</div>
+                <div class="group-assignment">
+                    <div class="group-team-checkboxes">
+                        ${allTeams.length ? allTeams.map(team => {
+                            const selected = assignedIds.includes(Number(team.id));
+                            const currentGroup = getGroupForTeam(team.id);
+                            const lockedByOtherGroup = currentGroup && Number(currentGroup.id) !== Number(group.id);
+
+                            return `
+                                <label class="group-team-option">
+                                    <input type="checkbox" data-group-team="${group.id || 0}" value="${team.id || 0}" ${selected ? "checked" : ""} ${lockedByOtherGroup ? "disabled" : ""} />
+                                    <div>
+                                        <strong>${team.teamName || "-"}</strong>
+                                        <span>${team.ownerName || "-"}${lockedByOtherGroup ? ` • Assigned to ${currentGroup.groupName}` : ""}</span>
+                                    </div>
+                                </label>
+                            `;
+                        }).join("") : `<div class="group-empty">Add teams first before assigning them into groups.</div>`}
+                    </div>
+                    <div class="group-team-pills">
+                        ${assignedTeams.length
+                            ? assignedTeams.map(team => `<div class="group-team-pill">${team.teamName || "-"}</div>`).join("")
+                            : `<div class="group-empty">No teams assigned yet.</div>`}
+                    </div>
+                </div>
+            </article>
+        `;
+    }).join("");
+
+    Array.from(document.querySelectorAll(".group-save-btn")).forEach(button => {
+        button.addEventListener("click", () => {
+            saveGroupAssignments(Number(button.dataset.groupId));
+        });
+    });
+
+    Array.from(document.querySelectorAll(".group-delete-btn")).forEach(button => {
+        button.addEventListener("click", () => {
+            deleteGroup(Number(button.dataset.groupId));
+        });
+    });
+
+    renderTeams(allTeams);
+}
+
+async function loadGroups() {
+    try {
+        const response = await fetch("/api/groups", { cache: "no-store" });
+        const data = await response.json();
+        renderGroups(Array.isArray(data.groups) ? data.groups : []);
+    } catch (error) {
+        groupList.innerHTML = `<div class="group-empty">Could not load groups.</div>`;
+        groupCount.textContent = "0 groups";
     }
 }
 
@@ -1518,9 +1822,116 @@ async function saveTeam() {
         ownerPlayerIdInput.value = "";
         ownerNameFromPlayerId = "";
         setTeamStatus(`${data.team.teamName} added successfully.`, false);
-        await loadTeams();
+        await Promise.all([loadTeams(), loadGroups()]);
     } catch (error) {
         setTeamStatus("Could not save team.", true);
+    }
+}
+
+async function saveGroup() {
+    const groupName = groupNameInput.value.trim();
+    const teamLimit = Number(groupTeamLimitInput.value);
+
+    if (groupName === "" || teamLimit <= 0) {
+        setGroupStatus("Enter group name and a valid team count.", true);
+        return;
+    }
+
+    try {
+        const response = await fetch("/api/groups", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                group_name: groupName,
+                team_limit: teamLimit
+            })
+        });
+
+        const data = await response.json();
+        if (data.error) {
+            setGroupStatus(data.error, true);
+            return;
+        }
+
+        groupNameInput.value = "";
+        groupTeamLimitInput.value = "";
+        setGroupStatus(`${data.group.groupName} added successfully.`, false);
+        await loadGroups();
+    } catch (error) {
+        setGroupStatus("Could not save group.", true);
+    }
+}
+
+function resetGroupForm() {
+    groupNameInput.value = "";
+    groupTeamLimitInput.value = "";
+    setGroupStatus("Form cleared. Add a new group anytime.", false);
+}
+
+async function saveGroupAssignments(groupId) {
+    const group = allGroups.find(item => Number(item.id) === Number(groupId));
+
+    if (!group) {
+        setGroupStatus("Group not found.", true);
+        return;
+    }
+
+    const selectedIds = Array.from(document.querySelectorAll(`[data-group-team="${groupId}"]:checked`))
+        .map(input => Number(input.value))
+        .filter(teamId => teamId > 0);
+
+    if (selectedIds.length > Number(group.teamLimit || 0)) {
+        setGroupStatus(`You can assign up to ${group.teamLimit} teams in ${group.groupName}.`, true);
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/group/${groupId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                team_ids: selectedIds
+            })
+        });
+
+        const data = await response.json();
+        if (data.error) {
+            setGroupStatus(data.error, true);
+            return;
+        }
+
+        setGroupStatus(`${group.groupName} team assignment saved successfully.`, false);
+        await Promise.all([loadGroups(), loadTeams()]);
+    } catch (error) {
+        setGroupStatus("Could not save group team assignment.", true);
+    }
+}
+
+async function deleteGroup(groupId) {
+    if (!groupId) {
+        setGroupStatus("Invalid group selected.", true);
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/group/${groupId}`, {
+            method: "DELETE"
+        });
+
+        const data = await response.json();
+        if (data.error) {
+            setGroupStatus(data.error, true);
+            return;
+        }
+
+        setGroupStatus("Group deleted successfully.", false);
+        await Promise.all([loadGroups(), loadTeams()]);
+    } catch (error) {
+        setGroupStatus("Could not delete group.", true);
     }
 }
 
@@ -1542,7 +1953,7 @@ async function deleteTeam(id) {
         }
 
         setTeamStatus("Team deleted successfully.", false);
-        await loadTeams();
+        await Promise.all([loadTeams(), loadGroups()]);
     } catch (error) {
         setTeamStatus("Could not delete team.", true);
     }
@@ -1912,6 +2323,8 @@ enableCountdownBtn.addEventListener("click", () => setCountdownEnabledState(true
 stopCountdownBtn.addEventListener("click", () => setCountdownEnabledState(false));
 saveTeamBtn.addEventListener("click", saveTeam);
 resetTeamBtn.addEventListener("click", resetTeamForm);
+saveGroupBtn.addEventListener("click", saveGroup);
+resetGroupBtn.addEventListener("click", resetGroupForm);
 ownerPlayerIdInput.addEventListener("input", syncOwnerNameFromPlayerId);
 soldPlayerIdInput.addEventListener("input", syncEditorFields);
 showPlayerBtn.addEventListener("click", showSelectedPlayer);
@@ -1928,6 +2341,7 @@ window.addEventListener("load", async () => {
     setActiveView("dashboardView");
     loadAdminPlayers();
     loadTeams();
+    loadGroups();
     loadAuctionSettings();
 });
 </script>
