@@ -3,6 +3,8 @@ const { sendJson, sendMethodNotAllowed, getRequestBody } = require("../../utils/
 const { readJsonFile, writeJsonFile } = require("../../utils/storage");
 
 module.exports = async function handler(req, res) {
+  const resource = String(req.query.resource || "").trim().toLowerCase();
+
   if (!["PUT", "DELETE"].includes(req.method)) {
     sendMethodNotAllowed(res, ["PUT", "DELETE"]);
     return;
@@ -19,6 +21,26 @@ module.exports = async function handler(req, res) {
   }
 
   if (req.method === "DELETE") {
+    if (resource === "fixtures") {
+      const fixtures = await readJsonFile("fixtures.json", []);
+      const safeFixtures = Array.isArray(fixtures) ? fixtures : [];
+      const filtered = safeFixtures.filter((fixture) => Number(fixture.id) !== id);
+
+      if (filtered.length === safeFixtures.length) {
+        sendJson(res, 404, { error: "Fixture not found" });
+        return;
+      }
+
+      const renumbered = filtered.map((fixture, index) => ({
+        ...fixture,
+        id: index + 1
+      }));
+
+      await writeJsonFile("fixtures.json", renumbered);
+      sendJson(res, 200, { success: true });
+      return;
+    }
+
     const groups = await readJsonFile("groups.json", []);
     const safeGroups = Array.isArray(groups) ? groups : [];
     const filtered = safeGroups.filter((group) => Number(group.id) !== id);
@@ -40,6 +62,59 @@ module.exports = async function handler(req, res) {
 
   try {
     const payload = await getRequestBody(req);
+
+    if (resource === "fixtures") {
+      const teamAId = Number(payload.team_a_id) || 0;
+      const teamBId = Number(payload.team_b_id) || 0;
+      const venue = String(payload.venue || "").trim();
+      const matchDate = String(payload.match_date || "").trim();
+      const matchTime = String(payload.match_time || "").trim();
+
+      if (!teamAId || !teamBId || teamAId === teamBId) {
+        sendJson(res, 400, { error: "Select two different teams for the fixture" });
+        return;
+      }
+
+      const [fixtures, teams] = await Promise.all([
+        readJsonFile("fixtures.json", []),
+        readJsonFile("teams.json", [])
+      ]);
+      const safeFixtures = Array.isArray(fixtures) ? fixtures : [];
+      const safeTeams = Array.isArray(teams) ? teams : [];
+      const fixtureIndex = safeFixtures.findIndex((fixture) => Number(fixture.id) === id);
+
+      if (fixtureIndex === -1) {
+        sendJson(res, 404, { error: "Fixture not found" });
+        return;
+      }
+
+      const teamA = safeTeams.find((team) => Number(team.id) === teamAId);
+      const teamB = safeTeams.find((team) => Number(team.id) === teamBId);
+      if (!teamA || !teamB) {
+        sendJson(res, 400, { error: "Selected teams were not found" });
+        return;
+      }
+
+      const updatedFixtures = safeFixtures.map((fixture) => Number(fixture.id) === id ? {
+        ...fixture,
+        matchTitle: `${String(teamA.teamName || "").trim()} vs ${String(teamB.teamName || "").trim()}`,
+        teamAId,
+        teamBId,
+        teamAName: String(teamA.teamName || "").trim(),
+        teamBName: String(teamB.teamName || "").trim(),
+        venue,
+        matchDate,
+        matchTime
+      } : fixture);
+
+      await writeJsonFile("fixtures.json", updatedFixtures);
+      sendJson(res, 200, {
+        success: true,
+        fixture: updatedFixtures.find((fixture) => Number(fixture.id) === id)
+      });
+      return;
+    }
+
     const teamIds = Array.isArray(payload.team_ids)
       ? payload.team_ids.map((teamId) => Number(teamId)).filter((teamId) => teamId > 0)
       : [];

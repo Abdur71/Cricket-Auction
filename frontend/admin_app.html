@@ -324,6 +324,12 @@ body::before {
     gap: 18px;
 }
 
+.fixture-layout {
+    display: grid;
+    grid-template-columns: minmax(340px, 460px) minmax(0, 1fr);
+    gap: 18px;
+}
+
 .team-form-card,
 .team-list-card {
     padding: 22px;
@@ -331,6 +337,11 @@ body::before {
 
 .group-form-card,
 .group-list-card {
+    padding: 22px;
+}
+
+.fixture-form-card,
+.fixture-list-card {
     padding: 22px;
 }
 
@@ -598,6 +609,53 @@ body::before {
 }
 
 .group-empty {
+    padding: 26px 18px;
+    border-radius: 20px;
+    border: 1px dashed rgba(255, 255, 255, 0.14);
+    background: rgba(4, 10, 22, 0.56);
+    color: var(--muted);
+    text-align: center;
+    font-size: 1rem;
+}
+
+.fixture-status {
+    min-height: 1.5em;
+    color: var(--muted);
+    font-size: 1rem;
+}
+
+.fixture-status.error {
+    color: #ff9fb0;
+}
+
+.fixture-list {
+    display: grid;
+    gap: 16px;
+}
+
+.fixture-item {
+    padding: 20px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background:
+        linear-gradient(135deg, rgba(59, 226, 255, 0.07), rgba(247, 201, 91, 0.06)),
+        rgba(4, 10, 22, 0.72);
+}
+
+.fixture-title {
+    margin-top: 14px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.12rem;
+    line-height: 1.35;
+}
+
+.fixture-meta {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 0.96rem;
+}
+
+.fixture-empty {
     padding: 26px 18px;
     border-radius: 20px;
     border: 1px dashed rgba(255, 255, 255, 0.14);
@@ -998,7 +1056,8 @@ tbody tr:hover {
     .editor-panel,
     .input-layout,
     .team-layout,
-    .group-layout {
+    .group-layout,
+    .fixture-layout {
         grid-template-columns: 1fr;
     }
 }
@@ -1039,6 +1098,9 @@ tbody tr:hover {
             </button>
             <button class="nav-btn" type="button" data-view="groupsView">
                 <strong>Groups</strong>
+            </button>
+            <button class="nav-btn" type="button" data-view="fixturesView">
+                <strong>Match Fixture</strong>
             </button>
             <button class="nav-btn" type="button" data-view="inputView">
                 <strong>Input Data</strong>
@@ -1230,6 +1292,77 @@ tbody tr:hover {
             </div>
         </section>
 
+        <section class="view" id="fixturesView">
+            <div class="fixture-layout">
+                <section class="panel fixture-form-card">
+                    <div class="editor-header">
+                        <h3>Add Match Fixture</h3>
+                        <p>Create fixtures easily by selecting two teams, plus optional date, time, and venue.</p>
+                    </div>
+
+                    <div class="team-form">
+                        <div class="field-group">
+                            <label for="fixtureTeamASelect">Team 1</label>
+                            <div class="control">
+                                <select id="fixtureTeamASelect">
+                                    <option value="">Select first team</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="fixtureTeamBSelect">Team 2</label>
+                            <div class="control">
+                                <select id="fixtureTeamBSelect">
+                                    <option value="">Select second team</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="fixtureDateInput">Match Date</label>
+                            <div class="control">
+                                <input type="date" id="fixtureDateInput" />
+                            </div>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="fixtureTimeInput">Match Time</label>
+                            <div class="control">
+                                <input type="time" id="fixtureTimeInput" />
+                            </div>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="fixtureVenueInput">Venue</label>
+                            <div class="control">
+                                <input type="text" id="fixtureVenueInput" placeholder="Example: Learning Hub Ground" />
+                            </div>
+                        </div>
+
+                        <div class="team-actions">
+                            <button class="action-btn primary" id="saveFixtureBtn" type="button">ADD FIXTURE</button>
+                            <button class="action-btn secondary" id="resetFixtureBtn" type="button">CLEAR</button>
+                        </div>
+
+                        <div class="fixture-status" id="fixtureStatus">Create match fixtures here for frontend display.</div>
+                    </div>
+                </section>
+
+                <section class="panel fixture-list-card">
+                    <div class="team-list-head">
+                        <h3>Added Fixtures</h3>
+                        <div class="team-head-actions">
+                            <div class="team-count" id="fixtureCount">0 fixtures</div>
+                        </div>
+                    </div>
+                    <div class="fixture-list" id="fixtureList">
+                        <div class="fixture-empty">No fixtures added yet.</div>
+                    </div>
+                </section>
+            </div>
+        </section>
+
         <section class="view" id="inputView">
             <div class="panel editor-grid">
                 <div class="editor-header">
@@ -1389,6 +1522,16 @@ const resetGroupBtn = document.getElementById("resetGroupBtn");
 const groupStatus = document.getElementById("groupStatus");
 const groupCount = document.getElementById("groupCount");
 const groupList = document.getElementById("groupList");
+const fixtureTeamASelect = document.getElementById("fixtureTeamASelect");
+const fixtureTeamBSelect = document.getElementById("fixtureTeamBSelect");
+const fixtureDateInput = document.getElementById("fixtureDateInput");
+const fixtureTimeInput = document.getElementById("fixtureTimeInput");
+const fixtureVenueInput = document.getElementById("fixtureVenueInput");
+const saveFixtureBtn = document.getElementById("saveFixtureBtn");
+const resetFixtureBtn = document.getElementById("resetFixtureBtn");
+const fixtureStatus = document.getElementById("fixtureStatus");
+const fixtureCount = document.getElementById("fixtureCount");
+const fixtureList = document.getElementById("fixtureList");
 const visibleCount = document.getElementById("visibleCount");
 const lastUpdated = document.getElementById("lastUpdated");
 const soldPlayerIdInput = document.getElementById("soldPlayerIdInput");
@@ -1426,6 +1569,10 @@ const viewMeta = {
         title: "Groups",
         subtitle: "Create unlimited groups, choose team count, and assign teams by your choice."
     },
+    fixturesView: {
+        title: "Match Fixture",
+        subtitle: "Create fixtures from saved teams and show the match list on the frontend."
+    },
     inputView: {
         title: "Input Data",
         subtitle: "Load a player by ID, preview the card, and save local sold data."
@@ -1440,6 +1587,7 @@ let allPlayers = [];
 let ownerNameFromPlayerId = "";
 let allTeams = [];
 let allGroups = [];
+let allFixtures = [];
 let countdownEnabled = false;
 
 function setDashboardStatus(message, isError = false) {
@@ -1646,6 +1794,11 @@ function setGroupStatus(message, isError = false) {
     groupStatus.classList.toggle("error", Boolean(isError));
 }
 
+function setFixtureStatus(message, isError = false) {
+    fixtureStatus.textContent = message;
+    fixtureStatus.classList.toggle("error", Boolean(isError));
+}
+
 function getGroupForTeam(teamId) {
     return allGroups.find(group => Array.isArray(group.teamIds) && group.teamIds.map(Number).includes(Number(teamId))) || null;
 }
@@ -1695,6 +1848,12 @@ function renderTeams(teams) {
     soldTeamSelect.innerHTML = `<option value="">Select team</option>` + teamItems.map(team => `
         <option value="${team.teamName || ""}">${team.teamName || "-"}</option>
     `).join("");
+
+    const fixtureOptions = `<option value="">Select team</option>` + teamItems.map(team => `
+        <option value="${team.id || 0}">${team.teamName || "-"}</option>
+    `).join("");
+    fixtureTeamASelect.innerHTML = fixtureOptions;
+    fixtureTeamBSelect.innerHTML = fixtureOptions;
 }
 
 async function loadTeams() {
@@ -1804,6 +1963,47 @@ async function loadGroups() {
     }
 }
 
+function renderFixtures(fixtures) {
+    const fixtureItems = Array.isArray(fixtures) ? fixtures : [];
+    allFixtures = fixtureItems;
+    fixtureCount.textContent = `${fixtureItems.length} fixture${fixtureItems.length === 1 ? "" : "s"}`;
+
+    if (!fixtureItems.length) {
+        fixtureList.innerHTML = `<div class="fixture-empty">No fixtures added yet.</div>`;
+        return;
+    }
+
+    fixtureList.innerHTML = fixtureItems.map(fixture => `
+        <article class="fixture-item">
+            <div class="group-item-top">
+                <span class="group-badge">MATCH ${fixture.id || "-"}</span>
+                <div class="team-head-actions">
+                    <button class="team-delete-btn fixture-delete-btn" type="button" data-fixture-id="${fixture.id || 0}">DELETE</button>
+                </div>
+            </div>
+            <div class="fixture-title">${fixture.matchTitle || `${fixture.teamAName || "-"} vs ${fixture.teamBName || "-"}`}</div>
+            <div class="fixture-meta">${fixture.matchDate || "Date TBD"}${fixture.matchTime ? ` • ${fixture.matchTime}` : ""}${fixture.venue ? ` • ${fixture.venue}` : ""}</div>
+        </article>
+    `).join("");
+
+    Array.from(document.querySelectorAll(".fixture-delete-btn")).forEach(button => {
+        button.addEventListener("click", () => {
+            deleteFixture(Number(button.dataset.fixtureId));
+        });
+    });
+}
+
+async function loadFixtures() {
+    try {
+        const response = await fetch("/api/groups?resource=fixtures", { cache: "no-store" });
+        const data = await response.json();
+        renderFixtures(Array.isArray(data.fixtures) ? data.fixtures : []);
+    } catch (error) {
+        fixtureList.innerHTML = `<div class="fixture-empty">Could not load fixtures.</div>`;
+        fixtureCount.textContent = "0 fixtures";
+    }
+}
+
 async function saveTeam() {
     const teamName = teamNameInput.value.trim();
     const ownerPlayerId = Number(ownerPlayerIdInput.value);
@@ -1876,6 +2076,84 @@ async function saveGroup() {
         await loadGroups();
     } catch (error) {
         setGroupStatus("Could not save group.", true);
+    }
+}
+
+async function saveFixture() {
+    const teamAId = Number(fixtureTeamASelect.value);
+    const teamBId = Number(fixtureTeamBSelect.value);
+    const matchDate = fixtureDateInput.value.trim();
+    const matchTime = fixtureTimeInput.value.trim();
+    const venue = fixtureVenueInput.value.trim();
+
+    if (!teamAId || !teamBId || teamAId === teamBId) {
+        setFixtureStatus("Select two different teams for the fixture.", true);
+        return;
+    }
+
+    try {
+        const response = await fetch("/api/groups?resource=fixtures", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                team_a_id: teamAId,
+                team_b_id: teamBId,
+                match_date: matchDate,
+                match_time: matchTime,
+                venue
+            })
+        });
+
+        const data = await response.json();
+        if (data.error) {
+            setFixtureStatus(data.error, true);
+            return;
+        }
+
+        fixtureTeamASelect.value = "";
+        fixtureTeamBSelect.value = "";
+        fixtureDateInput.value = "";
+        fixtureTimeInput.value = "";
+        fixtureVenueInput.value = "";
+        setFixtureStatus("Fixture added successfully.", false);
+        await loadFixtures();
+    } catch (error) {
+        setFixtureStatus("Could not save fixture.", true);
+    }
+}
+
+function resetFixtureForm() {
+    fixtureTeamASelect.value = "";
+    fixtureTeamBSelect.value = "";
+    fixtureDateInput.value = "";
+    fixtureTimeInput.value = "";
+    fixtureVenueInput.value = "";
+    setFixtureStatus("Form cleared. Add a fixture anytime.", false);
+}
+
+async function deleteFixture(fixtureId) {
+    if (!fixtureId) {
+        setFixtureStatus("Invalid fixture selected.", true);
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/group/${fixtureId}?resource=fixtures`, {
+            method: "DELETE"
+        });
+
+        const data = await response.json();
+        if (data.error) {
+            setFixtureStatus(data.error, true);
+            return;
+        }
+
+        setFixtureStatus("Fixture deleted successfully.", false);
+        await loadFixtures();
+    } catch (error) {
+        setFixtureStatus("Could not delete fixture.", true);
     }
 }
 
@@ -2340,6 +2618,8 @@ saveTeamBtn.addEventListener("click", saveTeam);
 resetTeamBtn.addEventListener("click", resetTeamForm);
 saveGroupBtn.addEventListener("click", saveGroup);
 resetGroupBtn.addEventListener("click", resetGroupForm);
+saveFixtureBtn.addEventListener("click", saveFixture);
+resetFixtureBtn.addEventListener("click", resetFixtureForm);
 ownerPlayerIdInput.addEventListener("input", syncOwnerNameFromPlayerId);
 soldPlayerIdInput.addEventListener("input", syncEditorFields);
 showPlayerBtn.addEventListener("click", showSelectedPlayer);
@@ -2357,6 +2637,7 @@ window.addEventListener("load", async () => {
     loadAdminPlayers();
     loadTeams();
     loadGroups();
+    loadFixtures();
     loadAuctionSettings();
 });
 </script>

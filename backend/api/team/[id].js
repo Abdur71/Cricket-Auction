@@ -18,12 +18,14 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  const [teams, groups] = await Promise.all([
+  const [teams, groups, fixtures] = await Promise.all([
     readJsonFile("teams.json", []),
-    readJsonFile("groups.json", [])
+    readJsonFile("groups.json", []),
+    readJsonFile("fixtures.json", [])
   ]);
   const safeTeams = Array.isArray(teams) ? teams : [];
   const safeGroups = Array.isArray(groups) ? groups : [];
+  const safeFixtures = Array.isArray(fixtures) ? fixtures : [];
   const filtered = safeTeams.filter((team) => Number(team.id) !== id);
 
   if (filtered.length === safeTeams.length) {
@@ -47,9 +49,19 @@ module.exports = async function handler(req, res) {
       .map((teamId) => previousToNextTeamId.get(Number(teamId)))
   }));
 
+  const updatedFixtures = safeFixtures
+    .filter((fixture) => Number(fixture.teamAId) !== id && Number(fixture.teamBId) !== id)
+    .map((fixture, index) => ({
+      ...fixture,
+      id: index + 1,
+      teamAId: previousToNextTeamId.get(Number(fixture.teamAId)) || 0,
+      teamBId: previousToNextTeamId.get(Number(fixture.teamBId)) || 0
+    }));
+
   await Promise.all([
     writeJsonFile("teams.json", renumbered),
-    writeJsonFile("groups.json", updatedGroups)
+    writeJsonFile("groups.json", updatedGroups),
+    writeJsonFile("fixtures.json", updatedFixtures)
   ]);
   sendJson(res, 200, { success: true });
 };

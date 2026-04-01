@@ -316,6 +316,105 @@ body::before {
     font-size: 1.05rem;
 }
 
+.fixtures-shell {
+    width: 100%;
+    max-width: 1680px;
+    border-radius: 28px;
+    background:
+        radial-gradient(circle at top left, rgba(0, 230, 255, 0.12), transparent 35%),
+        radial-gradient(circle at top right, rgba(244, 201, 93, 0.14), transparent 38%),
+        rgba(8, 15, 31, 0.78);
+    border: 1px solid var(--glass-stroke);
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 0 0 1px rgba(255, 255, 255, 0.03);
+    overflow: hidden;
+}
+
+.fixtures-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    padding: 22px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(135deg, rgba(0, 230, 255, 0.09), rgba(244, 201, 93, 0.09));
+}
+
+.fixtures-header h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.3rem, 1.9vw, 2rem);
+    letter-spacing: 0.12em;
+    color: var(--gold);
+}
+
+.fixtures-subtitle {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: clamp(0.95rem, 1.1vw, 1.05rem);
+}
+
+.fixtures-count {
+    color: var(--muted);
+    font-size: 1rem;
+    white-space: nowrap;
+}
+
+.fixtures-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+    padding: 24px;
+}
+
+.fixture-stage-card {
+    padding: 22px;
+    border-radius: 24px;
+    background:
+        linear-gradient(145deg, rgba(59, 226, 255, 0.08), rgba(244, 201, 93, 0.08)),
+        rgba(4, 10, 22, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 16px 36px rgba(0, 0, 0, 0.24);
+}
+
+.fixture-stage-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 90px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(59, 226, 255, 0.28);
+    background: rgba(59, 226, 255, 0.08);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+}
+
+.fixture-stage-title {
+    margin-top: 18px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.3rem, 2vw, 1.8rem);
+    line-height: 1.35;
+}
+
+.fixture-stage-meta {
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.55;
+}
+
+.fixtures-empty {
+    padding: 48px 24px 56px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 1.05rem;
+}
+
 .home-hero {
     position: relative;
     width: 100%;
@@ -1631,10 +1730,17 @@ body::before {
 
     <section class="frontend-section hidden" id="fixturesSection">
         <main class="stage">
-            <section class="placeholder-shell">
-                <div class="placeholder-kicker">Coming Soon</div>
-                <h2>Match Fixture</h2>
-                <p>Match fixture mode will live here. Once you tell me the design, I can build the full fixture board in this section.</p>
+            <section class="fixtures-shell">
+                <div class="fixtures-header">
+                    <div>
+                        <h2>MATCH FIXTURE</h2>
+                        <div class="fixtures-subtitle" id="fixturesStageSubtitle">Live fixtures from admin panel.</div>
+                    </div>
+                    <div class="fixtures-count" id="fixturesStageCount">0 fixtures</div>
+                </div>
+                <div class="fixtures-grid" id="fixturesStageGrid">
+                    <div class="fixtures-empty">No fixtures available to display.</div>
+                </div>
             </section>
         </main>
     </section>
@@ -1694,6 +1800,9 @@ const fixturesSection = document.getElementById("fixturesSection");
 const groupsStageGrid = document.getElementById("groupsStageGrid");
 const groupsStageCount = document.getElementById("groupsStageCount");
 const groupsStageSubtitle = document.getElementById("groupsStageSubtitle");
+const fixturesStageGrid = document.getElementById("fixturesStageGrid");
+const fixturesStageCount = document.getElementById("fixturesStageCount");
+const fixturesStageSubtitle = document.getElementById("fixturesStageSubtitle");
 const stageScreenOpenedAt = Date.now();
 const expandedTeamCards = new Set();
 let currentFrontendSection = "home";
@@ -1754,6 +1863,10 @@ function setFrontendSection(sectionName) {
 
     if (sectionName === "group") {
         loadStageGroups();
+    }
+
+    if (sectionName === "fixtures") {
+        loadStageFixtures();
     }
 
     syncHomeCountdownVisibility();
@@ -2037,6 +2150,38 @@ async function loadStageGroups() {
     } catch (error) {
         groupsStageGrid.innerHTML = `<div class="groups-empty">Could not load groups.</div>`;
         groupsStageCount.textContent = "0 groups";
+    }
+}
+
+function renderFixturesStage(fixtures) {
+    const fixtureItems = Array.isArray(fixtures) ? fixtures : [];
+    fixturesStageCount.textContent = `${fixtureItems.length} fixture${fixtureItems.length === 1 ? "" : "s"}`;
+
+    if (!fixtureItems.length) {
+        fixturesStageGrid.innerHTML = `<div class="fixtures-empty">No fixtures available to display.</div>`;
+        return;
+    }
+
+    fixturesStageGrid.innerHTML = fixtureItems.map(fixture => `
+        <article class="fixture-stage-card">
+            <div class="fixture-stage-badge">MATCH ${fixture.id || "-"}</div>
+            <div class="fixture-stage-title">${fixture.matchTitle || `${fixture.teamAName || "-"} vs ${fixture.teamBName || "-"}`}</div>
+            <div class="fixture-stage-meta">${fixture.matchDate || "Date TBD"}${fixture.matchTime ? ` • ${fixture.matchTime}` : ""}${fixture.venue ? `<br />Venue: ${fixture.venue}` : ""}</div>
+        </article>
+    `).join("");
+}
+
+async function loadStageFixtures() {
+    try {
+        const response = await fetch("/api/groups?resource=fixtures", { cache: "no-store" });
+        const data = await response.json();
+        const fixtures = Array.isArray(data.fixtures) ? data.fixtures : [];
+
+        fixturesStageSubtitle.textContent = "Live fixtures from admin panel.";
+        renderFixturesStage(fixtures);
+    } catch (error) {
+        fixturesStageGrid.innerHTML = `<div class="fixtures-empty">Could not load fixtures.</div>`;
+        fixturesStageCount.textContent = "0 fixtures";
     }
 }
 

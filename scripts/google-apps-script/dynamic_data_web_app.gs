@@ -1,6 +1,7 @@
 const SHEET_NAMES = [
   'teams',
   'groups',
+  'fixtures',
   'sold_states',
   'current_player',
   'stage_view',
