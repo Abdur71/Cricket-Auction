@@ -194,6 +194,128 @@ body::before {
     line-height: 1.6;
 }
 
+.groups-shell {
+    width: 100%;
+    max-width: 1680px;
+    border-radius: 28px;
+    background:
+        radial-gradient(circle at top left, rgba(0, 230, 255, 0.12), transparent 35%),
+        radial-gradient(circle at top right, rgba(244, 201, 93, 0.14), transparent 38%),
+        rgba(8, 15, 31, 0.78);
+    border: 1px solid var(--glass-stroke);
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 0 0 1px rgba(255, 255, 255, 0.03);
+    overflow: hidden;
+}
+
+.groups-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    padding: 22px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(135deg, rgba(0, 230, 255, 0.09), rgba(244, 201, 93, 0.09));
+}
+
+.groups-header h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.3rem, 1.9vw, 2rem);
+    letter-spacing: 0.12em;
+    color: var(--gold);
+}
+
+.groups-subtitle {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: clamp(0.95rem, 1.1vw, 1.05rem);
+}
+
+.groups-count {
+    color: var(--muted);
+    font-size: 1rem;
+    white-space: nowrap;
+}
+
+.groups-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+    padding: 24px;
+}
+
+.group-stage-card {
+    padding: 22px;
+    border-radius: 24px;
+    background:
+        linear-gradient(145deg, rgba(59, 226, 255, 0.08), rgba(244, 201, 93, 0.08)),
+        rgba(4, 10, 22, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 16px 36px rgba(0, 0, 0, 0.24);
+}
+
+.group-stage-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 88px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(59, 226, 255, 0.28);
+    background: rgba(59, 226, 255, 0.08);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+}
+
+.group-stage-name {
+    margin-top: 18px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.4rem, 2.1vw, 2rem);
+    color: var(--white);
+}
+
+.group-stage-meta {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+.group-stage-teams {
+    margin-top: 18px;
+    display: grid;
+    gap: 10px;
+}
+
+.group-stage-team {
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.group-stage-team-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.94rem;
+}
+
+.group-stage-team-owner {
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 0.88rem;
+}
+
+.groups-empty {
+    padding: 48px 24px 56px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 1.05rem;
+}
+
 .home-hero {
     position: relative;
     width: 100%;
@@ -1492,10 +1614,17 @@ body::before {
 
     <section class="frontend-section hidden" id="groupSection">
         <main class="stage">
-            <section class="placeholder-shell">
-                <div class="placeholder-kicker">Coming Soon</div>
-                <h2>Group Mode</h2>
-                <p>Group mode will live here. The navbar and breaking news ticker are ready, and we can shape the full design when you share the layout details.</p>
+            <section class="groups-shell">
+                <div class="groups-header">
+                    <div>
+                        <h2>GROUP FORMATION</h2>
+                        <div class="groups-subtitle" id="groupsStageSubtitle">Live groups from admin panel.</div>
+                    </div>
+                    <div class="groups-count" id="groupsStageCount">0 groups</div>
+                </div>
+                <div class="groups-grid" id="groupsStageGrid">
+                    <div class="groups-empty">No groups available to display.</div>
+                </div>
             </section>
         </main>
     </section>
@@ -1562,6 +1691,9 @@ const homeSection = document.getElementById("homeSection");
 const teamshowcaseSection = document.getElementById("teamshowcaseSection");
 const groupSection = document.getElementById("groupSection");
 const fixturesSection = document.getElementById("fixturesSection");
+const groupsStageGrid = document.getElementById("groupsStageGrid");
+const groupsStageCount = document.getElementById("groupsStageCount");
+const groupsStageSubtitle = document.getElementById("groupsStageSubtitle");
 const stageScreenOpenedAt = Date.now();
 const expandedTeamCards = new Set();
 let currentFrontendSection = "home";
@@ -1618,6 +1750,10 @@ function setFrontendSection(sectionName) {
 
     if (sectionName === "teamshowcase") {
         loadStageTeams();
+    }
+
+    if (sectionName === "group") {
+        loadStageGroups();
     }
 
     syncHomeCountdownVisibility();
@@ -1853,6 +1989,54 @@ async function loadStageTeams() {
     } catch (error) {
         teamsStageGrid.innerHTML = `<div class="teams-empty">Could not load teams.</div>`;
         teamsStageCount.textContent = "0 teams";
+    }
+}
+
+function renderGroupsStage(groups) {
+    const groupItems = Array.isArray(groups) ? groups : [];
+    groupsStageCount.textContent = `${groupItems.length} group${groupItems.length === 1 ? "" : "s"}`;
+
+    if (!groupItems.length) {
+        groupsStageGrid.innerHTML = `<div class="groups-empty">No groups available to display.</div>`;
+        return;
+    }
+
+    groupsStageGrid.innerHTML = groupItems.map(group => {
+        const teams = Array.isArray(group.teams) ? group.teams : [];
+        const teamLimit = Number(group.teamLimit) || 0;
+
+        return `
+            <article class="group-stage-card">
+                <div class="group-stage-badge">GROUP ${group.id || "-"}</div>
+                <div class="group-stage-name">${group.groupName || "-"}</div>
+                <div class="group-stage-meta">Capacity: ${teamLimit} teams • Assigned: ${teams.length}</div>
+                <div class="group-stage-teams">
+                    ${teams.length
+                        ? teams.map(team => `
+                            <article class="group-stage-team">
+                                <div class="group-stage-team-name">${team.teamName || "-"}</div>
+                                <div class="group-stage-team-owner">Owner: ${team.ownerName || "-"}</div>
+                            </article>
+                        `).join("")
+                        : `<div class="groups-empty">No teams assigned yet.</div>`
+                    }
+                </div>
+            </article>
+        `;
+    }).join("");
+}
+
+async function loadStageGroups() {
+    try {
+        const response = await fetch("/api/groups", { cache: "no-store" });
+        const data = await response.json();
+        const groups = Array.isArray(data.groups) ? data.groups : [];
+
+        groupsStageSubtitle.textContent = "Live groups from admin panel.";
+        renderGroupsStage(groups);
+    } catch (error) {
+        groupsStageGrid.innerHTML = `<div class="groups-empty">Could not load groups.</div>`;
+        groupsStageCount.textContent = "0 groups";
     }
 }
 
