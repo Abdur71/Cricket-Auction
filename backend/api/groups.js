@@ -47,20 +47,102 @@ function normalizeFixture(fixture, teams) {
   };
 }
 
+function formatOversLabel(overs) {
+  const clean = String(overs || "").trim();
+  return clean ? `${clean} ov` : "-";
+}
+
+function buildResultSummary(teamAName, teamBName, teamAScore, teamBScore) {
+  if (teamAScore.runs === teamBScore.runs) {
+    return "Match tied";
+  }
+
+  if (teamAScore.runs > teamBScore.runs) {
+    return `${teamAName} won by ${teamAScore.runs - teamBScore.runs} runs`;
+  }
+
+  return `${teamBName} won by ${Math.max(10 - teamBScore.wickets, 0)} wickets`;
+}
+
+function normalizeResult(result, fixtures, teams) {
+  const safeResult = result && typeof result === "object" ? result : {};
+  const fixtureId = Number(safeResult.fixtureId || safeResult.id) || 0;
+  const fixture = (Array.isArray(fixtures) ? fixtures : []).find((item) => Number(item.id) === fixtureId) || {};
+  const baseFixture = normalizeFixture(fixture, teams);
+  const teamARuns = Number(safeResult.teamARuns) || 0;
+  const teamAWickets = Number(safeResult.teamAWickets) || 0;
+  const teamAOvers = String(safeResult.teamAOvers || "").trim();
+  const teamBRuns = Number(safeResult.teamBRuns) || 0;
+  const teamBWickets = Number(safeResult.teamBWickets) || 0;
+  const teamBOvers = String(safeResult.teamBOvers || "").trim();
+  const winnerName =
+    teamARuns === teamBRuns
+      ? "Match Tied"
+      : teamARuns > teamBRuns
+        ? baseFixture.teamAName
+        : baseFixture.teamBName;
+
+  return {
+    id: fixtureId,
+    fixtureId,
+    matchTitle: baseFixture.matchTitle,
+    teamAId: baseFixture.teamAId,
+    teamBId: baseFixture.teamBId,
+    teamAName: baseFixture.teamAName,
+    teamBName: baseFixture.teamBName,
+    venue: baseFixture.venue,
+    matchDate: baseFixture.matchDate,
+    matchTime: baseFixture.matchTime,
+    teamARuns,
+    teamAWickets,
+    teamAOvers,
+    teamBRuns,
+    teamBWickets,
+    teamBOvers,
+    teamAScoreLabel: `${teamARuns}/${teamAWickets} (${formatOversLabel(teamAOvers)})`,
+    teamBScoreLabel: `${teamBRuns}/${teamBWickets} (${formatOversLabel(teamBOvers)})`,
+    resultSummary: buildResultSummary(
+      baseFixture.teamAName || "Team A",
+      baseFixture.teamBName || "Team B",
+      { runs: teamARuns, wickets: teamAWickets },
+      { runs: teamBRuns, wickets: teamBWickets }
+    ),
+    winnerName,
+    createdAt: String(safeResult.createdAt || "").trim(),
+    updatedAt: String(safeResult.updatedAt || "").trim()
+  };
+}
+
 module.exports = async function handler(req, res) {
   const resource = String(req.query.resource || "").trim().toLowerCase();
 
   if (req.method === "GET") {
     try {
-      const [groups, teams, fixtures] = await Promise.all([
+      const [groups, teams, fixtures, results] = await Promise.all([
         readJsonFile("groups.json", []),
         readJsonFile("teams.json", []),
-        readJsonFile("fixtures.json", [])
+        readJsonFile("fixtures.json", []),
+        readJsonFile("results.json", [])
       ]);
 
       if (resource === "fixtures") {
         sendJson(res, 200, {
           fixtures: (Array.isArray(fixtures) ? fixtures : []).map((fixture) => normalizeFixture(fixture, teams))
+        });
+        return;
+      }
+
+      if (resource === "results") {
+        const safeFixtures = Array.isArray(fixtures) ? fixtures : [];
+        const safeResults = Array.isArray(results) ? results : [];
+        const resultMap = new Map(safeResults.map((item) => [Number(item.fixtureId || item.id), item]));
+
+        sendJson(res, 200, {
+          results: safeFixtures.map((fixture) => normalizeResult(
+            resultMap.get(Number(fixture.id)) || { fixtureId: Number(fixture.id) || 0, id: Number(fixture.id) || 0 },
+            safeFixtures,
+            teams
+          ))
         });
         return;
       }
@@ -124,6 +206,11 @@ module.exports = async function handler(req, res) {
         safeFixtures.push(fixture);
         await writeJsonFile("fixtures.json", safeFixtures);
         sendJson(res, 200, { success: true, fixture: normalizeFixture(fixture, safeTeams) });
+        return;
+      }
+
+      if (resource === "results") {
+        sendJson(res, 405, { error: "Use PUT on a fixture ID to save result data" });
         return;
       }
 

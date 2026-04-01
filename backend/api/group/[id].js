@@ -23,6 +23,7 @@ module.exports = async function handler(req, res) {
   if (req.method === "DELETE") {
     if (resource === "fixtures") {
       const fixtures = await readJsonFile("fixtures.json", []);
+      const results = await readJsonFile("results.json", []);
       const safeFixtures = Array.isArray(fixtures) ? fixtures : [];
       const filtered = safeFixtures.filter((fixture) => Number(fixture.id) !== id);
 
@@ -36,7 +37,32 @@ module.exports = async function handler(req, res) {
         id: index + 1
       }));
 
+      const safeResults = Array.isArray(results) ? results : [];
+      const renumberedResults = safeResults
+        .filter((result) => Number(result.fixtureId || result.id) !== id)
+        .map((result) => {
+          const previousId = Number(result.fixtureId || result.id);
+          const nextId = previousId > id ? previousId - 1 : previousId;
+          return {
+            ...result,
+            id: nextId,
+            fixtureId: nextId
+          };
+        });
+
       await writeJsonFile("fixtures.json", renumbered);
+      await writeJsonFile("results.json", renumberedResults);
+      sendJson(res, 200, { success: true });
+      return;
+    }
+
+    if (resource === "results") {
+      const results = await readJsonFile("results.json", []);
+      const safeResults = Array.isArray(results) ? results : [];
+      await writeJsonFile(
+        "results.json",
+        safeResults.filter((result) => Number(result.fixtureId || result.id) !== id)
+      );
       sendJson(res, 200, { success: true });
       return;
     }
@@ -112,6 +138,57 @@ module.exports = async function handler(req, res) {
         success: true,
         fixture: updatedFixtures.find((fixture) => Number(fixture.id) === id)
       });
+      return;
+    }
+
+    if (resource === "results") {
+      const teamARuns = Number(payload.team_a_runs);
+      const teamAWickets = Number(payload.team_a_wickets);
+      const teamAOvers = String(payload.team_a_overs || "").trim();
+      const teamBRuns = Number(payload.team_b_runs);
+      const teamBWickets = Number(payload.team_b_wickets);
+      const teamBOvers = String(payload.team_b_overs || "").trim();
+
+      if ([teamARuns, teamAWickets, teamBRuns, teamBWickets].some((value) => Number.isNaN(value) || value < 0)) {
+        sendJson(res, 400, { error: "Runs and wickets must be valid non-negative numbers" });
+        return;
+      }
+
+      const [fixtures, results] = await Promise.all([
+        readJsonFile("fixtures.json", []),
+        readJsonFile("results.json", [])
+      ]);
+      const safeFixtures = Array.isArray(fixtures) ? fixtures : [];
+      const safeResults = Array.isArray(results) ? results : [];
+
+      if (!safeFixtures.some((fixture) => Number(fixture.id) === id)) {
+        sendJson(res, 404, { error: "Fixture not found" });
+        return;
+      }
+
+      const nextResult = {
+        id,
+        fixtureId: id,
+        teamARuns,
+        teamAWickets,
+        teamAOvers,
+        teamBRuns,
+        teamBWickets,
+        teamBOvers,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      const existingIndex = safeResults.findIndex((result) => Number(result.fixtureId || result.id) === id);
+      const updatedResults = existingIndex >= 0
+        ? safeResults.map((result, index) => index === existingIndex ? {
+          ...result,
+          ...nextResult,
+          createdAt: String(result.createdAt || "").trim() || nextResult.createdAt
+        } : result)
+        : [...safeResults, nextResult];
+
+      await writeJsonFile("results.json", updatedResults);
+      sendJson(res, 200, { success: true, result: nextResult });
       return;
     }
 

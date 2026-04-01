@@ -330,6 +330,12 @@ body::before {
     gap: 18px;
 }
 
+.result-layout {
+    display: grid;
+    grid-template-columns: minmax(360px, 520px) minmax(0, 1fr);
+    gap: 18px;
+}
+
 .team-form-card,
 .team-list-card {
     padding: 22px;
@@ -342,6 +348,11 @@ body::before {
 
 .fixture-form-card,
 .fixture-list-card {
+    padding: 22px;
+}
+
+.result-form-card,
+.result-list-card {
     padding: 22px;
 }
 
@@ -663,6 +674,77 @@ body::before {
     color: var(--muted);
     text-align: center;
     font-size: 1rem;
+}
+
+.result-entry-grid,
+.result-list {
+    display: grid;
+    gap: 16px;
+}
+
+.result-match-select,
+.result-team-panel,
+.result-item {
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background:
+        linear-gradient(135deg, rgba(59, 226, 255, 0.07), rgba(123, 255, 176, 0.06)),
+        rgba(4, 10, 22, 0.72);
+}
+
+.result-match-select,
+.result-team-panel,
+.result-item {
+    padding: 18px;
+}
+
+.result-score-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.result-team-panel h4 {
+    margin: 0 0 14px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.98rem;
+    color: var(--white);
+}
+
+.result-status {
+    min-height: 1.5em;
+    color: #8dffbe;
+    font-size: 1rem;
+}
+
+.result-status.error {
+    color: #ff9fb0;
+}
+
+.result-title {
+    margin-top: 12px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.04rem;
+}
+
+.result-summary {
+    margin-top: 8px;
+    color: #8dffbe;
+    font-weight: 700;
+}
+
+.result-meta,
+.result-empty {
+    color: var(--muted);
+    font-size: 0.96rem;
+}
+
+.result-empty {
+    padding: 26px 18px;
+    border-radius: 20px;
+    border: 1px dashed rgba(255, 255, 255, 0.14);
+    background: rgba(4, 10, 22, 0.56);
+    text-align: center;
 }
 
 .team-group-tag {
@@ -1069,7 +1151,8 @@ tbody tr:hover {
     .input-layout,
     .team-layout,
     .group-layout,
-    .fixture-layout {
+    .fixture-layout,
+    .result-layout {
         grid-template-columns: 1fr;
     }
 }
@@ -1090,6 +1173,10 @@ tbody tr:hover {
 
     .editor-actions {
         flex-direction: column;
+    }
+
+    .result-score-grid {
+        grid-template-columns: 1fr;
     }
 }
 </style>
@@ -1113,6 +1200,9 @@ tbody tr:hover {
             </button>
             <button class="nav-btn" type="button" data-view="fixturesView">
                 <strong>Match Fixture</strong>
+            </button>
+            <button class="nav-btn" type="button" data-view="resultsView">
+                <strong>Results</strong>
             </button>
             <button class="nav-btn" type="button" data-view="inputView">
                 <strong>Input Data</strong>
@@ -1375,6 +1465,95 @@ tbody tr:hover {
             </div>
         </section>
 
+        <section class="view" id="resultsView">
+            <div class="result-layout">
+                <section class="panel result-form-card">
+                    <div class="editor-header">
+                        <h3>Add Match Result</h3>
+                        <p>Select a saved fixture, enter both team scores, and the result will be generated automatically.</p>
+                    </div>
+
+                    <div class="result-entry-grid">
+                        <div class="result-match-select">
+                            <div class="field-group">
+                                <label for="resultFixtureSelect">Fixture</label>
+                                <div class="control">
+                                    <select id="resultFixtureSelect">
+                                        <option value="">Select fixture</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="result-score-grid">
+                            <section class="result-team-panel">
+                                <h4 id="resultTeamATitle">Team A Score</h4>
+                                <div class="field-group">
+                                    <label for="resultTeamARunsInput">Runs</label>
+                                    <div class="control">
+                                        <input type="number" id="resultTeamARunsInput" min="0" placeholder="50" />
+                                    </div>
+                                </div>
+                                <div class="field-group">
+                                    <label for="resultTeamAWicketsInput">Wickets</label>
+                                    <div class="control">
+                                        <input type="number" id="resultTeamAWicketsInput" min="0" max="10" placeholder="5" />
+                                    </div>
+                                </div>
+                                <div class="field-group">
+                                    <label for="resultTeamAOversInput">Overs</label>
+                                    <div class="control">
+                                        <input type="text" id="resultTeamAOversInput" placeholder="8.5" />
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section class="result-team-panel">
+                                <h4 id="resultTeamBTitle">Team B Score</h4>
+                                <div class="field-group">
+                                    <label for="resultTeamBRunsInput">Runs</label>
+                                    <div class="control">
+                                        <input type="number" id="resultTeamBRunsInput" min="0" placeholder="48" />
+                                    </div>
+                                </div>
+                                <div class="field-group">
+                                    <label for="resultTeamBWicketsInput">Wickets</label>
+                                    <div class="control">
+                                        <input type="number" id="resultTeamBWicketsInput" min="0" max="10" placeholder="7" />
+                                    </div>
+                                </div>
+                                <div class="field-group">
+                                    <label for="resultTeamBOversInput">Overs</label>
+                                    <div class="control">
+                                        <input type="text" id="resultTeamBOversInput" placeholder="8.0" />
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+
+                        <div class="team-actions">
+                            <button class="action-btn primary" id="saveResultBtn" type="button">SAVE RESULT</button>
+                            <button class="action-btn secondary" id="resetResultBtn" type="button">CLEAR</button>
+                        </div>
+
+                        <div class="result-status" id="resultStatus">Choose a fixture and enter the scorecard.</div>
+                    </div>
+                </section>
+
+                <section class="panel result-list-card">
+                    <div class="team-list-head">
+                        <h3>Saved Results</h3>
+                        <div class="team-head-actions">
+                            <div class="team-count" id="resultCount">0 results</div>
+                        </div>
+                    </div>
+                    <div class="result-list" id="resultList">
+                        <div class="result-empty">No results saved yet.</div>
+                    </div>
+                </section>
+            </div>
+        </section>
+
         <section class="view" id="inputView">
             <div class="panel editor-grid">
                 <div class="editor-header">
@@ -1544,6 +1723,20 @@ const resetFixtureBtn = document.getElementById("resetFixtureBtn");
 const fixtureStatus = document.getElementById("fixtureStatus");
 const fixtureCount = document.getElementById("fixtureCount");
 const fixtureList = document.getElementById("fixtureList");
+const resultFixtureSelect = document.getElementById("resultFixtureSelect");
+const resultTeamATitle = document.getElementById("resultTeamATitle");
+const resultTeamBTitle = document.getElementById("resultTeamBTitle");
+const resultTeamARunsInput = document.getElementById("resultTeamARunsInput");
+const resultTeamAWicketsInput = document.getElementById("resultTeamAWicketsInput");
+const resultTeamAOversInput = document.getElementById("resultTeamAOversInput");
+const resultTeamBRunsInput = document.getElementById("resultTeamBRunsInput");
+const resultTeamBWicketsInput = document.getElementById("resultTeamBWicketsInput");
+const resultTeamBOversInput = document.getElementById("resultTeamBOversInput");
+const saveResultBtn = document.getElementById("saveResultBtn");
+const resetResultBtn = document.getElementById("resetResultBtn");
+const resultStatus = document.getElementById("resultStatus");
+const resultCount = document.getElementById("resultCount");
+const resultList = document.getElementById("resultList");
 const visibleCount = document.getElementById("visibleCount");
 const lastUpdated = document.getElementById("lastUpdated");
 const soldPlayerIdInput = document.getElementById("soldPlayerIdInput");
@@ -1585,6 +1778,10 @@ const viewMeta = {
         title: "Match Fixture",
         subtitle: "Create fixtures from saved teams and show the match list on the frontend."
     },
+    resultsView: {
+        title: "Results",
+        subtitle: "Input scorecards from saved fixtures and publish match results automatically."
+    },
     inputView: {
         title: "Input Data",
         subtitle: "Load a player by ID, preview the card, and save local sold data."
@@ -1600,6 +1797,7 @@ let ownerNameFromPlayerId = "";
 let allTeams = [];
 let allGroups = [];
 let allFixtures = [];
+let allResults = [];
 let countdownEnabled = false;
 
 function setDashboardStatus(message, isError = false) {
@@ -1811,6 +2009,11 @@ function setFixtureStatus(message, isError = false) {
     fixtureStatus.classList.toggle("error", Boolean(isError));
 }
 
+function setResultStatus(message, isError = false) {
+    resultStatus.textContent = message;
+    resultStatus.classList.toggle("error", Boolean(isError));
+}
+
 function getGroupForTeam(teamId) {
     return allGroups.find(group => Array.isArray(group.teamIds) && group.teamIds.map(Number).includes(Number(teamId))) || null;
 }
@@ -2003,6 +2206,10 @@ function renderFixtures(fixtures) {
             deleteFixture(Number(button.dataset.fixtureId));
         });
     });
+
+    resultFixtureSelect.innerHTML = `<option value="">Select fixture</option>` + fixtureItems.map(fixture => `
+        <option value="${fixture.id || 0}">${fixture.matchTitle || `${fixture.teamAName || "-"} vs ${fixture.teamBName || "-"}`}</option>
+    `).join("");
 }
 
 async function loadFixtures() {
@@ -2013,6 +2220,55 @@ async function loadFixtures() {
     } catch (error) {
         fixtureList.innerHTML = `<div class="fixture-empty">Could not load fixtures.</div>`;
         fixtureCount.textContent = "0 fixtures";
+    }
+}
+
+function syncResultFixtureSelection() {
+    const fixtureId = Number(resultFixtureSelect.value);
+    const fixture = allFixtures.find(item => Number(item.id) === fixtureId);
+    const result = allResults.find(item => Number(item.fixtureId || item.id) === fixtureId);
+
+    resultTeamATitle.textContent = `${fixture?.teamAName || "Team A"} Score`;
+    resultTeamBTitle.textContent = `${fixture?.teamBName || "Team B"} Score`;
+    resultTeamARunsInput.value = result ? String(result.teamARuns ?? "") : "";
+    resultTeamAWicketsInput.value = result ? String(result.teamAWickets ?? "") : "";
+    resultTeamAOversInput.value = result ? String(result.teamAOvers || "") : "";
+    resultTeamBRunsInput.value = result ? String(result.teamBRuns ?? "") : "";
+    resultTeamBWicketsInput.value = result ? String(result.teamBWickets ?? "") : "";
+    resultTeamBOversInput.value = result ? String(result.teamBOvers || "") : "";
+}
+
+function renderResults(results) {
+    const resultItems = Array.isArray(results) ? results : [];
+    allResults = resultItems.filter(item => item.updatedAt || item.createdAt);
+    resultCount.textContent = `${allResults.length} result${allResults.length === 1 ? "" : "s"}`;
+
+    if (!allResults.length) {
+        resultList.innerHTML = `<div class="result-empty">No results saved yet.</div>`;
+        return;
+    }
+
+    resultList.innerHTML = allResults.map(result => `
+        <article class="result-item">
+            <div class="group-item-top">
+                <span class="group-badge">MATCH ${result.fixtureId || result.id || "-"}</span>
+            </div>
+            <div class="result-title">${result.matchTitle || `${result.teamAName || "-"} vs ${result.teamBName || "-"}`}</div>
+            <div class="result-meta">${result.matchDate || "Date TBD"}${result.matchTime ? ` • ${result.matchTime}` : ""}${result.venue ? ` • ${result.venue}` : ""}</div>
+            <div class="result-summary">${result.resultSummary || "Result pending"}</div>
+        </article>
+    `).join("");
+}
+
+async function loadResults() {
+    try {
+        const response = await fetch("/api/groups?resource=results", { cache: "no-store" });
+        const data = await response.json();
+        renderResults(Array.isArray(data.results) ? data.results : []);
+        syncResultFixtureSelection();
+    } catch (error) {
+        resultList.innerHTML = `<div class="result-empty">Could not load results.</div>`;
+        resultCount.textContent = "0 results";
     }
 }
 
@@ -2163,10 +2419,70 @@ async function deleteFixture(fixtureId) {
         }
 
         setFixtureStatus("Fixture deleted successfully.", false);
-        await loadFixtures();
+        await Promise.all([loadFixtures(), loadResults()]);
     } catch (error) {
         setFixtureStatus("Could not delete fixture.", true);
     }
+}
+
+async function saveResult() {
+    const fixtureId = Number(resultFixtureSelect.value);
+    const teamARuns = Number(resultTeamARunsInput.value);
+    const teamAWickets = Number(resultTeamAWicketsInput.value);
+    const teamAOvers = resultTeamAOversInput.value.trim();
+    const teamBRuns = Number(resultTeamBRunsInput.value);
+    const teamBWickets = Number(resultTeamBWicketsInput.value);
+    const teamBOvers = resultTeamBOversInput.value.trim();
+
+    if (!fixtureId) {
+        setResultStatus("Select a fixture first.", true);
+        return;
+    }
+
+    if ([teamARuns, teamAWickets, teamBRuns, teamBWickets].some(value => Number.isNaN(value) || value < 0)) {
+        setResultStatus("Enter valid non-negative runs and wickets for both teams.", true);
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/group/${fixtureId}?resource=results`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                team_a_runs: teamARuns,
+                team_a_wickets: teamAWickets,
+                team_a_overs: teamAOvers,
+                team_b_runs: teamBRuns,
+                team_b_wickets: teamBWickets,
+                team_b_overs: teamBOvers
+            })
+        });
+
+        const data = await response.json();
+        if (data.error) {
+            setResultStatus(data.error, true);
+            return;
+        }
+
+        setResultStatus("Result saved successfully.", false);
+        await loadResults();
+    } catch (error) {
+        setResultStatus("Could not save result.", true);
+    }
+}
+
+function resetResultForm() {
+    resultFixtureSelect.value = "";
+    resultTeamARunsInput.value = "";
+    resultTeamAWicketsInput.value = "";
+    resultTeamAOversInput.value = "";
+    resultTeamBRunsInput.value = "";
+    resultTeamBWicketsInput.value = "";
+    resultTeamBOversInput.value = "";
+    syncResultFixtureSelection();
+    setResultStatus("Form cleared. Select any fixture to add the score.", false);
 }
 
 function resetGroupForm() {
@@ -2632,6 +2948,9 @@ saveGroupBtn.addEventListener("click", saveGroup);
 resetGroupBtn.addEventListener("click", resetGroupForm);
 saveFixtureBtn.addEventListener("click", saveFixture);
 resetFixtureBtn.addEventListener("click", resetFixtureForm);
+saveResultBtn.addEventListener("click", saveResult);
+resetResultBtn.addEventListener("click", resetResultForm);
+resultFixtureSelect.addEventListener("change", syncResultFixtureSelection);
 ownerPlayerIdInput.addEventListener("input", syncOwnerNameFromPlayerId);
 soldPlayerIdInput.addEventListener("input", syncEditorFields);
 showPlayerBtn.addEventListener("click", showSelectedPlayer);
@@ -2650,6 +2969,7 @@ window.addEventListener("load", async () => {
     loadTeams();
     loadGroups();
     loadFixtures();
+    loadResults();
     loadAuctionSettings();
 });
 </script>

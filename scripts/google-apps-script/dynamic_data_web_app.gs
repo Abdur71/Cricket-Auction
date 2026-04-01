@@ -2,6 +2,7 @@ const SHEET_NAMES = [
   'teams',
   'groups',
   'fixtures',
+  'results',
   'sold_states',
   'current_player',
   'stage_view',

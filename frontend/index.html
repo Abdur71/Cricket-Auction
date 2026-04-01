@@ -516,6 +516,174 @@ body::before {
     font-size: 1.05rem;
 }
 
+.results-shell {
+    width: 100%;
+    max-width: 1680px;
+    border-radius: 28px;
+    background:
+        radial-gradient(circle at top left, rgba(117, 255, 181, 0.12), transparent 35%),
+        radial-gradient(circle at top right, rgba(244, 201, 93, 0.14), transparent 38%),
+        rgba(8, 15, 31, 0.78);
+    border: 1px solid var(--glass-stroke);
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 0 0 1px rgba(255, 255, 255, 0.03);
+    overflow: hidden;
+}
+
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    padding: 22px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(135deg, rgba(117, 255, 181, 0.08), rgba(244, 201, 93, 0.09));
+}
+
+.results-header h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.3rem, 1.9vw, 2rem);
+    letter-spacing: 0.12em;
+    color: #9effc5;
+}
+
+.results-subtitle {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: clamp(0.95rem, 1.1vw, 1.05rem);
+}
+
+.results-count {
+    color: var(--muted);
+    font-size: 1rem;
+    white-space: nowrap;
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 22px;
+    padding: 24px;
+}
+
+.result-stage-card {
+    position: relative;
+    padding: 24px;
+    border-radius: 24px;
+    background:
+        linear-gradient(145deg, rgba(117, 255, 181, 0.08), rgba(244, 201, 93, 0.08)),
+        rgba(4, 10, 22, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 16px 36px rgba(0, 0, 0, 0.24);
+    overflow: hidden;
+}
+
+.result-stage-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: center;
+}
+
+.result-stage-badge,
+.result-stage-winner {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 110px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.76rem;
+    letter-spacing: 0.08em;
+}
+
+.result-stage-badge {
+    border: 1px solid rgba(117, 255, 181, 0.24);
+    background: rgba(117, 255, 181, 0.08);
+    color: #b7ffd4;
+}
+
+.result-stage-winner {
+    border: 1px solid rgba(244, 201, 93, 0.24);
+    background: rgba(244, 201, 93, 0.08);
+    color: #ffd774;
+}
+
+.result-stage-title {
+    margin-top: 18px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.1rem, 1.7vw, 1.3rem);
+    color: var(--white);
+}
+
+.result-stage-meta {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+.result-stage-scores {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 18px;
+}
+
+.result-stage-team-box {
+    border-radius: 18px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.result-stage-team-box.winner {
+    border-color: rgba(117, 255, 181, 0.32);
+    box-shadow: inset 0 0 0 1px rgba(117, 255, 181, 0.12);
+}
+
+.result-stage-team-label {
+    color: var(--muted);
+    font-size: 0.76rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.result-stage-team-name {
+    margin-top: 8px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    color: var(--white);
+}
+
+.result-stage-score {
+    margin-top: 10px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.15rem;
+    color: var(--gold);
+}
+
+.result-stage-summary {
+    margin-top: 18px;
+    padding: 14px 16px;
+    border-radius: 18px;
+    background: rgba(117, 255, 181, 0.08);
+    border: 1px solid rgba(117, 255, 181, 0.16);
+    color: #dffff0;
+    font-weight: 700;
+}
+
+.results-empty {
+    padding: 48px 24px 56px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 1.05rem;
+}
+
 .home-hero {
     position: relative;
     width: 100%;
@@ -1640,6 +1808,15 @@ body::before {
         text-align: left;
     }
 
+    .results-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .result-stage-scores {
+        grid-template-columns: 1fr;
+    }
+
     .card {
         grid-template-columns: 1fr;
         min-height: auto;
@@ -1678,6 +1855,7 @@ body::before {
         <button class="site-nav-btn" type="button" data-front-section="teamshowcase">TeamShowcase</button>
         <button class="site-nav-btn" type="button" data-front-section="group">Group</button>
         <button class="site-nav-btn" type="button" data-front-section="fixtures">Match Fixture</button>
+        <button class="site-nav-btn" type="button" data-front-section="results">Result</button>
     </nav>
 
     <section class="news-ticker" aria-label="Breaking news">
@@ -1862,6 +2040,23 @@ body::before {
             </section>
         </main>
     </section>
+
+    <section class="frontend-section hidden" id="resultsSection">
+        <main class="stage">
+            <section class="results-shell">
+                <div class="results-header">
+                    <div>
+                        <h2>MATCH RESULTS</h2>
+                        <div class="results-subtitle" id="resultsStageSubtitle">Live results from admin panel.</div>
+                    </div>
+                    <div class="results-count" id="resultsStageCount">0 results</div>
+                </div>
+                <div class="results-grid" id="resultsStageGrid">
+                    <div class="results-empty">No results available to display.</div>
+                </div>
+            </section>
+        </main>
+    </section>
 </div>
 
 
@@ -1915,12 +2110,16 @@ const homeSection = document.getElementById("homeSection");
 const teamshowcaseSection = document.getElementById("teamshowcaseSection");
 const groupSection = document.getElementById("groupSection");
 const fixturesSection = document.getElementById("fixturesSection");
+const resultsSection = document.getElementById("resultsSection");
 const groupsStageGrid = document.getElementById("groupsStageGrid");
 const groupsStageCount = document.getElementById("groupsStageCount");
 const groupsStageSubtitle = document.getElementById("groupsStageSubtitle");
 const fixturesStageGrid = document.getElementById("fixturesStageGrid");
 const fixturesStageCount = document.getElementById("fixturesStageCount");
 const fixturesStageSubtitle = document.getElementById("fixturesStageSubtitle");
+const resultsStageGrid = document.getElementById("resultsStageGrid");
+const resultsStageCount = document.getElementById("resultsStageCount");
+const resultsStageSubtitle = document.getElementById("resultsStageSubtitle");
 const stageScreenOpenedAt = Date.now();
 const expandedTeamCards = new Set();
 let currentFrontendSection = "home";
@@ -1970,6 +2169,7 @@ function setFrontendSection(sectionName) {
     teamshowcaseSection.classList.toggle("hidden", sectionName !== "teamshowcase");
     groupSection.classList.toggle("hidden", sectionName !== "group");
     fixturesSection.classList.toggle("hidden", sectionName !== "fixtures");
+    resultsSection.classList.toggle("hidden", sectionName !== "results");
 
     frontNavButtons.forEach(button => {
         button.classList.toggle("active", button.dataset.frontSection === sectionName);
@@ -1985,6 +2185,10 @@ function setFrontendSection(sectionName) {
 
     if (sectionName === "fixtures") {
         loadStageFixtures();
+    }
+
+    if (sectionName === "results") {
+        loadStageResults();
     }
 
     syncHomeCountdownVisibility();
@@ -2324,6 +2528,58 @@ async function loadStageFixtures() {
     } catch (error) {
         fixturesStageGrid.innerHTML = `<div class="fixtures-empty">Could not load fixtures.</div>`;
         fixturesStageCount.textContent = "0 fixtures";
+    }
+}
+
+function renderResultsStage(results) {
+    const resultItems = Array.isArray(results) ? results : [];
+    resultsStageCount.textContent = `${resultItems.length} result${resultItems.length === 1 ? "" : "s"}`;
+
+    if (!resultItems.length) {
+        resultsStageGrid.innerHTML = `<div class="results-empty">No results available to display.</div>`;
+        return;
+    }
+
+    resultsStageGrid.innerHTML = resultItems.map(result => {
+        const teamAWon = result.winnerName === result.teamAName;
+        const teamBWon = result.winnerName === result.teamBName;
+        return `
+            <article class="result-stage-card">
+                <div class="result-stage-top">
+                    <div class="result-stage-badge">MATCH ${result.fixtureId || result.id || "-"}</div>
+                    <div class="result-stage-winner">${result.winnerName || "Awaiting Result"}</div>
+                </div>
+                <div class="result-stage-title">${result.matchTitle || `${result.teamAName || "-"} vs ${result.teamBName || "-"}`}</div>
+                <div class="result-stage-meta">${result.matchDate || "Date TBD"}${result.matchTime ? ` • ${result.matchTime}` : ""}${result.venue ? ` • ${result.venue}` : ""}</div>
+                <div class="result-stage-scores">
+                    <div class="result-stage-team-box ${teamAWon ? "winner" : ""}">
+                        <div class="result-stage-team-label">Team One</div>
+                        <div class="result-stage-team-name">${result.teamAName || "-"}</div>
+                        <div class="result-stage-score">${result.teamAScoreLabel || "-"}</div>
+                    </div>
+                    <div class="result-stage-team-box ${teamBWon ? "winner" : ""}">
+                        <div class="result-stage-team-label">Team Two</div>
+                        <div class="result-stage-team-name">${result.teamBName || "-"}</div>
+                        <div class="result-stage-score">${result.teamBScoreLabel || "-"}</div>
+                    </div>
+                </div>
+                <div class="result-stage-summary">${result.resultSummary || "Result will appear here after admin update."}</div>
+            </article>
+        `;
+    }).join("");
+}
+
+async function loadStageResults() {
+    try {
+        const response = await fetch("/api/groups?resource=results", { cache: "no-store" });
+        const data = await response.json();
+        const results = Array.isArray(data.results) ? data.results.filter(item => item.updatedAt || item.createdAt) : [];
+
+        resultsStageSubtitle.textContent = "Live results from admin panel.";
+        renderResultsStage(results);
+    } catch (error) {
+        resultsStageGrid.innerHTML = `<div class="results-empty">Could not load results.</div>`;
+        resultsStageCount.textContent = "0 results";
     }
 }
 
