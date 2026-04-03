@@ -2,6 +2,33 @@ const { requireAuth } = require("../utils/auth");
 const { sendJson, sendMethodNotAllowed, getRequestBody } = require("../utils/http");
 const { readJsonFile, writeJsonFile } = require("../utils/storage");
 
+function buildFixtureTitle(matchType, teamAName, teamBName) {
+  const safeMatchType = String(matchType || "").trim();
+  const safeTeamAName = String(teamAName || "").trim();
+  const safeTeamBName = String(teamBName || "").trim();
+
+  return safeMatchType
+    ? `${safeMatchType} - ${safeTeamAName} vs ${safeTeamBName}`
+    : `${safeTeamAName} vs ${safeTeamBName}`;
+}
+
+function resolveFixtureTeamSelection(teamIdValue, teamNameValue, teamSlotValue, teams) {
+  const teamId = Number(teamIdValue) || 0;
+  const safeTeams = Array.isArray(teams) ? teams : [];
+  const matchedTeam = safeTeams.find((team) => Number(team.id) === teamId) || null;
+  const fallbackName = String(teamNameValue || "").trim();
+  const teamSlot = String(teamSlotValue || "").trim();
+  const teamName = matchedTeam
+    ? String(matchedTeam.teamName || "").trim()
+    : fallbackName;
+
+  return {
+    teamId: matchedTeam ? teamId : 0,
+    teamName,
+    teamSlot
+  };
+}
+
 function normalizeGroup(group, teams) {
   const safeGroup = group && typeof group === "object" ? group : {};
   const teamIds = Array.isArray(safeGroup.teamIds) ? safeGroup.teamIds.map((teamId) => Number(teamId)).filter((teamId) => teamId > 0) : [];
@@ -39,6 +66,8 @@ function normalizeFixture(fixture, teams) {
     matchTitle: String(safeFixture.matchTitle || "").trim(),
     teamAId,
     teamBId,
+    teamASlot: String(safeFixture.teamASlot || "").trim(),
+    teamBSlot: String(safeFixture.teamBSlot || "").trim(),
     teamAName: teamA ? String(teamA.teamName || "").trim() : String(safeFixture.teamAName || "").trim(),
     teamBName: teamB ? String(teamB.teamName || "").trim() : String(safeFixture.teamBName || "").trim(),
     venue: String(safeFixture.venue || "").trim(),
@@ -166,17 +195,10 @@ module.exports = async function handler(req, res) {
       const payload = await getRequestBody(req);
 
       if (resource === "fixtures") {
-        const teamAId = Number(payload.team_a_id) || 0;
-        const teamBId = Number(payload.team_b_id) || 0;
         const matchType = String(payload.match_type || "").trim();
         const venue = String(payload.venue || "").trim();
         const matchDate = String(payload.match_date || "").trim();
         const matchTime = String(payload.match_time || "").trim();
-
-        if (!teamAId || !teamBId || teamAId === teamBId) {
-          sendJson(res, 400, { error: "Select two different teams for the fixture" });
-          return;
-        }
 
         const [fixtures, teams] = await Promise.all([
           readJsonFile("fixtures.json", []),
@@ -184,24 +206,43 @@ module.exports = async function handler(req, res) {
         ]);
         const safeFixtures = Array.isArray(fixtures) ? fixtures : [];
         const safeTeams = Array.isArray(teams) ? teams : [];
-        const teamA = safeTeams.find((team) => Number(team.id) === teamAId);
-        const teamB = safeTeams.find((team) => Number(team.id) === teamBId);
+        const teamASelection = resolveFixtureTeamSelection(
+          payload.team_a_id,
+          payload.team_a_name,
+          payload.team_a_slot,
+          safeTeams
+        );
+        const teamBSelection = resolveFixtureTeamSelection(
+          payload.team_b_id,
+          payload.team_b_name,
+          payload.team_b_slot,
+          safeTeams
+        );
 
-        if (!teamA || !teamB) {
-          sendJson(res, 400, { error: "Selected teams were not found" });
+        if (!teamASelection.teamName || !teamBSelection.teamName) {
+          sendJson(res, 400, { error: "Select both teams for the fixture" });
+          return;
+        }
+
+        if (
+          teamASelection.teamSlot && teamBSelection.teamSlot
+            ? teamASelection.teamSlot === teamBSelection.teamSlot
+            : teamASelection.teamId > 0 && teamASelection.teamId === teamBSelection.teamId
+        ) {
+          sendJson(res, 400, { error: "Select two different teams for the fixture" });
           return;
         }
 
         const fixture = {
           id: safeFixtures.length + 1,
           matchType,
-          matchTitle: matchType
-            ? `${matchType} - ${String(teamA.teamName || "").trim()} vs ${String(teamB.teamName || "").trim()}`
-            : `${String(teamA.teamName || "").trim()} vs ${String(teamB.teamName || "").trim()}`,
-          teamAId,
-          teamBId,
-          teamAName: String(teamA.teamName || "").trim(),
-          teamBName: String(teamB.teamName || "").trim(),
+          matchTitle: buildFixtureTitle(matchType, teamASelection.teamName, teamBSelection.teamName),
+          teamAId: teamASelection.teamId,
+          teamBId: teamBSelection.teamId,
+          teamASlot: teamASelection.teamSlot,
+          teamBSlot: teamBSelection.teamSlot,
+          teamAName: teamASelection.teamName,
+          teamBName: teamBSelection.teamName,
           venue,
           matchDate,
           matchTime,

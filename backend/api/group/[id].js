@@ -2,6 +2,33 @@ const { requireAuth } = require("../../utils/auth");
 const { sendJson, sendMethodNotAllowed, getRequestBody } = require("../../utils/http");
 const { readJsonFile, writeJsonFile } = require("../../utils/storage");
 
+function buildFixtureTitle(matchType, teamAName, teamBName) {
+  const safeMatchType = String(matchType || "").trim();
+  const safeTeamAName = String(teamAName || "").trim();
+  const safeTeamBName = String(teamBName || "").trim();
+
+  return safeMatchType
+    ? `${safeMatchType} - ${safeTeamAName} vs ${safeTeamBName}`
+    : `${safeTeamAName} vs ${safeTeamBName}`;
+}
+
+function resolveFixtureTeamSelection(teamIdValue, teamNameValue, teamSlotValue, teams) {
+  const teamId = Number(teamIdValue) || 0;
+  const safeTeams = Array.isArray(teams) ? teams : [];
+  const matchedTeam = safeTeams.find((team) => Number(team.id) === teamId) || null;
+  const fallbackName = String(teamNameValue || "").trim();
+  const teamSlot = String(teamSlotValue || "").trim();
+  const teamName = matchedTeam
+    ? String(matchedTeam.teamName || "").trim()
+    : fallbackName;
+
+  return {
+    teamId: matchedTeam ? teamId : 0,
+    teamName,
+    teamSlot
+  };
+}
+
 module.exports = async function handler(req, res) {
   const resource = String(req.query.resource || "").trim().toLowerCase();
 
@@ -90,17 +117,10 @@ module.exports = async function handler(req, res) {
     const payload = await getRequestBody(req);
 
     if (resource === "fixtures") {
-      const teamAId = Number(payload.team_a_id) || 0;
-      const teamBId = Number(payload.team_b_id) || 0;
       const matchType = String(payload.match_type || "").trim();
       const venue = String(payload.venue || "").trim();
       const matchDate = String(payload.match_date || "").trim();
       const matchTime = String(payload.match_time || "").trim();
-
-      if (!teamAId || !teamBId || teamAId === teamBId) {
-        sendJson(res, 400, { error: "Select two different teams for the fixture" });
-        return;
-      }
 
       const [fixtures, teams] = await Promise.all([
         readJsonFile("fixtures.json", []),
@@ -115,23 +135,43 @@ module.exports = async function handler(req, res) {
         return;
       }
 
-      const teamA = safeTeams.find((team) => Number(team.id) === teamAId);
-      const teamB = safeTeams.find((team) => Number(team.id) === teamBId);
-      if (!teamA || !teamB) {
-        sendJson(res, 400, { error: "Selected teams were not found" });
+      const teamASelection = resolveFixtureTeamSelection(
+        payload.team_a_id,
+        payload.team_a_name,
+        payload.team_a_slot,
+        safeTeams
+      );
+      const teamBSelection = resolveFixtureTeamSelection(
+        payload.team_b_id,
+        payload.team_b_name,
+        payload.team_b_slot,
+        safeTeams
+      );
+
+      if (!teamASelection.teamName || !teamBSelection.teamName) {
+        sendJson(res, 400, { error: "Select both teams for the fixture" });
+        return;
+      }
+
+      if (
+        teamASelection.teamSlot && teamBSelection.teamSlot
+          ? teamASelection.teamSlot === teamBSelection.teamSlot
+          : teamASelection.teamId > 0 && teamASelection.teamId === teamBSelection.teamId
+      ) {
+        sendJson(res, 400, { error: "Select two different teams for the fixture" });
         return;
       }
 
       const updatedFixtures = safeFixtures.map((fixture) => Number(fixture.id) === id ? {
         ...fixture,
         matchType,
-        matchTitle: matchType
-          ? `${matchType} - ${String(teamA.teamName || "").trim()} vs ${String(teamB.teamName || "").trim()}`
-          : `${String(teamA.teamName || "").trim()} vs ${String(teamB.teamName || "").trim()}`,
-        teamAId,
-        teamBId,
-        teamAName: String(teamA.teamName || "").trim(),
-        teamBName: String(teamB.teamName || "").trim(),
+        matchTitle: buildFixtureTitle(matchType, teamASelection.teamName, teamBSelection.teamName),
+        teamAId: teamASelection.teamId,
+        teamBId: teamBSelection.teamId,
+        teamASlot: teamASelection.teamSlot,
+        teamBSlot: teamBSelection.teamSlot,
+        teamAName: teamASelection.teamName,
+        teamBName: teamBSelection.teamName,
         venue,
         matchDate,
         matchTime

@@ -1814,6 +1814,90 @@ let allFixtures = [];
 let allResults = [];
 let countdownEnabled = false;
 
+const KNOCKOUT_MATCH_TEAM_OPTIONS = {
+    "Qualifier 1": [
+        { value: "slot:group-a-champion", label: "Group-A Champion" },
+        { value: "slot:group-b-champion", label: "Group-B Champion" }
+    ],
+    "Eliminator": [
+        { value: "slot:group-b-runners-up", label: "Group-B Runners Up" },
+        { value: "slot:group-a-runners-up", label: "Group-A Runners Up" }
+    ],
+    "Qualifier 2": [
+        { value: "slot:q1-runners-up", label: "Q-1 Runners Up" },
+        { value: "slot:eliminator-champion", label: "Eliminator Champion" }
+    ],
+    "Final": [
+        { value: "slot:q1-champion", label: "Q-1 Champion" },
+        { value: "slot:q2-champion", label: "Q-2 Champion" }
+    ]
+};
+
+function getFixtureTeamOptions(matchType = "") {
+    const normalizedMatchType = String(matchType || "").trim();
+    if (KNOCKOUT_MATCH_TEAM_OPTIONS[normalizedMatchType]) {
+        return KNOCKOUT_MATCH_TEAM_OPTIONS[normalizedMatchType];
+    }
+
+    return allTeams.map(team => ({
+        value: String(team.id || ""),
+        label: team.teamName || "-"
+    }));
+}
+
+function buildFixtureTeamOptionsHtml(options, placeholderText) {
+    return `<option value="">${placeholderText}</option>` + options.map(option => `
+        <option value="${option.value}">${option.label}</option>
+    `).join("");
+}
+
+function populateFixtureTeamSelects() {
+    const matchType = fixtureMatchTypeSelect.value.trim();
+    const teamOptions = getFixtureTeamOptions(matchType);
+    const teamAValue = fixtureTeamASelect.value;
+    const teamBValue = fixtureTeamBSelect.value;
+    const placeholderText = KNOCKOUT_MATCH_TEAM_OPTIONS[matchType] ? "Select slot" : "Select team";
+
+    fixtureTeamASelect.innerHTML = buildFixtureTeamOptionsHtml(teamOptions, placeholderText);
+    fixtureTeamBSelect.innerHTML = buildFixtureTeamOptionsHtml(teamOptions, placeholderText);
+
+    if (teamOptions.some(option => option.value === teamAValue)) {
+        fixtureTeamASelect.value = teamAValue;
+    }
+
+    if (teamOptions.some(option => option.value === teamBValue)) {
+        fixtureTeamBSelect.value = teamBValue;
+    }
+}
+
+function getSelectedFixtureTeamPayload(selectElement) {
+    const rawValue = String(selectElement.value || "").trim();
+    const selectedOption = selectElement.options[selectElement.selectedIndex];
+    const selectedLabel = String(selectedOption?.textContent || "").trim();
+
+    if (!rawValue) {
+        return {
+            teamId: 0,
+            teamName: "",
+            teamSlot: ""
+        };
+    }
+
+    if (rawValue.startsWith("slot:")) {
+        return {
+            teamId: 0,
+            teamName: selectedLabel,
+            teamSlot: rawValue.slice(5)
+        };
+    }
+
+    return {
+        teamId: Number(rawValue) || 0,
+        teamName: selectedLabel,
+        teamSlot: ""
+    };
+}
+
 function setDashboardStatus(message, isError = false) {
     dashboardStatus.textContent = message;
     dashboardStatus.classList.toggle("error", Boolean(isError));
@@ -2036,9 +2120,11 @@ function renderTeams(teams) {
     const teamItems = Array.isArray(teams) ? teams : [];
     allTeams = teamItems;
     teamCount.textContent = `${teamItems.length} team${teamItems.length === 1 ? "" : "s"}`;
+    populateFixtureTeamSelects();
 
     if (!teamItems.length) {
         teamList.innerHTML = `<div class="team-empty">No teams added yet.</div>`;
+        soldTeamSelect.innerHTML = `<option value="">Select team</option>`;
         return;
     }
 
@@ -2077,12 +2163,6 @@ function renderTeams(teams) {
     soldTeamSelect.innerHTML = `<option value="">Select team</option>` + teamItems.map(team => `
         <option value="${team.teamName || ""}">${team.teamName || "-"}</option>
     `).join("");
-
-    const fixtureOptions = `<option value="">Select team</option>` + teamItems.map(team => `
-        <option value="${team.id || 0}">${team.teamName || "-"}</option>
-    `).join("");
-    fixtureTeamASelect.innerHTML = fixtureOptions;
-    fixtureTeamBSelect.innerHTML = fixtureOptions;
 }
 
 async function loadTeams() {
@@ -2371,14 +2451,23 @@ async function saveGroup() {
 }
 
 async function saveFixture() {
-    const teamAId = Number(fixtureTeamASelect.value);
-    const teamBId = Number(fixtureTeamBSelect.value);
     const matchType = fixtureMatchTypeSelect.value.trim();
+    const teamASelection = getSelectedFixtureTeamPayload(fixtureTeamASelect);
+    const teamBSelection = getSelectedFixtureTeamPayload(fixtureTeamBSelect);
     const matchDate = fixtureDateInput.value.trim();
     const matchTime = fixtureTimeInput.value.trim();
     const venue = fixtureVenueInput.value.trim() || "RUET CENTER FIELD";
 
-    if (!teamAId || !teamBId || teamAId === teamBId) {
+    if (!teamASelection.teamName || !teamBSelection.teamName) {
+        setFixtureStatus("Select both teams for the fixture.", true);
+        return;
+    }
+
+    if (
+        teamASelection.teamSlot && teamBSelection.teamSlot
+            ? teamASelection.teamSlot === teamBSelection.teamSlot
+            : teamASelection.teamId > 0 && teamASelection.teamId === teamBSelection.teamId
+    ) {
         setFixtureStatus("Select two different teams for the fixture.", true);
         return;
     }
@@ -2390,8 +2479,12 @@ async function saveFixture() {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                team_a_id: teamAId,
-                team_b_id: teamBId,
+                team_a_id: teamASelection.teamId,
+                team_b_id: teamBSelection.teamId,
+                team_a_name: teamASelection.teamName,
+                team_b_name: teamBSelection.teamName,
+                team_a_slot: teamASelection.teamSlot,
+                team_b_slot: teamBSelection.teamSlot,
                 match_type: matchType,
                 match_date: matchDate,
                 match_time: matchTime,
@@ -2408,6 +2501,7 @@ async function saveFixture() {
         fixtureTeamASelect.value = "";
         fixtureTeamBSelect.value = "";
         fixtureMatchTypeSelect.value = "";
+        populateFixtureTeamSelects();
         fixtureDateInput.value = "";
         fixtureTimeInput.value = "";
         fixtureVenueInput.value = "RUET CENTER FIELD";
@@ -2422,6 +2516,7 @@ function resetFixtureForm() {
     fixtureTeamASelect.value = "";
     fixtureTeamBSelect.value = "";
     fixtureMatchTypeSelect.value = "";
+    populateFixtureTeamSelects();
     fixtureDateInput.value = "";
     fixtureTimeInput.value = "";
     fixtureVenueInput.value = "RUET CENTER FIELD";
@@ -3001,6 +3096,7 @@ saveTeamBtn.addEventListener("click", saveTeam);
 resetTeamBtn.addEventListener("click", resetTeamForm);
 saveGroupBtn.addEventListener("click", saveGroup);
 resetGroupBtn.addEventListener("click", resetGroupForm);
+fixtureMatchTypeSelect.addEventListener("change", populateFixtureTeamSelects);
 saveFixtureBtn.addEventListener("click", saveFixture);
 resetFixtureBtn.addEventListener("click", resetFixtureForm);
 saveResultBtn.addEventListener("click", saveResult);
