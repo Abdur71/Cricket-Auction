@@ -1694,7 +1694,7 @@
 
                 <div class="cricket-animation" aria-hidden="true" id="cricketAnimWrap">
                     <canvas class="cricket-canvas" id="cricketCanvas"></canvas>
-                    <div class="click-hint">Tap to hit a six âš¡</div>
+                    <div class="click-hint">Tap to hit a six</div>
                 </div>
             </section>
 
@@ -2087,8 +2087,8 @@
         }
 
         function updateBreakingNewsText(messages) {
-            const text = messages.length ? messages.join("  â€¢  ") : "Admin breaking news will appear here.";
-            newsTickerText.textContent = `${text}  â€¢  ${text}`;
+            const text = messages.length ? messages.join("  -  ") : "Admin breaking news will appear here.";
+            newsTickerText.textContent = `${text}  -  ${text}`;
         }
 
         async function refreshBreakingNews() {
@@ -2169,7 +2169,7 @@
                 });
 
                 databaseStageSubtitle.textContent = query || statusValue !== "all"
-                    ? `Filtered view from admin panel${query ? ` â€¢ Search: ${query}` : ""}${statusValue !== "all" ? ` â€¢ Status: ${statusValue}` : ""}`
+                    ? `Filtered view from admin panel${query ? ` - Search: ${query}` : ""}${statusValue !== "all" ? ` - Status: ${statusValue}` : ""}`
                     : "Live stage table from admin panel.";
                 renderStageDatabaseRows(filtered);
             } catch (error) {
@@ -2208,7 +2208,7 @@
                         ${players.map(player => `
                             <article class="team-stage-player-item">
                                 <div class="team-stage-player-item-name">${player.name || "-"}</div>
-                                <div class="team-stage-player-item-meta">Player ID: ${player.id || "-"}${player.soldPrice ? ` â€¢ ${player.soldPrice}` : ""}</div>
+                                <div class="team-stage-player-item-meta">Player ID: ${player.id || "-"}${player.soldPrice ? ` - ${player.soldPrice}` : ""}</div>
                             </article>
                         `).join("")}
                     </div>
@@ -2252,7 +2252,7 @@
             <article class="group-stage-card">
                 <div class="group-stage-badge">GROUP ${group.id || "-"}</div>
                 <div class="group-stage-name">${group.groupName || "-"}</div>
-                <div class="group-stage-meta">Capacity: ${teamLimit} teams â€¢ Assigned: ${teams.length}</div>
+                <div class="group-stage-meta">Capacity: ${teamLimit} teams - Assigned: ${teams.length}</div>
                 <div class="group-stage-teams">
                     ${teams.length
                         ? teams.map(team => `
@@ -2344,7 +2344,7 @@ function renderFixturesStage(fixtures) {
                 </div>
                 <div class="fixture-stage-detail">
                     <div class="fixture-stage-detail-label">Date & Time</div>
-                    <div class="fixture-stage-detail-value">${fixture.matchDate || "Date TBD"}${fixture.matchTime ? ` â€¢ ${fixture.matchTime}` : ""}</div>
+                    <div class="fixture-stage-detail-value">${fixture.matchDate || "Date TBD"}${fixture.matchTime ? ` - ${fixture.matchTime}` : ""}</div>
                 </div>
                 <div class="fixture-stage-detail">
                     <div class="fixture-stage-detail-label">Venue</div>
@@ -2388,7 +2388,7 @@ function renderFixturesStage(fixtures) {
                     <div class="result-stage-winner">${result.winnerName || "Awaiting Result"}</div>
                 </div>
                 <div class="result-stage-title">${result.matchTitle || `${result.teamAName || "-"} vs ${result.teamBName || "-"}`}</div>
-                <div class="result-stage-meta">${result.matchDate || "Date TBD"}${result.matchTime ? ` â€¢ ${result.matchTime}` : ""}${result.venue ? ` â€¢ ${result.venue}` : ""}</div>
+                <div class="result-stage-meta">${result.matchDate || "Date TBD"}${result.matchTime ? ` - ${result.matchTime}` : ""}${result.venue ? ` - ${result.venue}` : ""}</div>
                 <div class="result-stage-scores">
                     <div class="result-stage-team-box ${teamAWon ? "winner" : ""}">
                         <div class="result-stage-team-label">Team One</div>
@@ -2479,7 +2479,7 @@ function renderFixturesStage(fixtures) {
                 teamDetailPlayers.innerHTML = team.players.map(player => `
             <article class="team-detail-player">
                 <div class="team-detail-player-name">${player.name || "-"}</div>
-                <div class="team-detail-player-meta">Player ID: ${player.id || "-"}${player.soldPrice ? ` â€¢ ${player.soldPrice}` : ""}</div>
+                <div class="team-detail-player-meta">Player ID: ${player.id || "-"}${player.soldPrice ? ` - ${player.soldPrice}` : ""}</div>
             </article>
         `).join("");
             } catch (error) {
@@ -2675,557 +2675,7 @@ function renderFixturesStage(fixtures) {
             }, 5000);
         });
 
-        /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-           CRICKET SIX â€” Realistic Stadium Animation
-        â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
-        (function () {
-            const wrap = document.getElementById('cricketAnimWrap');
-            const canvas = document.getElementById('cricketCanvas');
-            if (!canvas || !wrap) return;
-            const ctx = canvas.getContext('2d');
-            let W, H, dpr;
-
-            function resize() {
-                dpr = window.devicePixelRatio || 1;
-                W = wrap.clientWidth; H = wrap.clientHeight;
-                canvas.width = W * dpr; canvas.height = H * dpr;
-                canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
-                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-            }
-            resize();
-            window.addEventListener('resize', resize);
-
-            /* â”€â”€ Timing â”€â”€ */
-            const T = { idle: 1.0, windup: 0.6, swing: 0.18, flight: 1.7, celebrate: 1.8 };
-            let phase = 'idle', pt = 0, trigger = false;
-
-            /* â”€â”€ Helpers â”€â”€ */
-            const px = () => W * 0.70;   // batsman centre X
-            const gy = () => H * 0.84;   // ground Y
-
-            /* â”€â”€ Particles â”€â”€ */
-            let sparks = [], confetti = [], trail = [], sixLetters = [];
-
-            function spawnSparks(ox, oy) {
-                const cols = ['#f4c95d', '#ff6040', '#00e6ff', '#fff', '#ffb020', '#80ff60'];
-                for (let i = 0; i < 60; i++) {
-                    const a = Math.random() * Math.PI * 2, sp = 3 + Math.random() * 7;
-                    sparks.push({
-                        x: ox, y: oy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 4,
-                        life: 1, decay: 0.016 + Math.random() * 0.022,
-                        r: 1.5 + Math.random() * 4, c: cols[Math.floor(Math.random() * cols.length)]
-                    });
-                }
-                for (let i = 0; i < 28; i++) {
-                    const a = Math.random() * Math.PI * 2, sp = 4 + Math.random() * 9;
-                    confetti.push({
-                        x: ox, y: oy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 5,
-                        life: 1, decay: 0.009 + Math.random() * 0.012,
-                        w: 6 + Math.random() * 8, h: 3 + Math.random() * 4,
-                        rot: Math.random() * Math.PI, drot: (Math.random() - 0.5) * 0.25,
-                        c: ['#f4c95d', '#00e6ff', '#ff607a', '#b4ff6f', '#fff'][Math.floor(Math.random() * 5)]
-                    });
-                }
-            }
-
-            function spawnSix(ox, oy) {
-                sixLetters = [];
-                ['S', 'I', 'X', '!'].forEach((ch, i) => {
-                    sixLetters.push({
-                        ch, x: ox + (i - 1.5) * 54, y: oy, vy: -9 - Math.random() * 3,
-                        delay: i * 0.045, scale: 0
-                    });
-                });
-            }
-
-            function updateParticles(dt) {
-                [sparks, confetti].forEach(arr => {
-                    arr.forEach(p => { p.x += p.vx; p.y += p.vy; p.vy += 0.3; p.life -= p.decay; });
-                });
-                sparks = sparks.filter(p => p.life > 0);
-                confetti = confetti.filter(p => p.life > 0);
-                trail.forEach(p => { p.life -= 0.05; });
-                trail = trail.filter(p => p.life > 0);
-            }
-
-            /* â”€â”€ Ball parabola â”€â”€ */
-            function ballPos(t) {
-                const sx = px(), sy = gy() - H * 0.10;
-                const ex = -W * 0.05, peakY = H * 0.05;
-                const x = sx + (ex - sx) * t;
-                const y = sy + (peakY - sy) * 4 * t * (1 - t) + (H * 0.97 - sy) * t * t;
-                return { x, y };
-            }
-
-            /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-               DRAW: Stadium background
-            â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
-            function drawStadium() {
-                // Night sky gradient
-                const sky = ctx.createLinearGradient(0, 0, 0, H);
-                sky.addColorStop(0, '#030510');
-                sky.addColorStop(0.55, '#061228');
-                sky.addColorStop(1, '#0a1f0a');
-                ctx.fillStyle = sky;
-                ctx.fillRect(0, 0, W, H);
-
-                // Distant stadium stands (crowd) â€“ left + right arcs
-                drawStands();
-
-                // Outfield glow
-                const oGlow = ctx.createRadialGradient(W * 0.5, H * 1.1, 20, W * 0.5, H * 1.1, W * 0.6);
-                oGlow.addColorStop(0, 'rgba(30,110,30,0.55)');
-                oGlow.addColorStop(0.5, 'rgba(12,55,12,0.22)');
-                oGlow.addColorStop(1, 'transparent');
-                ctx.fillStyle = oGlow; ctx.fillRect(0, 0, W, H);
-
-                // Boundary rope
-                drawBoundaryRope();
-
-                // Pitch
-                drawPitch();
-
-                // Floodlights
-                drawFloodlights();
-            }
-
-            function drawStands() {
-                // Stand silhouette â€“ fill behind player
-                const standH = H * 0.38;
-                // Left stand
-                ctx.fillStyle = '#07101e';
-                ctx.beginPath();
-                ctx.moveTo(0, standH); ctx.lineTo(0, 0); ctx.lineTo(W * 0.44, 0);
-                ctx.lineTo(W * 0.44, standH * 1.1); ctx.closePath(); ctx.fill();
-                // Right stand
-                ctx.beginPath();
-                ctx.moveTo(W, standH); ctx.lineTo(W, 0); ctx.lineTo(W * 0.56, 0);
-                ctx.lineTo(W * 0.56, standH * 1.1); ctx.closePath(); ctx.fill();
-
-                // Crowd rows â€“ tiny dots
-                const rowCols = ['rgba(255,60,60,0.65)', 'rgba(255,220,50,0.55)', 'rgba(60,180,255,0.55)', 'rgba(255,255,255,0.45)', 'rgba(80,220,80,0.45)'];
-                for (let side = 0; side < 2; side++) {
-                    const startX = side === 0 ? 0 : W * 0.57;
-                    const endX = side === 0 ? W * 0.43 : W;
-                    for (let row = 0; row < 9; row++) {
-                        const rowY = H * 0.04 + row * H * 0.036;
-                        const dotGap = 10;
-                        for (let dx = startX + 4; dx < endX - 4; dx += dotGap) {
-                            ctx.fillStyle = rowCols[(row + Math.floor(dx / dotGap)) % rowCols.length];
-                            ctx.beginPath();
-                            ctx.arc(dx, rowY, 3.2, 0, Math.PI * 2); ctx.fill();
-                        }
-                    }
-                }
-                // Stand ledge lines
-                ctx.strokeStyle = 'rgba(255,255,255,0.06)';
-                ctx.lineWidth = 1;
-                for (let row = 0; row < 9; row++) {
-                    const rowY = H * 0.04 + row * H * 0.036 + 6;
-                    ctx.beginPath(); ctx.moveTo(0, rowY); ctx.lineTo(W * 0.43, rowY); ctx.stroke();
-                    ctx.beginPath(); ctx.moveTo(W * 0.57, rowY); ctx.lineTo(W, rowY); ctx.stroke();
-                }
-            }
-
-            function drawBoundaryRope() {
-                // Slightly curved boundary rope near bottom
-                ctx.save();
-                ctx.setLineDash([8, 10]);
-                ctx.strokeStyle = 'rgba(255,255,220,0.55)';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.ellipse(W * 0.5, H * 1.18, W * 0.52, H * 0.45, 0, Math.PI * 1.12, Math.PI * 1.88);
-                ctx.stroke();
-                ctx.setLineDash([]);
-                ctx.restore();
-            }
-
-            function drawPitch() {
-                const pitchW = W * 0.11;
-                const pxc = W * 0.5;
-                const topY = H * 0.28, botY = H * 1.0;
-                // Pitch trapezoid
-                const pitchGrad = ctx.createLinearGradient(pxc, topY, pxc, botY);
-                pitchGrad.addColorStop(0, 'rgba(204,170,112,0.65)');
-                pitchGrad.addColorStop(0.5, 'rgba(178,138,82,0.80)');
-                pitchGrad.addColorStop(1, 'rgba(130,90,40,0.90)');
-                ctx.fillStyle = pitchGrad;
-                ctx.beginPath();
-                ctx.moveTo(pxc - pitchW * 0.42, topY);
-                ctx.lineTo(pxc + pitchW * 0.42, topY);
-                ctx.lineTo(pxc + pitchW * 0.55, botY);
-                ctx.lineTo(pxc - pitchW * 0.55, botY);
-                ctx.closePath(); ctx.fill();
-                // Cracks/texture lines
-                ctx.strokeStyle = 'rgba(100,65,20,0.35)'; ctx.lineWidth = 1;
-                [[0.3, 0.38, 0.48, 0.44], [0.5, 0.55, 0.62, 0.51], [0.6, 0.7, 0.72, 0.66]].forEach(([x1r, y1r, x2r, y2r]) => {
-                    ctx.beginPath();
-                    ctx.moveTo(pxc - pitchW * (0.3 - x1r * 0.2), H * y1r);
-                    ctx.lineTo(pxc + pitchW * x2r * 0.6, H * y2r);
-                    ctx.stroke();
-                });
-                // Crease stripe
-                const creaseY = gy() - H * 0.012;
-                ctx.strokeStyle = 'rgba(255,250,220,0.88)'; ctx.lineWidth = 2.5;
-                ctx.beginPath();
-                ctx.moveTo(pxc - pitchW * 0.52, creaseY);
-                ctx.lineTo(pxc + pitchW * 0.52, creaseY);
-                ctx.stroke();
-                // Popping crease vertical marks
-                [-0.52, 0.52].forEach(ox => {
-                    ctx.beginPath();
-                    ctx.moveTo(pxc + pitchW * ox, creaseY - H * 0.018);
-                    ctx.lineTo(pxc + pitchW * ox, creaseY + H * 0.004);
-                    ctx.stroke();
-                });
-                // Stumps (3)
-                const stumpY = creaseY - H * 0.06;
-                const stumpH = H * 0.07;
-                [-0.06, 0, 0.06].forEach(ox => {
-                    const sx = pxc + pitchW * ox * 0.8;
-                    ctx.strokeStyle = 'rgba(245,230,180,0.95)'; ctx.lineWidth = 3;
-                    ctx.beginPath(); ctx.moveTo(sx, stumpY + stumpH); ctx.lineTo(sx, stumpY); ctx.stroke();
-                    // bail
-                    ctx.strokeStyle = 'rgba(245,230,180,0.80)'; ctx.lineWidth = 1.8;
-                    ctx.beginPath(); ctx.moveTo(sx - 5, stumpY); ctx.lineTo(sx + 5, stumpY); ctx.stroke();
-                });
-            }
-
-            function drawFloodlights() {
-                const lights = [
-                    { lx: W * 0.04, ly: H * 0.03, tx: W * 0.3, ty: H * 0.75 },
-                    { lx: W * 0.96, ly: H * 0.03, tx: W * 0.7, ty: H * 0.75 }
-                ];
-                lights.forEach(({ lx, ly, tx, ty }) => {
-                    // Tower beam
-                    ctx.strokeStyle = 'rgba(160,190,210,0.18)'; ctx.lineWidth = 2.5;
-                    ctx.beginPath(); ctx.moveTo(lx, ly + 8); ctx.lineTo(tx, ty); ctx.stroke();
-                    // Light cone
-                    ctx.save();
-                    const coneGrad = ctx.createConicalGradient
-                        ? ctx.createConicalGradient(lx, ly, 0, Math.PI * 2)
-                        : null;
-                    // Fall back: radial cone
-                    const cone = ctx.createRadialGradient(lx, ly, 0, lx, ly, H * 0.82);
-                    cone.addColorStop(0, 'rgba(255,255,220,0.22)');
-                    cone.addColorStop(0.35, 'rgba(255,255,200,0.06)');
-                    cone.addColorStop(1, 'transparent');
-                    ctx.fillStyle = cone;
-                    ctx.beginPath();
-                    const ang = Math.atan2(ty - ly, tx - lx);
-                    ctx.moveTo(lx, ly);
-                    ctx.arc(lx, ly, H * 0.82, ang - 0.26, ang + 0.26);
-                    ctx.closePath(); ctx.fill();
-                    ctx.restore();
-                    // Lamp head glow
-                    const lampGlow = ctx.createRadialGradient(lx, ly, 0, lx, ly, 30);
-                    lampGlow.addColorStop(0, 'rgba(255,255,230,0.9)');
-                    lampGlow.addColorStop(0.4, 'rgba(255,250,200,0.3)');
-                    lampGlow.addColorStop(1, 'transparent');
-                    ctx.fillStyle = lampGlow;
-                    ctx.beginPath(); ctx.arc(lx, ly, 30, 0, Math.PI * 2); ctx.fill();
-                    // Core
-                    ctx.fillStyle = '#fffde0';
-                    ctx.beginPath(); ctx.arc(lx, ly, 6, 0, Math.PI * 2); ctx.fill();
-                });
-            }
-
-            /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-               DRAW: Realistic batsman
-            â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
-            function drawBatsman(swing /* 0=ready, 1=full-follow-through */) {
-                const bx = px(), base = gy();
-                const sc = Math.min(W, H * 2.5) * 0.00115;
-
-                // --- Scaling reference sizes ---
-                const HEAD = 17 * sc;
-                const NECK = 8 * sc;
-                const TORSO = 50 * sc;
-                const HIP_W = 22 * sc;
-                const SHLD_W = 28 * sc;
-                const UPPER_ARM = 34 * sc;
-                const FORE_ARM = 30 * sc;
-                const THIGH = 44 * sc;
-                const SHIN = 40 * sc;
-                const LW = 10 * sc; // limb stroke width
-
-                // --- Key joint Y positions (measured UP from ground) ---
-                const FOOT_Y = base;
-                const KNEE_Y = base - SHIN;
-                const HIP_Y = base - SHIN - THIGH;
-                const WAIST_Y = HIP_Y - 10 * sc;
-                const SHLDR_Y = WAIST_Y - TORSO;
-                const NECK_Y = SHLDR_Y - 6 * sc;
-                const HEAD_Y = NECK_Y - HEAD;
-
-                // Swing-dependent angles (radians)
-                const batA = (-55 + swing * 100) * Math.PI / 180;
-                const armA = (-60 + swing * 105) * Math.PI / 180;
-                const leanX = swing * 20 * sc; // torso lean forward on follow-through
-
-                ctx.save();
-                ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-
-                /* â”€â”€ Back leg â”€â”€ */
-                ctx.strokeStyle = '#1a3a7a'; ctx.lineWidth = LW * 1.1;
-                ctx.beginPath();
-                ctx.moveTo(bx - HIP_W * 0.5, HIP_Y);
-                ctx.quadraticCurveTo(bx - HIP_W * 0.7, KNEE_Y, bx - 18 * sc, FOOT_Y);
-                ctx.stroke();
-                // Pad (white)
-                ctx.strokeStyle = '#dde8f0'; ctx.lineWidth = LW * 0.65;
-                ctx.beginPath();
-                ctx.moveTo(bx - 18 * sc, FOOT_Y);
-                ctx.quadraticCurveTo(bx - HIP_W * 0.65, KNEE_Y, bx - HIP_W * 0.45, HIP_Y + 12 * sc);
-                ctx.stroke();
-
-                /* â”€â”€ Front leg â”€â”€ */
-                const frontStepX = 28 * sc * Math.min(1, swing * 1.4);
-                ctx.strokeStyle = '#1d4492'; ctx.lineWidth = LW * 1.2;
-                ctx.beginPath();
-                ctx.moveTo(bx + HIP_W * 0.5, HIP_Y);
-                ctx.quadraticCurveTo(bx + HIP_W * 0.6 + frontStepX * 0.5, KNEE_Y - 6 * sc, bx + HIP_W * 0.5 + frontStepX, FOOT_Y);
-                ctx.stroke();
-                // Front pad
-                ctx.strokeStyle = '#dde8f0'; ctx.lineWidth = LW * 0.7;
-                ctx.beginPath();
-                ctx.moveTo(bx + HIP_W * 0.5 + frontStepX, FOOT_Y);
-                ctx.quadraticCurveTo(bx + HIP_W * 0.55 + frontStepX * 0.5, KNEE_Y - 4 * sc, bx + HIP_W * 0.45, HIP_Y + 10 * sc);
-                ctx.stroke();
-                // Boot
-                ctx.fillStyle = '#18202e'; ctx.beginPath();
-                ctx.ellipse(bx + HIP_W * 0.5 + frontStepX, FOOT_Y + 3 * sc, 14 * sc, 5 * sc, 0, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = '#18202e'; ctx.beginPath();
-                ctx.ellipse(bx - 18 * sc, FOOT_Y + 3 * sc, 12 * sc, 5 * sc, 0, 0, Math.PI * 2); ctx.fill();
-
-                /* â”€â”€ Torso (cricket whites) â”€â”€ */
-                const torsoGrad = ctx.createLinearGradient(bx - SHLD_W, SHLDR_Y, bx + SHLD_W, HIP_Y);
-                torsoGrad.addColorStop(0, '#d8eaf8');
-                torsoGrad.addColorStop(0.5, '#bdd4e8');
-                torsoGrad.addColorStop(1, '#9ab8d4');
-                ctx.fillStyle = torsoGrad;
-                ctx.beginPath();
-                ctx.moveTo(bx - SHLD_W + leanX * 0.3, SHLDR_Y);
-                ctx.cubicBezierTo
-                    ? ctx.cubicBezierTo(bx - SHLD_W * 0.6 + leanX * 0.3, WAIST_Y, bx - HIP_W * 0.6, HIP_Y, bx - HIP_W * 0.4, HIP_Y)
-                    : (() => {
-                        ctx.lineTo(bx - HIP_W * 0.5, HIP_Y);
-                        ctx.lineTo(bx + HIP_W * 0.5, HIP_Y);
-                    })();
-                ctx.lineTo(bx + HIP_W * 0.5, HIP_Y);
-                ctx.lineTo(bx + SHLD_W + leanX * 0.3, SHLDR_Y);
-                ctx.closePath(); ctx.fill();
-                // Jersey number / stripe
-                ctx.fillStyle = '#1d6ac8'; ctx.globalAlpha = 0.4;
-                ctx.fillRect(bx - 6 * sc, SHLDR_Y + 8 * sc, 12 * sc, 14 * sc);
-                ctx.globalAlpha = 1;
-
-                /* â”€â”€ Batting arm + forearm (right side, near bat) â”€â”€ */
-                const elbX = bx + Math.sin(armA) * UPPER_ARM;
-                const elbY = SHLDR_Y + Math.cos(armA) * UPPER_ARM;
-                const handX = elbX + Math.sin(armA * 0.6) * FORE_ARM;
-                const handY = elbY + Math.cos(armA * 0.6) * FORE_ARM;
-
-                ctx.strokeStyle = '#c8a07a'; ctx.lineWidth = LW * 0.9;
-                ctx.beginPath(); ctx.moveTo(bx + SHLD_W * 0.6 + leanX * 0.3, SHLDR_Y);
-                ctx.lineTo(elbX, elbY); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(elbX, elbY); ctx.lineTo(handX, handY); ctx.stroke();
-                // Glove
-                ctx.fillStyle = '#1a1a2a';
-                ctx.beginPath(); ctx.arc(handX, handY, 7 * sc, 0, Math.PI * 2); ctx.fill();
-
-                /* â”€â”€ Off arm (left/leading arm) â”€â”€ */
-                const armA2 = armA - 0.6;
-                const elb2X = bx - SHLD_W * 0.5 + Math.sin(armA2) * UPPER_ARM * 0.85;
-                const elb2Y = SHLDR_Y + Math.cos(armA2) * UPPER_ARM * 0.85;
-                ctx.strokeStyle = '#c8a07a'; ctx.lineWidth = LW * 0.85;
-                ctx.beginPath(); ctx.moveTo(bx - SHLD_W * 0.5 + leanX * 0.3, SHLDR_Y);
-                ctx.lineTo(elb2X, elb2Y); ctx.stroke();
-                ctx.fillStyle = '#1a1a2a';
-                ctx.beginPath(); ctx.arc(elb2X, elb2Y, 6 * sc, 0, Math.PI * 2); ctx.fill();
-
-                /* â”€â”€ Neck + Head â”€â”€ */
-                ctx.fillStyle = '#c8a07a';
-                ctx.beginPath(); ctx.arc(bx + leanX * 0.5, HEAD_Y, HEAD, 0, Math.PI * 2); ctx.fill();
-                // Helmet
-                const helGrad = ctx.createRadialGradient(bx + leanX * 0.5 - 5 * sc, HEAD_Y - 5 * sc, 2, bx + leanX * 0.5, HEAD_Y, HEAD * 1.2);
-                helGrad.addColorStop(0, '#0a5fc2'); helGrad.addColorStop(1, '#041433');
-                ctx.fillStyle = helGrad;
-                ctx.beginPath(); ctx.arc(bx + leanX * 0.5, HEAD_Y, HEAD * 1.08, Math.PI, 0); ctx.fill();
-                // Visor peak
-                ctx.fillStyle = '#021028';
-                ctx.beginPath(); ctx.moveTo(bx + leanX * 0.5 - HEAD, HEAD_Y + 3 * sc);
-                ctx.lineTo(bx + leanX * 0.5 + HEAD * 1.1, HEAD_Y + 3 * sc);
-                ctx.lineTo(bx + leanX * 0.5 + HEAD * 1.35, HEAD_Y + HEAD * 0.65); ctx.closePath(); ctx.fill();
-                // Grill bars
-                ctx.strokeStyle = 'rgba(200,200,200,0.7)'; ctx.lineWidth = 1.5;
-                for (let g = 0; g < 3; g++) {
-                    const gy2 = HEAD_Y + HEAD * 0.25 + g * HEAD * 0.28;
-                    ctx.beginPath();
-                    ctx.moveTo(bx + leanX * 0.5, gy2);
-                    ctx.lineTo(bx + leanX * 0.5 + HEAD * 1.3, gy2 + HEAD * 0.1 * g); ctx.stroke();
-                }
-
-                /* â”€â”€ BAT â”€â”€ */
-                ctx.save();
-                ctx.translate(handX, handY);
-                ctx.rotate(batA);
-                const BW = 16 * sc, BL = 95 * sc;
-                // Blade
-                const bladeGrad = ctx.createLinearGradient(-BW / 2, 0, BW / 2, BL * 0.75);
-                bladeGrad.addColorStop(0, '#f0d090'); bladeGrad.addColorStop(0.45, '#d4a840');
-                bladeGrad.addColorStop(1, '#8a5c18');
-                ctx.fillStyle = bladeGrad;
-                ctx.shadowColor = 'rgba(240,200,100,0.55)'; ctx.shadowBlur = 18 + swing * 12;
-                ctx.beginPath(); ctx.roundRect(-BW / 2, -BL * 0.1, BW, BL * 0.72, BW * 0.35); ctx.fill();
-                ctx.shadowBlur = 0;
-                // Edges
-                ctx.strokeStyle = '#a07828'; ctx.lineWidth = 1.2;
-                ctx.stroke();
-                // Face grain lines
-                ctx.strokeStyle = 'rgba(100,60,10,0.2)'; ctx.lineWidth = 1;
-                for (let g = 0; g < 6; g++) {
-                    ctx.beginPath();
-                    ctx.moveTo(-BW / 2 + 3, BL * 0.06 + g * BL * 0.1);
-                    ctx.lineTo(BW / 2 - 3, BL * 0.06 + g * BL * 0.1); ctx.stroke();
-                }
-                // Handle
-                ctx.fillStyle = '#4a2808';
-                ctx.beginPath(); ctx.roundRect(-BW * 0.28, BL * 0.62, BW * 0.56, BL * 0.34, BW * 0.28); ctx.fill();
-                // Grip wrap
-                ctx.strokeStyle = 'rgba(0,0,0,0.35)'; ctx.lineWidth = 2.2;
-                for (let g = 0; g < 5; g++) {
-                    ctx.beginPath();
-                    ctx.moveTo(-BW * 0.26, BL * 0.64 + g * BL * 0.058);
-                    ctx.lineTo(BW * 0.26, BL * 0.64 + g * BL * 0.058); ctx.stroke();
-                }
-                ctx.restore();
-                ctx.restore();
-
-                // Return approximate bat-sweet-spot position for ball contact
-                const tipX = handX + Math.sin(batA) * (BL * 0.55);
-                const tipY = handY + Math.cos(batA) * (BL * 0.55);
-                return { tipX, tipY };
-            }
-
-            /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-               DRAW: Leather ball
-            â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
-            function drawBall(x, y, r, glow) {
-                ctx.save();
-                // Glow halo
-                if (glow > 0.05) {
-                    const halo = ctx.createRadialGradient(x, y, 0, x, y, r * 4.5);
-                    halo.addColorStop(0, `rgba(255,80,20,${glow * 0.55})`);
-                    halo.addColorStop(1, 'transparent');
-                    ctx.fillStyle = halo;
-                    ctx.beginPath(); ctx.arc(x, y, r * 4.5, 0, Math.PI * 2); ctx.fill();
-                }
-                // Ball body
-                const ballG = ctx.createRadialGradient(x - r * 0.3, y - r * 0.3, r * 0.05, x, y, r);
-                ballG.addColorStop(0, '#ff6655');
-                ballG.addColorStop(0.45, '#cc1100');
-                ballG.addColorStop(1, '#550800');
-                ctx.fillStyle = ballG;
-                ctx.shadowColor = 'rgba(200,40,0,0.7)'; ctx.shadowBlur = 18 * glow;
-                ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
-                ctx.shadowBlur = 0;
-                // Shine specular
-                const shine = ctx.createRadialGradient(x - r * 0.35, y - r * 0.38, 0, x - r * 0.2, y - r * 0.22, r * 0.7);
-                shine.addColorStop(0, 'rgba(255,220,180,0.75)');
-                shine.addColorStop(1, 'transparent');
-                ctx.fillStyle = shine;
-                ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
-                // Seam curve
-                ctx.strokeStyle = 'rgba(255,200,180,0.60)'; ctx.lineWidth = 1.4;
-                ctx.beginPath(); ctx.arc(x, y, r * 0.7, 0.5, Math.PI - 0.5); ctx.stroke();
-                ctx.beginPath(); ctx.arc(x, y, r * 0.7, Math.PI + 0.5, -0.5); ctx.stroke();
-                // Seam stitches
-                ctx.strokeStyle = 'rgba(255,230,200,0.45)'; ctx.lineWidth = 0.8;
-                for (let st = -3; st <= 3; st++) {
-                    const sa = 0.5 + st * 0.1;
-                    const sx = x + Math.cos(sa) * r * 0.7, sy = y + Math.sin(sa) * r * 0.7;
-                    ctx.beginPath(); ctx.moveTo(sx - 3, sy - 2); ctx.lineTo(sx + 3, sy + 2); ctx.stroke();
-                }
-                ctx.restore();
-            }
-
-            /* â”€â”€ Trail â”€â”€ */
-            function addTrail(x, y) {
-                trail.push({ x, y, life: 1 });
-                if (trail.length > 42) trail.shift();
-            }
-            function drawTrail() {
-                for (let i = 1; i < trail.length; i++) {
-                    const a = trail[i].life * (i / trail.length) * 0.65;
-                    ctx.save(); ctx.globalAlpha = a;
-                    ctx.strokeStyle = `rgba(255,140,40,${a})`;
-                    ctx.lineWidth = 8 * (i / trail.length) + 1;
-                    ctx.shadowColor = 'rgba(255,100,20,0.5)'; ctx.shadowBlur = 10;
-                    ctx.beginPath();
-                    ctx.moveTo(trail[i - 1].x, trail[i - 1].y);
-                    ctx.lineTo(trail[i].x, trail[i].y);
-                    ctx.stroke(); ctx.restore();
-                }
-            }
-
-            /* â”€â”€ Draw particles â”€â”€ */
-            function drawParticles() {
-                sparks.forEach(s => {
-                    ctx.save(); ctx.globalAlpha = Math.max(0, s.life);
-                    ctx.fillStyle = s.c; ctx.shadowColor = s.c; ctx.shadowBlur = 12;
-                    ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill(); ctx.restore();
-                });
-                confetti.forEach(c => {
-                    ctx.save(); ctx.globalAlpha = Math.max(0, c.life);
-                    ctx.translate(c.x, c.y); ctx.rotate(c.rot); c.rot += c.drot;
-                    ctx.fillStyle = c.c;
-                    ctx.fillRect(-c.w / 2, -c.h / 2, c.w, c.h); ctx.restore();
-                });
-            }
-
-            /* â”€â”€ SIX! scoreboard text â”€â”€ */
-            function drawSix(elapsed) {
-                sixLetters.forEach((l, i) => {
-                    const age = elapsed - l.delay;
-                    if (age < 0) return;
-                    l.scale = Math.min(1, l.scale + 0.14);
-                    l.y += l.vy * 0.05; l.vy *= 0.93;
-                    const alpha = age < 0.15 ? age / 0.15 : Math.max(0, 1 - (age - 0.45) * 1.1);
-                    const sc2 = l.scale;
-                    ctx.save();
-                    ctx.globalAlpha = alpha;
-                    ctx.font = `900 ${Math.floor(64 * sc2)}px 'Orbitron',sans-serif`;
-                    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                    // Shadow/glow
-                    ctx.shadowColor = '#f4c95d'; ctx.shadowBlur = 40;
-                    ctx.fillStyle = '#f4c95d'; ctx.fillText(l.ch, l.x, l.y);
-                    ctx.shadowBlur = 14; ctx.shadowColor = '#fff';
-                    ctx.fillStyle = '#fff';
-                    ctx.font = `900 ${Math.floor(60 * sc2)}px 'Orbitron',sans-serif`;
-                    ctx.fillText(l.ch, l.x, l.y);
-                    ctx.restore();
-                });
-            }
-
-            /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-               IMPACT FLASH
-            â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
-            let flashAlpha = 0;
-            function triggerFlash() { flashAlpha = 1; }
-            function drawFlash() {
-                if (flashAlpha <= 0) return;
-                ctx.save();
-                ctx.globalAlpha = flashAlpha * 0.45;
-                ctx.fillStyle = '#fff8e0';
-                ctx.fillRect(0, 0, W, H);
-                ctx.restore();
-                flashAlpha = Math.max(0, flashAlpha - 0.12);
-            }
-
-            /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-               MAIN LOOP
-            â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+        /* MAIN LOOP */
             let lastT = null;
             function loop(ts) {
                 if (!lastT) lastT = ts;
