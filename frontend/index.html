@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+<<<<<<< HEAD
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cricket Auction Stadium Display</title>
@@ -1657,6 +1658,1877 @@
             }
         }
     </style>
+=======
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cricket Auction Stadium Display</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet" />
+
+<style>
+:root {
+    --bg-1: #05070d;
+    --bg-2: #081226;
+    --panel: rgba(9, 17, 34, 0.6);
+    --glass-stroke: rgba(255, 255, 255, 0.16);
+    --gold: #f4c95d;
+    --gold-soft: rgba(244, 201, 93, 0.3);
+    --neon: #00e6ff;
+    --white: #f4f8ff;
+    --muted: #b8c4d8;
+    --danger: #ff6f7d;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    font-family: 'Rajdhani', sans-serif;
+    color: var(--white);
+    background:
+        radial-gradient(1100px 500px at 12% -6%, rgba(0, 230, 255, 0.24), transparent 60%),
+        radial-gradient(900px 500px at 90% 10%, rgba(244, 201, 93, 0.16), transparent 65%),
+        linear-gradient(145deg, var(--bg-1), var(--bg-2));
+    overflow-x: hidden;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+        repeating-linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0.03) 0,
+            rgba(255, 255, 255, 0.03) 1px,
+            transparent 1px,
+            transparent 120px
+        ),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.06), transparent 25%, transparent 75%, rgba(255, 255, 255, 0.04));
+    opacity: 0.22;
+}
+
+.wrapper {
+    position: relative;
+    z-index: 1;
+    width: min(1780px, 96vw);
+    margin: 0 auto;
+    padding: clamp(18px, 2vw, 28px);
+}
+
+.topbar {
+    display: block;
+    margin-bottom: 20px;
+}
+
+.brand h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    font-size: clamp(1.5rem, 2.3vw, 2.4rem);
+    color: var(--gold);
+    text-shadow: 0 0 18px rgba(244, 201, 93, 0.4);
+}
+
+.brand p {
+    margin-top: 4px;
+    font-size: clamp(0.95rem, 1.2vw, 1.2rem);
+    color: var(--muted);
+    letter-spacing: 0.08em;
+}
+
+.keyboard-hint {
+    margin-bottom: 14px;
+    color: var(--muted);
+    font-size: clamp(0.9rem, 1.1vw, 1.1rem);
+    letter-spacing: 0.04em;
+    text-align: center;
+}
+
+.site-nav {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+    padding: 14px;
+    border-radius: 20px;
+    background: rgba(8, 15, 31, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.site-nav-btn {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    padding: 12px 18px;
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--white);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.86rem;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+}
+
+.site-nav-btn:hover {
+    transform: translateY(-1px);
+    background: rgba(59, 226, 255, 0.08);
+    border-color: rgba(59, 226, 255, 0.35);
+}
+
+.site-nav-btn.active {
+    background: linear-gradient(135deg, rgba(59, 226, 255, 0.18), rgba(244, 201, 93, 0.14));
+    border-color: rgba(244, 201, 93, 0.4);
+    color: var(--gold);
+}
+
+.news-ticker {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+    padding: 12px 18px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(255, 98, 122, 0.18), rgba(244, 201, 93, 0.12));
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    overflow: hidden;
+}
+
+.news-ticker.hidden {
+    display: none;
+}
+
+.frontend-section.hidden {
+    display: none;
+}
+
+.placeholder-shell {
+    width: 100%;
+    max-width: 1680px;
+    min-height: 420px;
+    padding: 36px 30px;
+    border-radius: 28px;
+    background:
+        radial-gradient(circle at top left, rgba(0, 230, 255, 0.1), transparent 34%),
+        radial-gradient(circle at top right, rgba(244, 201, 93, 0.12), transparent 36%),
+        rgba(8, 15, 31, 0.78);
+    border: 1px solid var(--glass-stroke);
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.placeholder-kicker {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--neon);
+    font-size: 0.82rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.placeholder-shell h2 {
+    margin-top: 18px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(2rem, 4vw, 3.4rem);
+    color: var(--gold);
+}
+
+.placeholder-shell p {
+    margin-top: 16px;
+    max-width: 760px;
+    color: var(--muted);
+    font-size: clamp(1rem, 1.4vw, 1.15rem);
+    line-height: 1.6;
+}
+
+.groups-shell {
+    width: 100%;
+    max-width: 1680px;
+    border-radius: 28px;
+    background:
+        radial-gradient(circle at top left, rgba(0, 230, 255, 0.12), transparent 35%),
+        radial-gradient(circle at top right, rgba(244, 201, 93, 0.14), transparent 38%),
+        rgba(8, 15, 31, 0.78);
+    border: 1px solid var(--glass-stroke);
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 0 0 1px rgba(255, 255, 255, 0.03);
+    overflow: hidden;
+}
+
+.groups-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    padding: 22px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(135deg, rgba(0, 230, 255, 0.09), rgba(244, 201, 93, 0.09));
+}
+
+.groups-header h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.3rem, 1.9vw, 2rem);
+    letter-spacing: 0.12em;
+    color: var(--gold);
+}
+
+.groups-subtitle {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: clamp(0.95rem, 1.1vw, 1.05rem);
+}
+
+.groups-count {
+    color: var(--muted);
+    font-size: 1rem;
+    white-space: nowrap;
+}
+
+.groups-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+    padding: 24px;
+}
+
+.group-stage-card {
+    padding: 22px;
+    border-radius: 24px;
+    background:
+        linear-gradient(145deg, rgba(59, 226, 255, 0.08), rgba(244, 201, 93, 0.08)),
+        rgba(4, 10, 22, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 16px 36px rgba(0, 0, 0, 0.24);
+}
+
+.group-stage-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 88px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(59, 226, 255, 0.28);
+    background: rgba(59, 226, 255, 0.08);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+}
+
+.group-stage-name {
+    margin-top: 18px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.4rem, 2.1vw, 2rem);
+    color: var(--white);
+}
+
+.group-stage-meta {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+.group-stage-teams {
+    margin-top: 18px;
+    display: grid;
+    gap: 10px;
+}
+
+.group-stage-team {
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.group-stage-team-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.94rem;
+}
+
+.group-stage-team-owner {
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 0.88rem;
+}
+
+.groups-empty {
+    padding: 48px 24px 56px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 1.05rem;
+}
+
+.fixtures-shell {
+    width: 100%;
+    max-width: 1680px;
+    border-radius: 28px;
+    background:
+        radial-gradient(circle at top left, rgba(0, 230, 255, 0.12), transparent 35%),
+        radial-gradient(circle at top right, rgba(244, 201, 93, 0.14), transparent 38%),
+        rgba(8, 15, 31, 0.78);
+    border: 1px solid var(--glass-stroke);
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 0 0 1px rgba(255, 255, 255, 0.03);
+    overflow: hidden;
+}
+
+.fixtures-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    padding: 22px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(135deg, rgba(0, 230, 255, 0.09), rgba(244, 201, 93, 0.09));
+}
+
+.fixtures-header h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.3rem, 1.9vw, 2rem);
+    letter-spacing: 0.12em;
+    color: var(--gold);
+}
+
+.fixtures-subtitle {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: clamp(0.95rem, 1.1vw, 1.05rem);
+}
+
+.fixtures-count {
+    color: var(--muted);
+    font-size: 1rem;
+    white-space: nowrap;
+}
+
+.fixtures-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+    padding: 24px;
+}
+
+.fixture-stage-card {
+    position: relative;
+    padding: 22px;
+    border-radius: 24px;
+    background:
+        linear-gradient(145deg, rgba(59, 226, 255, 0.08), rgba(244, 201, 93, 0.08)),
+        rgba(4, 10, 22, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 16px 36px rgba(0, 0, 0, 0.24);
+    overflow: hidden;
+}
+
+.fixture-stage-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at top right, rgba(244, 201, 93, 0.16), transparent 34%),
+        radial-gradient(circle at bottom left, rgba(59, 226, 255, 0.16), transparent 36%);
+    pointer-events: none;
+}
+
+.fixture-stage-badge {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 90px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(59, 226, 255, 0.28);
+    background: rgba(59, 226, 255, 0.08);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+}
+
+.fixture-stage-top {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+.fixture-stage-type {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 184, 77, 0.35);
+    background: rgba(255, 184, 77, 0.12);
+    color: #ffe3b0;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.fixture-stage-title {
+    position: relative;
+    margin-top: 18px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1rem, 1.5vw, 1.15rem);
+    line-height: 1.35;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.fixture-stage-meta {
+    position: relative;
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.55;
+}
+
+.fixture-stage-matchup {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 14px;
+    margin-top: 20px;
+    padding: 18px;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.fixture-stage-team {
+    min-width: 0;
+}
+
+.fixture-stage-team.align-right {
+    text-align: right;
+}
+
+.fixture-stage-team-label {
+    color: var(--muted);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.fixture-stage-team-name {
+    margin-top: 8px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.1rem, 1.7vw, 1.4rem);
+    line-height: 1.35;
+    color: var(--white);
+    word-break: break-word;
+}
+
+.fixture-stage-vs {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(255, 102, 124, 0.92), rgba(255, 149, 59, 0.9));
+    color: #fff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.92rem;
+    letter-spacing: 0.08em;
+    box-shadow: 0 0 22px rgba(255, 102, 124, 0.26);
+}
+
+.fixture-stage-details {
+    position: relative;
+    margin-top: 18px;
+    display: grid;
+    gap: 10px;
+}
+
+.fixture-stage-detail {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.fixture-stage-detail-label {
+    color: var(--muted);
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.fixture-stage-detail-value {
+    color: var(--white);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.86rem;
+    text-align: right;
+}
+
+.fixtures-empty {
+    padding: 48px 24px 56px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 1.05rem;
+}
+
+.results-shell {
+    width: 100%;
+    max-width: 1680px;
+    border-radius: 28px;
+    background:
+        radial-gradient(circle at top left, rgba(117, 255, 181, 0.12), transparent 35%),
+        radial-gradient(circle at top right, rgba(244, 201, 93, 0.14), transparent 38%),
+        rgba(8, 15, 31, 0.78);
+    border: 1px solid var(--glass-stroke);
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 0 0 1px rgba(255, 255, 255, 0.03);
+    overflow: hidden;
+}
+
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    padding: 22px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(135deg, rgba(117, 255, 181, 0.08), rgba(244, 201, 93, 0.09));
+}
+
+.results-header h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.3rem, 1.9vw, 2rem);
+    letter-spacing: 0.12em;
+    color: #9effc5;
+}
+
+.results-subtitle {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: clamp(0.95rem, 1.1vw, 1.05rem);
+}
+
+.results-count {
+    color: var(--muted);
+    font-size: 1rem;
+    white-space: nowrap;
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 22px;
+    padding: 24px;
+}
+
+.result-stage-card {
+    position: relative;
+    padding: 24px;
+    border-radius: 24px;
+    background:
+        linear-gradient(145deg, rgba(117, 255, 181, 0.08), rgba(244, 201, 93, 0.08)),
+        rgba(4, 10, 22, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 16px 36px rgba(0, 0, 0, 0.24);
+    overflow: hidden;
+}
+
+.result-stage-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: center;
+}
+
+.result-stage-badge,
+.result-stage-winner {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 110px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.76rem;
+    letter-spacing: 0.08em;
+}
+
+.result-stage-badge {
+    border: 1px solid rgba(117, 255, 181, 0.24);
+    background: rgba(117, 255, 181, 0.08);
+    color: #b7ffd4;
+}
+
+.result-stage-winner {
+    border: 1px solid rgba(244, 201, 93, 0.24);
+    background: rgba(244, 201, 93, 0.08);
+    color: #ffd774;
+}
+
+.result-stage-title {
+    margin-top: 18px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.1rem, 1.7vw, 1.3rem);
+    color: var(--white);
+}
+
+.result-stage-meta {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+.result-stage-scores {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 18px;
+}
+
+.result-stage-team-box {
+    border-radius: 18px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.result-stage-team-box.winner {
+    border-color: rgba(117, 255, 181, 0.32);
+    box-shadow: inset 0 0 0 1px rgba(117, 255, 181, 0.12);
+}
+
+.result-stage-team-label {
+    color: var(--muted);
+    font-size: 0.76rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.result-stage-team-name {
+    margin-top: 8px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    color: var(--white);
+}
+
+.result-stage-score {
+    margin-top: 10px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.15rem;
+    color: var(--gold);
+}
+
+.result-stage-summary {
+    margin-top: 18px;
+    padding: 14px 16px;
+    border-radius: 18px;
+    background: rgba(117, 255, 181, 0.08);
+    border: 1px solid rgba(117, 255, 181, 0.16);
+    color: #dffff0;
+    font-weight: 700;
+}
+
+.results-empty {
+    padding: 48px 24px 56px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 1.05rem;
+}
+
+.home-hero {
+    position: relative;
+    width: 100%;
+    max-width: 1680px;
+    min-height: 380px;
+    margin-bottom: 22px;
+    padding: 28px;
+    border-radius: 30px;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 18% 18%, rgba(59, 226, 255, 0.18), transparent 24%),
+        radial-gradient(circle at 82% 16%, rgba(244, 201, 93, 0.22), transparent 22%),
+        linear-gradient(180deg, rgba(5, 10, 22, 0.78), rgba(4, 9, 20, 0.92));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.home-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.04), transparent 26%),
+        repeating-linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0.02) 0,
+            rgba(255, 255, 255, 0.02) 1px,
+            transparent 1px,
+            transparent 120px
+        );
+    pointer-events: none;
+}
+
+.home-hero-copy {
+    position: relative;
+    z-index: 2;
+    max-width: 520px;
+}
+
+.home-hero-kicker {
+    display: inline-flex;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgba(59, 226, 255, 0.12);
+    border: 1px solid rgba(59, 226, 255, 0.22);
+    color: var(--neon);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.home-hero-title {
+    margin-top: 18px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(2rem, 4vw, 3.6rem);
+    line-height: 1.08;
+    color: var(--white);
+    text-shadow: 0 0 18px rgba(255, 255, 255, 0.12);
+}
+
+.home-hero-title span {
+    color: var(--gold);
+}
+
+.home-hero-text {
+    margin-top: 16px;
+    color: var(--muted);
+    font-size: clamp(1rem, 1.3vw, 1.14rem);
+    line-height: 1.6;
+}
+
+.cricket-animation {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.stadium-glow {
+    position: absolute;
+    left: 50%;
+    bottom: -120px;
+    width: 72%;
+    height: 230px;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: radial-gradient(circle at center, rgba(38, 185, 122, 0.45), rgba(18, 88, 61, 0.24) 50%, transparent 72%);
+    filter: blur(8px);
+}
+
+.pitch-strip {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 220px;
+    height: 150px;
+    transform: translateX(-50%);
+    background: linear-gradient(180deg, rgba(201, 166, 111, 0.88), rgba(143, 102, 52, 0.94));
+    clip-path: polygon(18% 0, 82% 0, 100% 100%, 0 100%);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+}
+
+.pitch-strip::before,
+.pitch-strip::after {
+    content: "";
+    position: absolute;
+    top: 12px;
+    bottom: 18px;
+    width: 3px;
+    background: rgba(255, 248, 217, 0.72);
+}
+
+.pitch-strip::before {
+    left: 34%;
+}
+
+.pitch-strip::after {
+    right: 34%;
+}
+
+.batsman {
+    position: absolute;
+    right: 24%;
+    bottom: 90px;
+    width: 120px;
+    height: 200px;
+    animation: batsmanSwing 2.8s ease-in-out infinite;
+    transform-origin: 55% 84%;
+    z-index: 2;
+}
+
+.batsman-head {
+    position: absolute;
+    top: 8px;
+    left: 44px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #ffd7b0;
+    box-shadow: 0 0 12px rgba(255, 215, 176, 0.2);
+}
+
+.batsman-torso {
+    position: absolute;
+    top: 34px;
+    left: 42px;
+    width: 34px;
+    height: 74px;
+    border-radius: 18px;
+    background: linear-gradient(180deg, #0dd2f0, #096fc2);
+}
+
+.batsman-arm {
+    position: absolute;
+    top: 54px;
+    width: 16px;
+    height: 62px;
+    border-radius: 999px;
+    background: #ffd7b0;
+    transform-origin: top center;
+}
+
+.batsman-arm.back {
+    left: 28px;
+    transform: rotate(48deg);
+}
+
+.batsman-arm.front {
+    left: 68px;
+    transform: rotate(-32deg);
+}
+
+.batsman-leg {
+    position: absolute;
+    top: 98px;
+    width: 18px;
+    height: 88px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #0f88d2, #083868);
+    transform-origin: top center;
+}
+
+.batsman-leg.back {
+    left: 40px;
+    transform: rotate(18deg);
+}
+
+.batsman-leg.front {
+    left: 64px;
+    transform: rotate(-18deg);
+}
+
+.bat {
+    position: absolute;
+    top: 18px;
+    left: 68px;
+    width: 20px;
+    height: 110px;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #f8d28c, #b9762c);
+    transform: rotate(-52deg);
+    transform-origin: bottom center;
+    box-shadow: 0 0 22px rgba(248, 210, 140, 0.18);
+}
+
+.bat::before {
+    content: "";
+    position: absolute;
+    left: 6px;
+    bottom: -18px;
+    width: 8px;
+    height: 24px;
+    border-radius: 999px;
+    background: #6b3e16;
+}
+
+.ball-flight {
+    position: absolute;
+    left: 55%;
+    bottom: 204px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #fff6dc 0, #ffd168 42%, #ff7b2f 72%, #d91f11 100%);
+    box-shadow:
+        0 0 14px rgba(255, 207, 94, 0.88),
+        0 0 34px rgba(255, 110, 43, 0.7),
+        0 0 60px rgba(255, 72, 0, 0.45);
+    animation: fireballFlight 2.8s linear infinite;
+    z-index: 3;
+}
+
+.ball-flight::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    width: 170px;
+    height: 18px;
+    transform: translateY(-50%);
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(255, 249, 190, 0.9), rgba(255, 130, 38, 0.7) 40%, rgba(255, 65, 0, 0.26) 75%, transparent 100%);
+    filter: blur(7px);
+}
+
+.ball-flight::after {
+    content: "";
+    position: absolute;
+    inset: -12px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 133, 33, 0.52), transparent 68%);
+    animation: emberPulse 500ms ease-in-out infinite alternate;
+}
+
+.hero-crease {
+    position: absolute;
+    right: 20%;
+    bottom: 76px;
+    width: 150px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.75);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.18);
+}
+
+@keyframes batsmanSwing {
+    0%, 18% {
+        transform: rotate(0deg);
+    }
+    28% {
+        transform: rotate(-10deg);
+    }
+    42% {
+        transform: rotate(14deg);
+    }
+    55%, 100% {
+        transform: rotate(4deg);
+    }
+}
+
+@keyframes fireballFlight {
+    0% {
+        transform: translate(0, 0) scale(0.75);
+        opacity: 0;
+    }
+    12% {
+        transform: translate(16px, -10px) scale(1);
+        opacity: 1;
+    }
+    52% {
+        transform: translate(220px, -100px) scale(1.1);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(470px, -210px) scale(0.82);
+        opacity: 0;
+    }
+}
+
+@keyframes emberPulse {
+    0% {
+        transform: scale(0.9);
+        opacity: 0.6;
+    }
+    100% {
+        transform: scale(1.18);
+        opacity: 1;
+    }
+}
+
+.countdown-banner {
+    display: grid;
+    place-items: center;
+    gap: 18px;
+    margin-bottom: 22px;
+    padding: 28px 24px;
+    border-radius: 28px;
+    background:
+        linear-gradient(135deg, rgba(0, 230, 255, 0.16), rgba(244, 201, 93, 0.14)),
+        rgba(8, 15, 31, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    text-align: center;
+}
+
+.countdown-label {
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #00cfe8, #1eb7ff);
+    color: #041019;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.82rem;
+    letter-spacing: 0.12em;
+}
+
+.countdown-content {
+    display: grid;
+    place-items: center;
+    gap: 18px;
+    width: 100%;
+}
+
+.countdown-message {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1rem, 1.3vw, 1.2rem);
+    color: var(--white);
+    letter-spacing: 0.06em;
+    max-width: 900px;
+}
+
+.countdown-time {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.countdown-box {
+    min-width: 110px;
+    padding: 16px 14px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.countdown-value {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.5rem, 2.2vw, 2rem);
+    color: var(--gold);
+}
+
+.countdown-unit {
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.news-label {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #ff667c, #ff8a54);
+    color: #fff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.84rem;
+    letter-spacing: 0.12em;
+}
+
+.news-track {
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+}
+
+.news-text {
+    display: inline-block;
+    min-width: 100%;
+    padding-left: 100%;
+    font-family: 'Orbitron', sans-serif;
+    color: var(--white);
+    font-size: clamp(0.95rem, 1.35vw, 1.2rem);
+    letter-spacing: 0.08em;
+    animation: tickerScroll 170s linear infinite;
+}
+
+@keyframes tickerScroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.stage {
+    display: grid;
+    place-items: center;
+    min-height: calc(100vh - 210px);
+}
+
+.stage-view {
+    width: 100%;
+}
+
+.stage-view.hidden {
+    display: none;
+}
+
+.card-shell {
+    width: 100%;
+    max-width: 1680px;
+    border-radius: 28px;
+    background: var(--panel);
+    border: 1px solid var(--glass-stroke);
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 0 0 1px rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    overflow: hidden;
+}
+
+.table-shell {
+    width: 100%;
+    max-width: 1680px;
+    border-radius: 28px;
+    background: rgba(8, 15, 31, 0.74);
+    border: 1px solid var(--glass-stroke);
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 0 0 1px rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    overflow: hidden;
+}
+
+.teams-shell {
+    width: 100%;
+    max-width: 1680px;
+    border-radius: 28px;
+    background:
+        radial-gradient(circle at top left, rgba(0, 230, 255, 0.12), transparent 35%),
+        radial-gradient(circle at top right, rgba(244, 201, 93, 0.14), transparent 38%),
+        rgba(8, 15, 31, 0.78);
+    border: 1px solid var(--glass-stroke);
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 0 0 1px rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    overflow: hidden;
+}
+
+.teams-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    padding: 22px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(135deg, rgba(0, 230, 255, 0.09), rgba(244, 201, 93, 0.09));
+}
+
+.teams-header h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.3rem, 1.9vw, 2rem);
+    letter-spacing: 0.12em;
+    color: var(--gold);
+}
+
+.teams-subtitle {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: clamp(0.95rem, 1.1vw, 1.05rem);
+}
+
+.teams-count {
+    color: var(--muted);
+    font-size: 1rem;
+    white-space: nowrap;
+}
+
+.teams-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 24px;
+}
+
+.team-stage-card {
+    position: relative;
+    min-height: 240px;
+    padding: 24px;
+    border-radius: 24px;
+    background:
+        linear-gradient(145deg, rgba(59, 226, 255, 0.08), rgba(244, 201, 93, 0.08)),
+        rgba(4, 10, 22, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 16px 36px rgba(0, 0, 0, 0.24);
+    overflow: hidden;
+}
+
+.team-stage-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at top right, rgba(244, 201, 93, 0.14), transparent 34%),
+        radial-gradient(circle at bottom left, rgba(59, 226, 255, 0.14), transparent 36%);
+    pointer-events: none;
+}
+
+.team-stage-badge {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 78px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(59, 226, 255, 0.28);
+    background: rgba(59, 226, 255, 0.08);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+}
+
+.team-stage-name {
+    position: relative;
+    margin-top: 22px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.4rem, 2.2vw, 2.2rem);
+    line-height: 1.15;
+    color: var(--white);
+}
+
+.team-stage-owner-label {
+    position: relative;
+    margin-top: 28px;
+    color: var(--muted);
+    font-size: 0.86rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.team-stage-owner {
+    position: relative;
+    margin-top: 8px;
+    font-size: clamp(1rem, 1.3vw, 1.2rem);
+    color: var(--gold);
+    font-family: 'Orbitron', sans-serif;
+}
+
+.team-stage-action {
+    position: relative;
+    margin-top: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 18px;
+    border: 1px solid rgba(59, 226, 255, 0.34);
+    border-radius: 999px;
+    background: rgba(59, 226, 255, 0.1);
+    color: var(--white);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.team-stage-action:hover {
+    background: rgba(59, 226, 255, 0.18);
+    border-color: rgba(59, 226, 255, 0.52);
+    transform: translateY(-1px);
+}
+
+.team-stage-action:focus-visible {
+    outline: 2px solid rgba(244, 201, 93, 0.65);
+    outline-offset: 3px;
+}
+
+.team-stage-players {
+    position: relative;
+    display: none;
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.team-stage-card.expanded .team-stage-players {
+    display: block;
+}
+
+.team-stage-players-title {
+    color: var(--muted);
+    font-size: 0.86rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.team-stage-player-list {
+    margin-top: 14px;
+    display: grid;
+    gap: 10px;
+}
+
+.team-stage-player-item {
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.team-stage-player-item-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.92rem;
+    line-height: 1.3;
+}
+
+.team-stage-player-item-meta {
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 0.88rem;
+}
+
+.team-stage-player-empty {
+    margin-top: 14px;
+    padding: 14px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--muted);
+    text-align: center;
+}
+
+.teams-empty {
+    padding: 48px 24px 56px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 1.05rem;
+}
+
+.team-detail-shell {
+    width: 100%;
+    max-width: 1280px;
+    border-radius: 30px;
+    background:
+        radial-gradient(circle at top left, rgba(0, 230, 255, 0.14), transparent 36%),
+        radial-gradient(circle at top right, rgba(244, 201, 93, 0.15), transparent 40%),
+        rgba(8, 15, 31, 0.8);
+    border: 1px solid var(--glass-stroke);
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 0 0 1px rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    overflow: hidden;
+}
+
+.team-detail-top {
+    padding: 28px 30px 22px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.team-detail-kicker {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--cyan);
+    font-size: 0.86rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.team-detail-name {
+    margin-top: 14px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(2rem, 3.8vw, 3.4rem);
+    line-height: 1.08;
+    color: var(--white);
+}
+
+.team-detail-owner {
+    margin-top: 14px;
+    color: var(--gold);
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1rem, 1.4vw, 1.25rem);
+}
+
+.team-detail-body {
+    padding: 26px 30px 30px;
+}
+
+.team-detail-section-title {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--muted);
+    font-size: 0.92rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.team-detail-players {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-top: 18px;
+}
+
+.team-detail-player {
+    padding: 18px;
+    border-radius: 22px;
+    background:
+        linear-gradient(145deg, rgba(59, 226, 255, 0.08), rgba(244, 201, 93, 0.08)),
+        rgba(4, 10, 22, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.team-detail-player-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    line-height: 1.25;
+}
+
+.team-detail-player-meta {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 0.96rem;
+}
+
+.team-detail-empty {
+    margin-top: 18px;
+    padding: 20px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--muted);
+    text-align: center;
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(135deg, rgba(0, 230, 255, 0.08), rgba(244, 201, 93, 0.08));
+}
+
+.table-header h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.2rem, 1.8vw, 1.8rem);
+    letter-spacing: 0.12em;
+    color: var(--gold);
+}
+
+.table-subtitle {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: clamp(0.95rem, 1.1vw, 1.05rem);
+}
+
+.table-stage-count {
+    color: var(--muted);
+    font-size: 1rem;
+    white-space: nowrap;
+}
+
+.table-stage-wrap {
+    overflow: auto;
+}
+
+.table-stage {
+    width: 100%;
+    min-width: 1080px;
+    border-collapse: collapse;
+}
+
+.table-stage thead th {
+    padding: 18px 20px;
+    text-align: left;
+    color: var(--muted);
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.table-stage tbody td {
+    padding: 18px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 1.08rem;
+}
+
+.table-stage tbody tr:hover {
+    background: rgba(59, 226, 255, 0.04);
+}
+
+.table-id-pill {
+    display: inline-flex;
+    min-width: 54px;
+    justify-content: center;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(59, 226, 255, 0.26);
+    background: rgba(59, 226, 255, 0.08);
+    font-family: 'Orbitron', sans-serif;
+}
+
+.table-status-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 92px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.88rem;
+    letter-spacing: 0.06em;
+}
+
+.table-status-pill.sold {
+    color: #fff1f4;
+    background: rgba(255, 102, 124, 0.2);
+    border: 1px solid rgba(255, 102, 124, 0.45);
+}
+
+.table-status-pill.unsold {
+    color: #eafff8;
+    background: rgba(49, 208, 161, 0.18);
+    border: 1px solid rgba(49, 208, 161, 0.4);
+}
+
+.table-empty {
+    padding: 40px 24px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 1.05rem;
+}
+
+.card {
+    position: relative;
+    display: grid;
+    grid-template-columns: 48% 52%;
+    gap: 0;
+    min-height: min(20vh, 400px);
+    opacity: 0;
+    transform: scale(0.96) translateY(16px);
+}
+
+.card.show {
+    animation: playerEntry 650ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes playerEntry {
+    0% {
+        opacity: 0;
+        transform: scale(0.96) translateY(16px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.image-panel {
+    position: relative;
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+    background:
+        radial-gradient(circle at 50% 15%, rgba(255, 255, 255, 0.15), transparent 45%),
+        linear-gradient(180deg, rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.55));
+    display: grid;
+    place-items: center;
+    padding: clamp(12px, 1.4vw, 20px);
+}
+
+.image-panel::after {
+    content: "";
+    position: absolute;
+    inset: auto 8% 8% 8%;
+    height: 10px;
+    border-radius: 999px;
+    background: radial-gradient(circle at center, rgba(244, 201, 93, 0.28), transparent 70%);
+    filter: blur(8px);
+}
+
+#playerImage {
+    width: 100%;
+    max-width: 700px;
+    height: clamp(300px, 60vh, 450px);
+    object-fit: contain;
+    object-position: center;
+    border-radius: 22px;
+    border: 3px solid rgba(244, 201, 93, 0.65);
+    background: rgba(4, 10, 22, 0.88);
+    box-shadow:
+        0 0 45px rgba(244, 201, 93, 0.2),
+        0 24px 35px rgba(0, 0, 0, 0.35);
+}
+
+.info-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(8px, 1vw, 12px);
+    position: relative;
+}
+
+.label {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--neon);
+    letter-spacing: 0.18em;
+    font-size: clamp(0.95rem, 1.1vw, 1.15rem);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+#playerName {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(2.2rem, 4.8vw, 4.6rem);
+    font-weight: 800;
+    line-height: 1.02;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.14);
+}
+
+.role-badge {
+    margin-top: 12px;
+    display: inline-flex;
+    align-self: flex-start;
+    padding: 8px 18px;
+    border-radius: 999px;
+    background: linear-gradient(130deg, rgba(0, 230, 255, 0.16), rgba(244, 201, 93, 0.16));
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1rem, 1.2vw, 1.35rem);
+    letter-spacing: 0.08em;
+}
+
+.meta-line {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: clamp(1rem, 1.1vw, 1.15rem);
+    letter-spacing: 0.08em;
+}
+
+.meta-line strong {
+    color: var(--cyan);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.95em;
+    margin-right: 8px;
+}
+
+.price-wrap {
+    margin-top: clamp(14px, 2vh, 22px);
+}
+
+.price-title {
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: clamp(0.72rem, 0.9vw, 0.95rem);
+}
+
+#playerPrice {
+    margin-top: 4px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(2.1rem, 4.2vw, 4.4rem);
+    color: var(--gold);
+    letter-spacing: 0.04em;
+    text-shadow: 0 0 24px var(--gold-soft);
+}
+
+.status {
+    margin-top: 12px;
+    font-size: clamp(0.75rem, 0.92vw, 0.95rem);
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    min-height: 1.4em;
+}
+
+.status.error {
+    color: var(--danger);
+}
+
+.sold-seal {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    width: clamp(120px, 18vw, 170px);
+    max-width: 180px;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10;
+    transform: translateY(-150px) scale(1.5) rotate(0deg);
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.45));
+}
+
+.sold-seal.show {
+    animation: stampIn 0.7s ease-out forwards;
+}
+
+.sold-seal.bounce {
+    animation: sealBounce 0.3s ease-in-out forwards;
+}
+
+.sold-seal.sealed {
+    opacity: 0.9;
+    transform: translate(0, 0) scale(1) rotate(-15deg);
+}
+
+@keyframes stampIn {
+    0% {
+        transform: translateY(-150px) scale(1.5) rotate(0deg);
+        opacity: 0;
+    }
+    60% {
+        opacity: 1;
+        transform: translateY(-20px) scale(1.1) rotate(-10deg);
+    }
+    100% {
+        transform: translate(0, 0) scale(1) rotate(-15deg);
+        opacity: 1;
+    }
+}
+
+@keyframes sealFlyIn {
+    0% {
+        transform: translateY(-200px) scale(2) rotate(0deg);
+        opacity: 0;
+    }
+    40% {
+        transform: translateY(-30px) scale(1.3) rotate(-10deg);
+        opacity: 0.9;
+    }
+    70% {
+        transform: translateY(5px) scale(0.95) rotate(-18deg);
+        opacity: 0.85;
+    }
+    100% {
+        transform: translateY(0) scale(1) rotate(-20deg);
+        opacity: 0.85;
+    }
+}
+
+@keyframes sealBounce {
+    0%, 100% {
+        transform: translateY(0) scale(1) rotate(-20deg);
+    }
+    50% {
+        transform: translateY(-3px) scale(1.02) rotate(-20deg);
+    }
+}
+
+@media (max-width: 1150px) {
+    .home-hero {
+        min-height: 520px;
+        padding-bottom: 260px;
+    }
+
+    .home-hero-copy {
+        max-width: 100%;
+    }
+
+    .batsman {
+        right: 16%;
+        bottom: 70px;
+        transform: scale(0.9);
+    }
+
+    .ball-flight {
+        left: 52%;
+        bottom: 188px;
+    }
+
+    .ball-flight::before {
+        width: 130px;
+    }
+
+    .fixture-stage-matchup {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .fixture-stage-team.align-right {
+        text-align: center;
+    }
+
+    .fixture-stage-detail {
+        flex-direction: column;
+    }
+
+    .fixture-stage-detail-value {
+        text-align: left;
+    }
+
+    .results-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .result-stage-scores {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        grid-template-columns: 1fr;
+        min-height: auto;
+    }
+
+    .image-panel {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    #playerImage {
+        max-width: 100%;
+        height: clamp(280px, 40vh, 420px);
+    }
+
+    #playerName {
+        font-size: clamp(2rem, 8vw, 3.5rem);
+    }
+
+    #playerPrice {
+        font-size: clamp(2rem, 8vw, 4rem);
+    }
+
+    .site-nav {
+        justify-content: center;
+    }
+}
+
+</style>
+>>>>>>> 37bfce6 (match type)
 </head>
 
 <body>
@@ -2283,9 +4155,42 @@
             }
         }
 
+<<<<<<< HEAD
         function renderFixturesStage(fixtures) {
             const fixtureItems = Array.isArray(fixtures) ? fixtures : [];
             fixturesStageCount.textContent = `${fixtureItems.length} fixture${fixtureItems.length === 1 ? "" : "s"}`;
+=======
+function getFixtureMatchTypeLabel(fixture) {
+    const explicitMatchType = String(fixture?.matchType || "").trim();
+    if (explicitMatchType) {
+        return explicitMatchType;
+    }
+
+    const savedTitle = String(fixture?.matchTitle || "").trim();
+    const knownMatchTypes = ["Qualifier 1", "Qualifier 2", "Eliminator", "Final"];
+    return knownMatchTypes.find(matchType => savedTitle.startsWith(`${matchType} - `)) || "";
+}
+
+function getFixtureDisplayTitle(fixture) {
+    const fallbackTitle = `${fixture?.teamAName || "-"} vs ${fixture?.teamBName || "-"}`;
+    const savedTitle = String(fixture?.matchTitle || "").trim();
+    const matchType = getFixtureMatchTypeLabel(fixture);
+
+    if (!savedTitle) {
+        return fallbackTitle;
+    }
+
+    if (matchType && savedTitle.startsWith(`${matchType} - `)) {
+        return savedTitle.slice(matchType.length + 3).trim() || fallbackTitle;
+    }
+
+    return savedTitle;
+}
+
+function renderFixturesStage(fixtures) {
+    const fixtureItems = Array.isArray(fixtures) ? fixtures : [];
+    fixturesStageCount.textContent = `${fixtureItems.length} fixture${fixtureItems.length === 1 ? "" : "s"}`;
+>>>>>>> 37bfce6 (match type)
 
             if (!fixtureItems.length) {
                 fixturesStageGrid.innerHTML = `<div class="fixtures-empty">No fixtures available to display.</div>`;
@@ -2294,8 +4199,11 @@
 
             fixturesStageGrid.innerHTML = fixtureItems.map(fixture => `
         <article class="fixture-stage-card">
-            <div class="fixture-stage-badge">MATCH ${fixture.id || "-"}</div>
-            <div class="fixture-stage-title">Upcoming Clash</div>
+            <div class="fixture-stage-top">
+                <div class="fixture-stage-badge">MATCH ${fixture.id || "-"}</div>
+                ${getFixtureMatchTypeLabel(fixture) ? `<div class="fixture-stage-type">${getFixtureMatchTypeLabel(fixture)}</div>` : ``}
+            </div>
+            <div class="fixture-stage-title">${getFixtureMatchTypeLabel(fixture) || "Upcoming Clash"}</div>
             <div class="fixture-stage-matchup">
                 <div class="fixture-stage-team">
                     <div class="fixture-stage-team-label">Team One</div>
@@ -2310,7 +4218,7 @@
             <div class="fixture-stage-details">
                 <div class="fixture-stage-detail">
                     <div class="fixture-stage-detail-label">Match</div>
-                    <div class="fixture-stage-detail-value">${fixture.matchTitle || `${fixture.teamAName || "-"} vs ${fixture.teamBName || "-"}`}</div>
+                    <div class="fixture-stage-detail-value">${getFixtureDisplayTitle(fixture)}</div>
                 </div>
                 <div class="fixture-stage-detail">
                     <div class="fixture-stage-detail-label">Date & Time</div>

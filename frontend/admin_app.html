@@ -1422,6 +1422,19 @@ tbody tr:hover {
                         </div>
 
                         <div class="field-group">
+                            <label for="fixtureMatchTypeSelect">Match Type</label>
+                            <div class="control">
+                                <select id="fixtureMatchTypeSelect">
+                                    <option value="">Regular Match</option>
+                                    <option value="Qualifier 1">Qualifier 1</option>
+                                    <option value="Qualifier 2">Qualifier 2</option>
+                                    <option value="Eliminator">Eliminator</option>
+                                    <option value="Final">Final</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="field-group">
                             <label for="fixtureDateInput">Match Date</label>
                             <div class="control">
                                 <input type="date" id="fixtureDateInput" />
@@ -1715,6 +1728,7 @@ const groupCount = document.getElementById("groupCount");
 const groupList = document.getElementById("groupList");
 const fixtureTeamASelect = document.getElementById("fixtureTeamASelect");
 const fixtureTeamBSelect = document.getElementById("fixtureTeamBSelect");
+const fixtureMatchTypeSelect = document.getElementById("fixtureMatchTypeSelect");
 const fixtureDateInput = document.getElementById("fixtureDateInput");
 const fixtureTimeInput = document.getElementById("fixtureTimeInput");
 const fixtureVenueInput = document.getElementById("fixtureVenueInput");
@@ -2359,6 +2373,7 @@ async function saveGroup() {
 async function saveFixture() {
     const teamAId = Number(fixtureTeamASelect.value);
     const teamBId = Number(fixtureTeamBSelect.value);
+    const matchType = fixtureMatchTypeSelect.value.trim();
     const matchDate = fixtureDateInput.value.trim();
     const matchTime = fixtureTimeInput.value.trim();
     const venue = fixtureVenueInput.value.trim() || "RUET CENTER FIELD";
@@ -2377,6 +2392,7 @@ async function saveFixture() {
             body: JSON.stringify({
                 team_a_id: teamAId,
                 team_b_id: teamBId,
+                match_type: matchType,
                 match_date: matchDate,
                 match_time: matchTime,
                 venue
@@ -2391,6 +2407,7 @@ async function saveFixture() {
 
         fixtureTeamASelect.value = "";
         fixtureTeamBSelect.value = "";
+        fixtureMatchTypeSelect.value = "";
         fixtureDateInput.value = "";
         fixtureTimeInput.value = "";
         fixtureVenueInput.value = "RUET CENTER FIELD";
@@ -2404,6 +2421,7 @@ async function saveFixture() {
 function resetFixtureForm() {
     fixtureTeamASelect.value = "";
     fixtureTeamBSelect.value = "";
+    fixtureMatchTypeSelect.value = "";
     fixtureDateInput.value = "";
     fixtureTimeInput.value = "";
     fixtureVenueInput.value = "RUET CENTER FIELD";

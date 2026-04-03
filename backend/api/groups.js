@@ -35,6 +35,7 @@ function normalizeFixture(fixture, teams) {
 
   return {
     id: Number(safeFixture.id) || 0,
+    matchType: String(safeFixture.matchType || "").trim(),
     matchTitle: String(safeFixture.matchTitle || "").trim(),
     teamAId,
     teamBId,
@@ -167,6 +168,7 @@ module.exports = async function handler(req, res) {
       if (resource === "fixtures") {
         const teamAId = Number(payload.team_a_id) || 0;
         const teamBId = Number(payload.team_b_id) || 0;
+        const matchType = String(payload.match_type || "").trim();
         const venue = String(payload.venue || "").trim();
         const matchDate = String(payload.match_date || "").trim();
         const matchTime = String(payload.match_time || "").trim();
@@ -192,7 +194,10 @@ module.exports = async function handler(req, res) {
 
         const fixture = {
           id: safeFixtures.length + 1,
-          matchTitle: `${String(teamA.teamName || "").trim()} vs ${String(teamB.teamName || "").trim()}`,
+          matchType,
+          matchTitle: matchType
+            ? `${matchType} - ${String(teamA.teamName || "").trim()} vs ${String(teamB.teamName || "").trim()}`
+            : `${String(teamA.teamName || "").trim()} vs ${String(teamB.teamName || "").trim()}`,
           teamAId,
           teamBId,
           teamAName: String(teamA.teamName || "").trim(),
