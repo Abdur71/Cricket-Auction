@@ -383,6 +383,17 @@
             overflow: hidden;
         }
 
+        .fixture-stage-card.final-fixture {
+            background:
+                linear-gradient(145deg, rgba(0, 238, 255, 0.14), rgba(255, 214, 79, 0.16)),
+                rgba(4, 10, 22, 0.88);
+            border-color: rgba(255, 214, 79, 0.22);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                0 24px 54px rgba(0, 0, 0, 0.34),
+                0 0 28px rgba(0, 238, 255, 0.14);
+        }
+
         .fixture-stage-card::before {
             content: "";
             position: absolute;
@@ -391,6 +402,13 @@
                 radial-gradient(circle at top right, rgba(244, 201, 93, 0.16), transparent 34%),
                 radial-gradient(circle at bottom left, rgba(59, 226, 255, 0.16), transparent 36%);
             pointer-events: none;
+        }
+
+        .fixture-stage-card.final-fixture::before {
+            background:
+                radial-gradient(circle at top right, rgba(255, 214, 79, 0.25), transparent 34%),
+                radial-gradient(circle at bottom left, rgba(0, 238, 255, 0.22), transparent 36%),
+                linear-gradient(120deg, transparent 40%, rgba(255, 255, 255, 0.05) 50%, transparent 60%);
         }
 
         .fixture-stage-badge {
@@ -465,6 +483,7 @@
         }
 
         .fixture-stage-vs {
+            position: relative;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -477,6 +496,92 @@
             font-size: 0.92rem;
             letter-spacing: 0.08em;
             box-shadow: 0 0 22px rgba(255, 102, 124, 0.26);
+        }
+
+        .fixture-stage-card.final-fixture .fixture-stage-vs {
+            width: 74px;
+            height: 74px;
+            background:
+                radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 0.95), rgba(255, 214, 79, 0.82) 32%, rgba(0, 238, 255, 0.72) 68%, rgba(0, 20, 42, 0.25) 100%);
+            color: #08111f;
+            font-size: 1.02rem;
+            font-weight: 900;
+            letter-spacing: 0.14em;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+            box-shadow:
+                0 0 0 3px rgba(255, 255, 255, 0.08),
+                0 0 30px rgba(0, 238, 255, 0.34),
+                0 0 48px rgba(255, 214, 79, 0.24);
+            animation: finalVsPulse 1.8s ease-in-out infinite;
+            overflow: visible;
+        }
+
+        .fixture-stage-card.final-fixture .fixture-stage-vs::before,
+        .fixture-stage-card.final-fixture .fixture-stage-vs::after {
+            content: "";
+            position: absolute;
+            inset: -12px;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .fixture-stage-card.final-fixture .fixture-stage-vs::before {
+            background:
+                conic-gradient(from 210deg, transparent 0deg 50deg, rgba(255, 255, 255, 0.95) 52deg 62deg, transparent 64deg 180deg, rgba(255, 234, 127, 0.88) 182deg 192deg, transparent 194deg 360deg);
+            filter: blur(1px);
+            opacity: 0.9;
+            animation: finalLightningSpin 3.4s linear infinite;
+        }
+
+        .fixture-stage-card.final-fixture .fixture-stage-vs::after {
+            inset: -22px;
+            background:
+                radial-gradient(circle, rgba(0, 238, 255, 0.22) 0%, rgba(0, 238, 255, 0.08) 42%, transparent 70%);
+            animation: finalVsGlow 1.9s ease-in-out infinite;
+        }
+
+        .fixture-stage-card.final-fixture .fixture-stage-title {
+            color: #f7d35b;
+            text-shadow: 0 0 12px rgba(247, 211, 91, 0.18);
+        }
+
+        @keyframes finalVsPulse {
+            0%, 100% {
+                transform: scale(1);
+                filter: brightness(1);
+            }
+
+            45% {
+                transform: scale(1.08);
+                filter: brightness(1.18);
+            }
+
+            55% {
+                transform: scale(0.98);
+                filter: brightness(0.98);
+            }
+        }
+
+        @keyframes finalLightningSpin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes finalVsGlow {
+            0%, 100% {
+                transform: scale(0.92);
+                opacity: 0.48;
+            }
+
+            50% {
+                transform: scale(1.08);
+                opacity: 0.9;
+            }
         }
 
         .fixture-stage-details {
@@ -2310,6 +2415,10 @@ function getFixtureDisplayTitle(fixture) {
     return savedTitle;
 }
 
+function isFinalFixture(fixture) {
+    return getFixtureMatchTypeLabel(fixture).toLowerCase() === "final";
+}
+
 function renderFixturesStage(fixtures) {
     const fixtureItems = Array.isArray(fixtures) ? fixtures : [];
     fixturesStageCount.textContent = `${fixtureItems.length} fixture${fixtureItems.length === 1 ? "" : "s"}`;
@@ -2320,7 +2429,7 @@ function renderFixturesStage(fixtures) {
             }
 
             fixturesStageGrid.innerHTML = fixtureItems.map(fixture => `
-        <article class="fixture-stage-card">
+        <article class="fixture-stage-card ${isFinalFixture(fixture) ? "final-fixture" : ""}">
             <div class="fixture-stage-top">
                 <div class="fixture-stage-badge">MATCH ${fixture.id || "-"}</div>
                 ${getFixtureMatchTypeLabel(fixture) ? `<div class="fixture-stage-type">${getFixtureMatchTypeLabel(fixture)}</div>` : ``}
@@ -2331,7 +2440,7 @@ function renderFixturesStage(fixtures) {
                     <div class="fixture-stage-team-label">Team One</div>
                     <div class="fixture-stage-team-name">${fixture.teamAName || "-"}</div>
                 </div>
-                <div class="fixture-stage-vs">VS</div>
+                <div class="fixture-stage-vs">${isFinalFixture(fixture) ? `<span>VS</span>` : `VS`}</div>
                 <div class="fixture-stage-team align-right">
                     <div class="fixture-stage-team-label">Team Two</div>
                     <div class="fixture-stage-team-name">${fixture.teamBName || "-"}</div>

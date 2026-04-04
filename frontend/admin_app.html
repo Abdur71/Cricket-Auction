@@ -1826,16 +1826,12 @@ const KNOCKOUT_MATCH_TEAM_OPTIONS = {
     "Qualifier 2": [
         { value: "slot:q1-runners-up", label: "Q-1 Runners Up" },
         { value: "slot:eliminator-champion", label: "Eliminator Champion" }
-    ],
-    "Final": [
-        { value: "slot:q1-champion", label: "Q-1 Champion" },
-        { value: "slot:q2-champion", label: "Q-2 Champion" }
     ]
 };
 
 function getFixtureTeamOptions(matchType = "") {
     const normalizedMatchType = String(matchType || "").trim();
-    if (KNOCKOUT_MATCH_TEAM_OPTIONS[normalizedMatchType]) {
+    if (normalizedMatchType !== "Final" && KNOCKOUT_MATCH_TEAM_OPTIONS[normalizedMatchType]) {
         return KNOCKOUT_MATCH_TEAM_OPTIONS[normalizedMatchType];
     }
 
@@ -1856,7 +1852,7 @@ function populateFixtureTeamSelects() {
     const teamOptions = getFixtureTeamOptions(matchType);
     const teamAValue = fixtureTeamASelect.value;
     const teamBValue = fixtureTeamBSelect.value;
-    const placeholderText = KNOCKOUT_MATCH_TEAM_OPTIONS[matchType] ? "Select slot" : "Select team";
+    const placeholderText = matchType !== "Final" && KNOCKOUT_MATCH_TEAM_OPTIONS[matchType] ? "Select slot" : "Select team";
 
     fixtureTeamASelect.innerHTML = buildFixtureTeamOptionsHtml(teamOptions, placeholderText);
     fixtureTeamBSelect.innerHTML = buildFixtureTeamOptionsHtml(teamOptions, placeholderText);
