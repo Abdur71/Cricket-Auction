@@ -384,14 +384,16 @@
         }
 
         .fixture-stage-card.final-fixture {
+            padding: 30px 34px 34px;
+            border-radius: 34px;
             background:
-                linear-gradient(145deg, rgba(0, 238, 255, 0.14), rgba(255, 214, 79, 0.16)),
-                rgba(4, 10, 22, 0.88);
-            border-color: rgba(255, 214, 79, 0.22);
+                linear-gradient(90deg, rgba(3, 48, 71, 0.92) 0%, rgba(10, 24, 37, 0.96) 58%, rgba(50, 43, 24, 0.9) 100%),
+                rgba(4, 10, 22, 0.92);
+            border-color: rgba(150, 182, 196, 0.18);
             box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                0 24px 54px rgba(0, 0, 0, 0.34),
-                0 0 28px rgba(0, 238, 255, 0.14);
+                inset 0 1px 0 rgba(255, 255, 255, 0.06),
+                0 28px 58px rgba(0, 0, 0, 0.34),
+                0 0 0 1px rgba(255, 255, 255, 0.03);
         }
 
         .fixture-stage-card::before {
@@ -406,9 +408,9 @@
 
         .fixture-stage-card.final-fixture::before {
             background:
-                radial-gradient(circle at top right, rgba(255, 214, 79, 0.25), transparent 34%),
-                radial-gradient(circle at bottom left, rgba(0, 238, 255, 0.22), transparent 36%),
-                linear-gradient(120deg, transparent 40%, rgba(255, 255, 255, 0.05) 50%, transparent 60%);
+                linear-gradient(90deg, rgba(0, 179, 255, 0.1), transparent 42%, rgba(255, 187, 71, 0.08)),
+                radial-gradient(circle at top left, rgba(0, 183, 255, 0.14), transparent 34%),
+                radial-gradient(circle at top right, rgba(255, 191, 87, 0.12), transparent 32%);
         }
 
         .fixture-stage-badge {
@@ -424,6 +426,16 @@
             font-family: 'Orbitron', sans-serif;
             font-size: 0.78rem;
             letter-spacing: 0.08em;
+        }
+
+        .fixture-stage-card.final-fixture .fixture-stage-badge {
+            min-width: 116px;
+            padding: 11px 20px;
+            border-color: rgba(54, 194, 255, 0.4);
+            background: rgba(8, 69, 100, 0.34);
+            color: #d8f4ff;
+            font-size: 0.96rem;
+            letter-spacing: 0.06em;
         }
 
         .fixture-stage-title {
@@ -456,6 +468,14 @@
             border-radius: 22px;
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .fixture-stage-card.final-fixture .fixture-stage-matchup {
+            margin-top: 28px;
+            padding: 32px 26px;
+            border-radius: 32px;
+            background: linear-gradient(90deg, rgba(28, 61, 81, 0.72), rgba(31, 40, 49, 0.82));
+            border-color: rgba(215, 231, 243, 0.08);
         }
 
         .fixture-stage-team {
@@ -501,48 +521,98 @@
         .fixture-stage-card.final-fixture .fixture-stage-vs {
             width: 74px;
             height: 74px;
-            background:
-                radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 0.95), rgba(255, 214, 79, 0.82) 32%, rgba(0, 238, 255, 0.72) 68%, rgba(0, 20, 42, 0.25) 100%);
-            color: #08111f;
+            background: radial-gradient(circle at 50% 35%, #ff8a72 0%, #f36f58 42%, #f38d41 100%);
+            color: #ffffff;
             font-size: 1.02rem;
             font-weight: 900;
-            letter-spacing: 0.14em;
-            text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+            letter-spacing: 0.06em;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
             box-shadow:
-                0 0 0 3px rgba(255, 255, 255, 0.08),
-                0 0 30px rgba(0, 238, 255, 0.34),
-                0 0 48px rgba(255, 214, 79, 0.24);
+                0 0 18px rgba(255, 120, 92, 0.4),
+                0 0 38px rgba(255, 145, 65, 0.18);
             animation: finalVsPulse 1.8s ease-in-out infinite;
             overflow: visible;
+            isolation: isolate;
+        }
+
+        .fixture-stage-card.final-fixture .fixture-stage-vs > span {
+            position: relative;
+            z-index: 2;
         }
 
         .fixture-stage-card.final-fixture .fixture-stage-vs::before,
         .fixture-stage-card.final-fixture .fixture-stage-vs::after {
             content: "";
             position: absolute;
-            inset: -12px;
-            border-radius: 50%;
             pointer-events: none;
         }
 
         .fixture-stage-card.final-fixture .fixture-stage-vs::before {
-            background:
-                conic-gradient(from 210deg, transparent 0deg 50deg, rgba(255, 255, 255, 0.95) 52deg 62deg, transparent 64deg 180deg, rgba(255, 234, 127, 0.88) 182deg 192deg, transparent 194deg 360deg);
-            filter: blur(1px);
-            opacity: 0.9;
-            animation: finalLightningSpin 3.4s linear infinite;
+            left: 50%;
+            top: 50%;
+            width: 152px;
+            height: 214px;
+            transform: translate(-50%, -58%) rotate(8deg);
+            background: #ffffff;
+            clip-path: polygon(63% 0%, 53% 23%, 68% 23%, 55% 49%, 67% 49%, 34% 100%, 46% 66%, 34% 66%, 50% 40%, 38% 40%);
+            filter:
+                drop-shadow(0 0 4px rgba(255, 255, 255, 0.85))
+                drop-shadow(0 0 12px rgba(255, 255, 255, 0.42));
+            opacity: 0.96;
+            z-index: 1;
+            animation: finalLightningFlash 2.6s steps(1, end) infinite;
         }
 
         .fixture-stage-card.final-fixture .fixture-stage-vs::after {
-            inset: -22px;
+            inset: -18px;
+            border-radius: 50%;
             background:
-                radial-gradient(circle, rgba(0, 238, 255, 0.22) 0%, rgba(0, 238, 255, 0.08) 42%, transparent 70%);
+                radial-gradient(circle, rgba(255, 157, 89, 0.32) 0%, rgba(255, 157, 89, 0.12) 42%, transparent 72%);
             animation: finalVsGlow 1.9s ease-in-out infinite;
         }
 
         .fixture-stage-card.final-fixture .fixture-stage-title {
-            color: #f7d35b;
-            text-shadow: 0 0 12px rgba(247, 211, 91, 0.18);
+            margin-top: 30px;
+            color: #d8e5f4;
+            font-size: clamp(1.7rem, 3vw, 2.45rem);
+            letter-spacing: 0.12em;
+            text-shadow: 0 0 14px rgba(216, 229, 244, 0.12);
+        }
+
+        .fixture-stage-card.final-fixture .fixture-stage-type {
+            color: #f0f5fb;
+            font-size: 1.18rem;
+            font-weight: 600;
+        }
+
+        .fixture-stage-card.final-fixture .fixture-stage-team-label,
+        .fixture-stage-card.final-fixture .fixture-stage-detail-label {
+            color: #aebfd0;
+            font-size: 0.86rem;
+            letter-spacing: 0.16em;
+        }
+
+        .fixture-stage-card.final-fixture .fixture-stage-team-name {
+            margin-top: 12px;
+            font-size: clamp(1.85rem, 3.2vw, 2.45rem);
+            color: #f3f7fb;
+        }
+
+        .fixture-stage-card.final-fixture .fixture-stage-details {
+            margin-top: 28px;
+            gap: 16px;
+        }
+
+        .fixture-stage-card.final-fixture .fixture-stage-detail {
+            padding: 18px 22px;
+            border-radius: 24px;
+            background: linear-gradient(90deg, rgba(32, 68, 88, 0.7), rgba(28, 38, 47, 0.86));
+            border: 1px solid rgba(214, 230, 241, 0.06);
+        }
+
+        .fixture-stage-card.final-fixture .fixture-stage-detail-value {
+            color: #f3f7fb;
+            font-size: clamp(1rem, 2vw, 1.2rem);
         }
 
         @keyframes finalVsPulse {
@@ -562,13 +632,17 @@
             }
         }
 
-        @keyframes finalLightningSpin {
-            from {
-                transform: rotate(0deg);
+        @keyframes finalLightningFlash {
+            0%, 18%, 24%, 100% {
+                opacity: 0;
             }
 
-            to {
-                transform: rotate(360deg);
+            19%, 21%, 23% {
+                opacity: 0.98;
+            }
+
+            20%, 22% {
+                opacity: 0.35;
             }
         }
 
@@ -1711,6 +1785,22 @@
             .fixture-stage-matchup {
                 grid-template-columns: 1fr;
                 text-align: center;
+            }
+
+            .fixture-stage-card.final-fixture {
+                padding: 24px 18px 22px;
+                border-radius: 28px;
+            }
+
+            .fixture-stage-card.final-fixture .fixture-stage-matchup {
+                padding: 24px 16px;
+                gap: 18px;
+            }
+
+            .fixture-stage-card.final-fixture .fixture-stage-vs::before {
+                width: 118px;
+                height: 170px;
+                transform: translate(-50%, -56%) rotate(8deg);
             }
 
             .fixture-stage-team.align-right {
