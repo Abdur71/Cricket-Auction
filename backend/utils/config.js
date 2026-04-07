@@ -8,7 +8,7 @@ module.exports = {
   FRONTEND_DIR,
   SHEET_URL:
     process.env.GOOGLE_SHEET_URL ||
-    "https://docs.google.com/spreadsheets/d/1BFWNKZK8t230bL2XwHEJfCr2kqr1nCuZnihwmv1UFQE/edit?usp=sharing",
+    "https://docs.google.com/spreadsheets/d/1xPIesIE3jrRJI67knyypgyIpoBD98eRwVPxk81z5w50/edit?usp=sharing",
   ADMIN_USERNAME: process.env.ADMIN_USERNAME || "admin",
   ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || process.env.ADMIN_PASSWORD_PLAIN || "",
   ADMIN_PASSWORD_HASH:
