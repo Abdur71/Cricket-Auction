@@ -1858,6 +1858,7 @@
     <div class="wrapper">
         <nav class="site-nav" aria-label="Frontend navigation">
             <button class="site-nav-btn active" type="button" data-front-section="home">Home</button>
+            <button class="site-nav-btn" type="button" data-front-section="playerintroduction">Player Introduction</button>
             <button class="site-nav-btn" type="button" data-front-section="teamshowcase">TeamShowcase</button>
             <button class="site-nav-btn" type="button" data-front-section="group">Group</button>
             <button class="site-nav-btn" type="button" data-front-section="fixtures">Match Fixture</button>
@@ -1985,6 +1986,35 @@
             </main>
         </section>
 
+        <section class="frontend-section hidden" id="playerIntroductionSection">
+            <main class="stage">
+                <section class="card-shell" id="playerIntroductionStageView">
+                    <article class="card show" id="playerIntroductionCard">
+                        <div class="image-panel">
+                            <img id="introPlayerImage" alt="Player Introduction Image"
+                                src="https://images.unsplash.com/photo-1543357480-c60d40007a3f?auto=format&fit=crop&w=1200&q=80" />
+                            <img id="introSoldSeal" class="sold-seal" src="image.png" alt="SOLD stamp" />
+                        </div>
+
+                        <div class="info-panel">
+                            <div class="label">Player Introduction Mode</div>
+                            <h2 id="introPlayerName">Waiting For Player</h2>
+                            <div class="role-badge" id="introPlayerRole">Role</div>
+                            <div class="meta-line"><strong>Player ID</strong><span id="introPlayerDisplayId">-</span></div>
+                            <div class="meta-line"><strong>Series</strong><span id="introPlayerSeries">-</span></div>
+
+                            <div class="price-wrap">
+                                <div class="price-title" id="introPlayerPriceTitle">Base Price</div>
+                                <div id="introPlayerPrice">50k</div>
+                            </div>
+
+                            <div class="status" id="introStatusText">Select a player from admin, then open this mode.</div>
+                        </div>
+                    </article>
+                </section>
+            </main>
+        </section>
+
         <section class="frontend-section hidden" id="teamshowcaseSection">
             <main class="stage">
                 <section class="teams-shell" id="teamsStageView">
@@ -2103,6 +2133,17 @@
         const teamDetailPlayers = document.getElementById("teamDetailPlayers");
         const frontNavButtons = Array.from(document.querySelectorAll("[data-front-section]"));
         const homeSection = document.getElementById("homeSection");
+        const playerIntroductionSection = document.getElementById("playerIntroductionSection");
+        const playerIntroductionCard = document.getElementById("playerIntroductionCard");
+        const introPlayerName = document.getElementById("introPlayerName");
+        const introPlayerRole = document.getElementById("introPlayerRole");
+        const introPlayerDisplayId = document.getElementById("introPlayerDisplayId");
+        const introPlayerSeries = document.getElementById("introPlayerSeries");
+        const introPlayerPriceTitle = document.getElementById("introPlayerPriceTitle");
+        const introPlayerPrice = document.getElementById("introPlayerPrice");
+        const introPlayerImage = document.getElementById("introPlayerImage");
+        const introSoldSeal = document.getElementById("introSoldSeal");
+        const introStatusText = document.getElementById("introStatusText");
         const teamshowcaseSection = document.getElementById("teamshowcaseSection");
         const groupSection = document.getElementById("groupSection");
         const fixturesSection = document.getElementById("fixturesSection");
@@ -2162,6 +2203,7 @@
             currentFrontendSection = sectionName;
 
             homeSection.classList.toggle("hidden", sectionName !== "home");
+            playerIntroductionSection.classList.toggle("hidden", sectionName !== "playerintroduction");
             teamshowcaseSection.classList.toggle("hidden", sectionName !== "teamshowcase");
             groupSection.classList.toggle("hidden", sectionName !== "group");
             fixturesSection.classList.toggle("hidden", sectionName !== "fixtures");
@@ -2173,6 +2215,10 @@
 
             if (sectionName === "teamshowcase") {
                 loadStageTeams();
+            }
+
+            if (sectionName === "playerintroduction") {
+                loadPlayerIntroduction();
             }
 
             if (sectionName === "group") {
@@ -2307,6 +2353,78 @@
             // Force reflow to reliably restart animation for every new player.
             void card.offsetWidth;
             card.classList.add("show");
+        }
+
+        function animatePlayerIntroductionCard() {
+            playerIntroductionCard.classList.remove("show");
+            void playerIntroductionCard.offsetWidth;
+            playerIntroductionCard.classList.add("show");
+        }
+
+        function setPlayerIntroductionStatus(message, isError) {
+            introStatusText.textContent = message;
+            introStatusText.classList.toggle("error", Boolean(isError));
+        }
+
+        function updateIntroSoldUI(isSold) {
+            if (isSold) {
+                introSoldSeal.classList.add("sealed");
+                introSoldSeal.classList.remove("show", "bounce");
+            } else {
+                introSoldSeal.classList.remove("sealed", "show", "bounce");
+            }
+        }
+
+        function renderPlayerIntroduction(data, id) {
+            const soldPrice = (data.soldPrice || "").trim();
+            const isSoldWithPrice = Boolean(data.sold && soldPrice);
+
+            animatePlayerIntroductionCard();
+            introPlayerName.textContent = data.name || "Waiting For Player";
+            introPlayerRole.textContent = data.role || "Role";
+            introPlayerDisplayId.textContent = String(id || "-");
+            introPlayerSeries.textContent = data.series || "-";
+            introPlayerPriceTitle.textContent = isSoldWithPrice ? "Sold Price" : "Base Price";
+            introPlayerPrice.textContent = isSoldWithPrice ? soldPrice : (data.price || "50k");
+            introPlayerImage.alt = data.name || "Player Introduction Image";
+            introPlayerImage.onerror = () => {
+                introPlayerImage.src = "image.png";
+            };
+            introPlayerImage.src = data.image && data.image.trim() !== "" ? data.image : "image.png";
+            updateIntroSoldUI(Boolean(data.sold));
+            setPlayerIntroductionStatus(`Introducing: ${data.name || `Player ${id}`}`, false);
+        }
+
+        async function loadPlayerIntroduction() {
+            try {
+                setPlayerIntroductionStatus("Loading selected player introduction.", false);
+
+                let playerId = currentId;
+                const stageResponse = await fetch("/api/stage-view", { cache: "no-store" });
+                const stageData = await stageResponse.json();
+
+                if (Number(stageData.playerId) > 0) {
+                    playerId = Number(stageData.playerId);
+                }
+
+                if (!playerId || playerId < 1) {
+                    setPlayerIntroductionStatus("Waiting for admin to select a player.", false);
+                    return;
+                }
+
+                const response = await fetch(`/api/players/${playerId}`, { cache: "no-store" });
+                const data = await response.json();
+
+                if (data.error) {
+                    setPlayerIntroductionStatus(data.error, true);
+                    return;
+                }
+
+                currentId = playerId;
+                renderPlayerIntroduction(data, playerId);
+            } catch (error) {
+                setPlayerIntroductionStatus("Could not load player introduction.", true);
+            }
         }
 
         function renderStageDatabaseRows(playersToRender) {
@@ -2833,6 +2951,8 @@ function renderFixturesStage(fixtures) {
                 event.preventDefault();
                 if (currentFrontendSection === "teamshowcase") {
                     loadStageTeams();
+                } else if (currentFrontendSection === "playerintroduction") {
+                    loadPlayerIntroduction();
                 } else {
                     syncStageViewFromAdmin();
                 }
