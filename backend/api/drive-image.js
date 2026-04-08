@@ -6,11 +6,19 @@ function isValidDriveId(value) {
   return /^[a-zA-Z0-9_-]+$/.test(String(value || "").trim());
 }
 
-async function sendFallback(res) {
+async function sendFallback(res, statusCode = 200, message = "") {
+  if (message) {
+    res.statusCode = statusCode;
+    res.setHeader("Content-Type", "text/plain; charset=utf-8");
+    res.setHeader("Cache-Control", "no-store");
+    res.end(message);
+    return;
+  }
+
   try {
     const filePath = path.join(FRONTEND_DIR, "image.png");
     const body = await fs.readFile(filePath);
-    res.statusCode = 200;
+    res.statusCode = statusCode;
     res.setHeader("Content-Type", "image/png");
     res.setHeader("Cache-Control", "public, max-age=300");
     res.end(body);
@@ -85,7 +93,7 @@ module.exports = async function handler(req, res) {
 
   const fileId = String(req.query.id || "").trim();
   if (!isValidDriveId(fileId)) {
-    await sendFallback(res);
+    await sendFallback(res, 400, "Invalid Google Drive image id");
     return;
   }
 
@@ -109,5 +117,5 @@ module.exports = async function handler(req, res) {
     }
   }
 
-  await sendFallback(res);
+  await sendFallback(res, 404, "Could not load Google Drive image. Check that the file is shared with anyone who has the link.");
 };

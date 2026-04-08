@@ -196,19 +196,21 @@ function getSoldStateDetails(states, id) {
 
 function getPlayerImageFromRow(row) {
   const preferredImage = String(row[4] || "").trim();
-  if (preferredImage) {
+  if (isPlayerImageValue(preferredImage)) {
     return preferredImage;
   }
 
-  const imageCell = row.find((cell) => {
-    const value = String(cell || "").trim();
-    return (
-      extractDriveId(value) ||
-      /^https?:\/\/.+\.(png|jpe?g|webp|gif)(\?.*)?$/i.test(value)
-    );
-  });
+  const imageCell = row.find((cell) => isPlayerImageValue(cell));
 
   return String(imageCell || "").trim();
+}
+
+function isPlayerImageValue(value) {
+  const normalizedValue = String(value || "").trim();
+  return Boolean(
+    extractDriveId(normalizedValue) ||
+    /^https?:\/\/.+\.(png|jpe?g|webp|gif)(\?.*)?$/i.test(normalizedValue)
+  );
 }
 
 function mapPlayerRow(row, id, soldStates) {

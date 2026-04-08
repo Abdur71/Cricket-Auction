@@ -1813,6 +1813,7 @@ let allGroups = [];
 let allFixtures = [];
 let allResults = [];
 let countdownEnabled = false;
+const defaultPlayerImage = "https://images.unsplash.com/photo-1543357480-c60d40007a3f?auto=format&fit=crop&w=1200&q=80";
 
 const KNOCKOUT_MATCH_TEAM_OPTIONS = {
     "Qualifier 1": [
@@ -2831,7 +2832,7 @@ function extractGoogleDriveFileId(link) {
 function getPlayerImageSrc(image) {
     const value = String(image || "").trim();
     if (!value) {
-        return "image.png";
+        return defaultPlayerImage;
     }
 
     const driveId = extractGoogleDriveFileId(value);
@@ -2844,7 +2845,7 @@ function updatePreviewCard(playerData, id) {
 
     previewImage.onerror = () => {
         previewImage.onerror = null;
-        previewImage.src = "image.png";
+        previewImage.src = defaultPlayerImage;
     };
     previewImage.classList.remove("is-empty");
     previewEmpty.classList.remove("show");

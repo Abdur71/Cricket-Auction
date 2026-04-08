@@ -2158,6 +2158,7 @@
         const resultsStageCount = document.getElementById("resultsStageCount");
         const resultsStageSubtitle = document.getElementById("resultsStageSubtitle");
         const stageScreenOpenedAt = Date.now();
+        const defaultPlayerImage = "https://images.unsplash.com/photo-1543357480-c60d40007a3f?auto=format&fit=crop&w=1200&q=80";
         const expandedTeamCards = new Set();
         let currentFrontendSection = "home";
 
@@ -2347,7 +2348,7 @@
         function getPlayerImageSrc(image) {
             const value = String(image || "").trim();
             if (!value) {
-                return "image.png";
+                return defaultPlayerImage;
             }
 
             const driveId = extractGoogleDriveFileId(value);
@@ -2422,7 +2423,8 @@
             introPlayerPrice.textContent = isSoldWithPrice ? soldPrice : (data.price || "50k");
             introPlayerImage.alt = data.name || "Player Introduction Image";
             introPlayerImage.onerror = () => {
-                introPlayerImage.src = "image.png";
+                introPlayerImage.onerror = null;
+                introPlayerImage.src = defaultPlayerImage;
             };
             introPlayerImage.src = getPlayerImageSrc(data.image);
             updateIntroSoldUI(Boolean(data.sold));
@@ -2929,7 +2931,8 @@ function renderFixturesStage(fixtures) {
                     playerSeries.textContent = data.series || "-";
                     playerImage.alt = data.name || "Player Image";
                     playerImage.onerror = () => {
-                        playerImage.src = "image.png";
+                        playerImage.onerror = null;
+                        playerImage.src = defaultPlayerImage;
                     };
                     playerImage.src = getPlayerImageSrc(data.image);
 
