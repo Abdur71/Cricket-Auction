@@ -3,6 +3,7 @@ const SHEET_NAMES = [
   'groups',
   'fixtures',
   'results',
+  'committee',
   'sold_states',
   'current_player',
   'stage_view',

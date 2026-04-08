@@ -336,6 +336,12 @@ body::before {
     gap: 18px;
 }
 
+.committee-layout {
+    display: grid;
+    grid-template-columns: minmax(340px, 460px) minmax(0, 1fr);
+    gap: 18px;
+}
+
 .team-form-card,
 .team-list-card {
     padding: 22px;
@@ -353,6 +359,11 @@ body::before {
 
 .result-form-card,
 .result-list-card {
+    padding: 22px;
+}
+
+.committee-form-card,
+.committee-list-card {
     padding: 22px;
 }
 
@@ -494,6 +505,67 @@ body::before {
 }
 
 .team-empty {
+    padding: 26px 18px;
+    border-radius: 20px;
+    border: 1px dashed rgba(255, 255, 255, 0.14);
+    background: rgba(4, 10, 22, 0.56);
+    color: var(--muted);
+    text-align: center;
+    font-size: 1rem;
+}
+
+.committee-status {
+    min-height: 1.5em;
+    color: var(--muted);
+    font-size: 1rem;
+}
+
+.committee-status.error {
+    color: #ff9fb0;
+}
+
+.committee-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.committee-item {
+    overflow: hidden;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background:
+        linear-gradient(135deg, rgba(59, 226, 255, 0.07), rgba(247, 201, 91, 0.06)),
+        rgba(4, 10, 22, 0.72);
+}
+
+.committee-photo {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    display: block;
+    background: rgba(4, 10, 22, 0.88);
+}
+
+.committee-body {
+    padding: 16px;
+}
+
+.committee-name {
+    margin-top: 12px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+    color: var(--text);
+}
+
+.committee-meta {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 0.98rem;
+}
+
+.committee-empty {
     padding: 26px 18px;
     border-radius: 20px;
     border: 1px dashed rgba(255, 255, 255, 0.14);
@@ -1152,7 +1224,8 @@ tbody tr:hover {
     .team-layout,
     .group-layout,
     .fixture-layout,
-    .result-layout {
+    .result-layout,
+    .committee-layout {
         grid-template-columns: 1fr;
     }
 }
@@ -1203,6 +1276,9 @@ tbody tr:hover {
             </button>
             <button class="nav-btn" type="button" data-view="resultsView">
                 <strong>Results</strong>
+            </button>
+            <button class="nav-btn" type="button" data-view="committeeView">
+                <strong>Committee</strong>
             </button>
             <button class="nav-btn" type="button" data-view="inputView">
                 <strong>Input Data</strong>
@@ -1567,6 +1643,64 @@ tbody tr:hover {
             </div>
         </section>
 
+        <section class="view" id="committeeView">
+            <div class="committee-layout">
+                <section class="panel committee-form-card">
+                    <div class="editor-header">
+                        <h3>Add Committee Member</h3>
+                        <p>Add committee member photo, name, series, and phone number for the frontend committee page.</p>
+                    </div>
+
+                    <div class="team-form">
+                        <div class="field-group">
+                            <label for="committeePhotoInput">Photo URL</label>
+                            <div class="control">
+                                <input type="text" id="committeePhotoInput" placeholder="Paste image or Google Drive link" />
+                            </div>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="committeeNameInput">Name</label>
+                            <div class="control">
+                                <input type="text" id="committeeNameInput" placeholder="Committee member name" />
+                            </div>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="committeeSeriesInput">Series</label>
+                            <div class="control">
+                                <input type="text" id="committeeSeriesInput" placeholder="Example: Series 21" />
+                            </div>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="committeePhoneInput">Phone Number</label>
+                            <div class="control">
+                                <input type="text" id="committeePhoneInput" placeholder="Example: 01700000000" />
+                            </div>
+                        </div>
+
+                        <div class="team-actions">
+                            <button class="action-btn primary" id="saveCommitteeBtn" type="button">ADD MEMBER</button>
+                            <button class="action-btn secondary" id="resetCommitteeBtn" type="button">CLEAR</button>
+                        </div>
+
+                        <div class="committee-status" id="committeeStatus">Committee members will appear on committe.html.</div>
+                    </div>
+                </section>
+
+                <section class="panel committee-list-card">
+                    <div class="team-list-head">
+                        <h3>Committee Members</h3>
+                        <div class="team-count" id="committeeCount">0 members</div>
+                    </div>
+                    <div class="committee-list" id="committeeList">
+                        <div class="committee-empty">No committee members added yet.</div>
+                    </div>
+                </section>
+            </div>
+        </section>
+
         <section class="view" id="inputView">
             <div class="panel editor-grid">
                 <div class="editor-header">
@@ -1751,6 +1885,15 @@ const resetResultBtn = document.getElementById("resetResultBtn");
 const resultStatus = document.getElementById("resultStatus");
 const resultCount = document.getElementById("resultCount");
 const resultList = document.getElementById("resultList");
+const committeePhotoInput = document.getElementById("committeePhotoInput");
+const committeeNameInput = document.getElementById("committeeNameInput");
+const committeeSeriesInput = document.getElementById("committeeSeriesInput");
+const committeePhoneInput = document.getElementById("committeePhoneInput");
+const saveCommitteeBtn = document.getElementById("saveCommitteeBtn");
+const resetCommitteeBtn = document.getElementById("resetCommitteeBtn");
+const committeeStatus = document.getElementById("committeeStatus");
+const committeeCount = document.getElementById("committeeCount");
+const committeeList = document.getElementById("committeeList");
 const visibleCount = document.getElementById("visibleCount");
 const lastUpdated = document.getElementById("lastUpdated");
 const soldPlayerIdInput = document.getElementById("soldPlayerIdInput");
@@ -1796,6 +1939,10 @@ const viewMeta = {
         title: "Results",
         subtitle: "Input scorecards from saved fixtures and publish match results automatically."
     },
+    committeeView: {
+        title: "Committee",
+        subtitle: "Add and manage committee members for the frontend committee page."
+    },
     inputView: {
         title: "Input Data",
         subtitle: "Load a player by ID, preview the card, and save local sold data."
@@ -1812,6 +1959,7 @@ let allTeams = [];
 let allGroups = [];
 let allFixtures = [];
 let allResults = [];
+let allCommitteeMembers = [];
 let countdownEnabled = false;
 const defaultPlayerImage = "https://images.unsplash.com/photo-1543357480-c60d40007a3f?auto=format&fit=crop&w=1200&q=80";
 
@@ -2109,6 +2257,11 @@ function setResultStatus(message, isError = false) {
     resultStatus.classList.toggle("error", Boolean(isError));
 }
 
+function setCommitteeStatus(message, isError = false) {
+    committeeStatus.textContent = message;
+    committeeStatus.classList.toggle("error", Boolean(isError));
+}
+
 function getGroupForTeam(teamId) {
     return allGroups.find(group => Array.isArray(group.teamIds) && group.teamIds.map(Number).includes(Number(teamId))) || null;
 }
@@ -2145,13 +2298,13 @@ function renderTeams(teams) {
         </article>
     `).join("");
 
-    Array.from(document.querySelectorAll(".team-show-btn")).forEach(button => {
+    Array.from(teamList.querySelectorAll(".team-show-btn")).forEach(button => {
         button.addEventListener("click", () => {
             showSingleTeamOnStage(Number(button.dataset.teamId));
         });
     });
 
-    Array.from(document.querySelectorAll(".team-delete-btn")).forEach(button => {
+    Array.from(teamList.querySelectorAll(".team-delete-btn")).forEach(button => {
         button.addEventListener("click", () => {
             deleteTeam(Number(button.dataset.teamId));
         });
@@ -2372,6 +2525,56 @@ async function loadResults() {
     }
 }
 
+function renderCommitteeMembers(members) {
+    const memberItems = Array.isArray(members) ? members : [];
+    allCommitteeMembers = memberItems;
+    committeeCount.textContent = `${memberItems.length} member${memberItems.length === 1 ? "" : "s"}`;
+
+    if (!memberItems.length) {
+        committeeList.innerHTML = `<div class="committee-empty">No committee members added yet.</div>`;
+        return;
+    }
+
+    committeeList.innerHTML = memberItems.map(member => `
+        <article class="committee-item">
+            <img class="committee-photo" src="${getPlayerImageSrc(member.photo)}" alt="${member.name || "Committee member"}" />
+            <div class="committee-body">
+                <div class="team-item-top">
+                    <span class="team-badge">MEMBER ${member.id || "-"}</span>
+                    <button class="team-delete-btn committee-delete-btn" type="button" data-committee-id="${member.id || 0}">DELETE</button>
+                </div>
+                <div class="committee-name">${member.name || "-"}</div>
+                <div class="committee-meta">Series: ${member.series || "-"}</div>
+                <div class="committee-meta">Phone: ${member.phone || "-"}</div>
+            </div>
+        </article>
+    `).join("");
+
+    Array.from(committeeList.querySelectorAll(".committee-delete-btn")).forEach(button => {
+        button.addEventListener("click", () => {
+            deleteCommitteeMember(Number(button.dataset.committeeId));
+        });
+    });
+
+    Array.from(committeeList.querySelectorAll(".committee-photo")).forEach(image => {
+        image.onerror = () => {
+            image.onerror = null;
+            image.src = defaultPlayerImage;
+        };
+    });
+}
+
+async function loadCommitteeMembers() {
+    try {
+        const response = await fetch("/api/committee", { cache: "no-store" });
+        const data = await response.json();
+        renderCommitteeMembers(Array.isArray(data.members) ? data.members : []);
+    } catch (error) {
+        committeeList.innerHTML = `<div class="committee-empty">Could not load committee members.</div>`;
+        committeeCount.textContent = "0 members";
+    }
+}
+
 async function saveTeam() {
     const teamName = teamNameInput.value.trim();
     const ownerPlayerId = Number(ownerPlayerIdInput.value);
@@ -2444,6 +2647,77 @@ async function saveGroup() {
         await loadGroups();
     } catch (error) {
         setGroupStatus("Could not save group.", true);
+    }
+}
+
+async function saveCommitteeMember() {
+    const photo = committeePhotoInput.value.trim();
+    const name = committeeNameInput.value.trim();
+    const series = committeeSeriesInput.value.trim();
+    const phone = committeePhoneInput.value.trim();
+
+    if (!photo || !name || !series || !phone) {
+        setCommitteeStatus("Enter photo, name, series, and phone number.", true);
+        return;
+    }
+
+    try {
+        const response = await fetch("/api/committee", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                photo,
+                name,
+                series,
+                phone
+            })
+        });
+
+        const data = await response.json();
+        if (data.error) {
+            setCommitteeStatus(data.error, true);
+            return;
+        }
+
+        resetCommitteeForm();
+        setCommitteeStatus(`${data.member.name} added successfully.`, false);
+        await loadCommitteeMembers();
+    } catch (error) {
+        setCommitteeStatus("Could not save committee member.", true);
+    }
+}
+
+function resetCommitteeForm() {
+    committeePhotoInput.value = "";
+    committeeNameInput.value = "";
+    committeeSeriesInput.value = "";
+    committeePhoneInput.value = "";
+    setCommitteeStatus("Form cleared. Add a committee member anytime.", false);
+}
+
+async function deleteCommitteeMember(memberId) {
+    if (!memberId) {
+        setCommitteeStatus("Invalid committee member selected.", true);
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/committee?id=${memberId}`, {
+            method: "DELETE"
+        });
+
+        const data = await response.json();
+        if (data.error) {
+            setCommitteeStatus(data.error, true);
+            return;
+        }
+
+        setCommitteeStatus("Committee member deleted successfully.", false);
+        await loadCommitteeMembers();
+    } catch (error) {
+        setCommitteeStatus("Could not delete committee member.", true);
     }
 }
 
@@ -3127,6 +3401,8 @@ saveTeamBtn.addEventListener("click", saveTeam);
 resetTeamBtn.addEventListener("click", resetTeamForm);
 saveGroupBtn.addEventListener("click", saveGroup);
 resetGroupBtn.addEventListener("click", resetGroupForm);
+saveCommitteeBtn.addEventListener("click", saveCommitteeMember);
+resetCommitteeBtn.addEventListener("click", resetCommitteeForm);
 fixtureMatchTypeSelect.addEventListener("change", populateFixtureTeamSelects);
 saveFixtureBtn.addEventListener("click", saveFixture);
 resetFixtureBtn.addEventListener("click", resetFixtureForm);
@@ -3152,6 +3428,7 @@ window.addEventListener("load", async () => {
     loadGroups();
     loadFixtures();
     loadResults();
+    loadCommitteeMembers();
     loadAuctionSettings();
 });
 </script>

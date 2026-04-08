@@ -7,6 +7,7 @@ This setup keeps the players Google Sheet unchanged and moves only dynamic state
 - teams
 - groups
 - fixtures
+- committee
 - sold status
 - current player
 - stage view
@@ -59,6 +60,7 @@ The Apps Script will automatically create these tabs when needed:
 - `teams`
 - `groups`
 - `fixtures`
+- `committee`
 - `sold_states`
 - `current_player`
 - `stage_view`

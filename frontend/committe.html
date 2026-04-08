@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Committee Members</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Rajdhani:wght@500;700&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --bg-1: #05070d;
+            --bg-2: #081226;
+            --gold: #f4c95d;
+            --neon: #00e6ff;
+            --white: #f4f8ff;
+            --muted: #b8c4d8;
+            --glass-stroke: rgba(255, 255, 255, 0.16);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Rajdhani', sans-serif;
+            color: var(--white);
+            background:
+                radial-gradient(1100px 500px at 12% -6%, rgba(0, 230, 255, 0.24), transparent 60%),
+                radial-gradient(900px 500px at 90% 10%, rgba(244, 201, 93, 0.16), transparent 65%),
+                linear-gradient(145deg, var(--bg-1), var(--bg-2));
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background:
+                repeating-linear-gradient(to right,
+                    rgba(255, 255, 255, 0.03) 0,
+                    rgba(255, 255, 255, 0.03) 1px,
+                    transparent 1px,
+                    transparent 120px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.06), transparent 25%, transparent 75%, rgba(255, 255, 255, 0.04));
+            opacity: 0.22;
+        }
+
+        .wrapper {
+            position: relative;
+            z-index: 1;
+            width: min(1780px, 96vw);
+            margin: 0 auto;
+            padding: clamp(18px, 2vw, 28px);
+        }
+
+        .site-nav {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+            padding: 14px;
+            border-radius: 20px;
+            background: rgba(8, 15, 31, 0.72);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .site-nav-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 999px;
+            padding: 12px 18px;
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--white);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.86rem;
+            letter-spacing: 0.08em;
+            text-decoration: none;
+            transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+        }
+
+        .site-nav-btn:hover {
+            transform: translateY(-1px);
+            background: rgba(59, 226, 255, 0.08);
+            border-color: rgba(59, 226, 255, 0.35);
+        }
+
+        .site-nav-btn.active {
+            background: linear-gradient(135deg, rgba(59, 226, 255, 0.18), rgba(244, 201, 93, 0.14));
+            border-color: rgba(244, 201, 93, 0.4);
+            color: var(--gold);
+        }
+
+        .brand {
+            margin-bottom: 22px;
+        }
+
+        .brand h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            font-size: clamp(1.5rem, 2.3vw, 2.4rem);
+            color: var(--gold);
+            text-shadow: 0 0 18px rgba(244, 201, 93, 0.4);
+        }
+
+        .brand p {
+            margin-top: 4px;
+            font-size: clamp(0.95rem, 1.2vw, 1.2rem);
+            color: var(--muted);
+            letter-spacing: 0.08em;
+        }
+
+        .committee-shell {
+            width: 100%;
+            border-radius: 28px;
+            background:
+                radial-gradient(circle at top left, rgba(0, 230, 255, 0.12), transparent 35%),
+                radial-gradient(circle at top right, rgba(244, 201, 93, 0.14), transparent 38%),
+                rgba(8, 15, 31, 0.78);
+            border: 1px solid var(--glass-stroke);
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.45),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            overflow: hidden;
+        }
+
+        .committee-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            padding: 22px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: linear-gradient(135deg, rgba(0, 230, 255, 0.09), rgba(244, 201, 93, 0.09));
+        }
+
+        .committee-header h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.3rem, 1.9vw, 2rem);
+            letter-spacing: 0.12em;
+            color: var(--gold);
+        }
+
+        .committee-subtitle,
+        .committee-count {
+            color: var(--muted);
+            font-size: clamp(0.95rem, 1.1vw, 1.05rem);
+        }
+
+        .committee-subtitle {
+            margin-top: 8px;
+        }
+
+        .committee-count {
+            white-space: nowrap;
+        }
+
+        .committee-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 22px;
+            padding: 24px;
+        }
+
+        .committee-card {
+            overflow: hidden;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background:
+                linear-gradient(145deg, rgba(0, 230, 255, 0.08), rgba(244, 201, 93, 0.08)),
+                rgba(4, 10, 22, 0.76);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.32);
+        }
+
+        .committee-photo {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+            background: rgba(4, 10, 22, 0.88);
+        }
+
+        .committee-body {
+            padding: 18px;
+        }
+
+        .committee-badge {
+            display: inline-flex;
+            padding: 6px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(0, 230, 255, 0.28);
+            background: rgba(0, 230, 255, 0.08);
+            color: var(--neon);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.72rem;
+            letter-spacing: 0.12em;
+        }
+
+        .committee-name {
+            margin-top: 14px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.05rem, 1.5vw, 1.35rem);
+            line-height: 1.25;
+            color: var(--white);
+        }
+
+        .committee-meta {
+            margin-top: 10px;
+            color: var(--muted);
+            font-size: 1.05rem;
+            letter-spacing: 0.04em;
+        }
+
+        .committee-phone {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        .committee-empty {
+            grid-column: 1 / -1;
+            padding: 42px 24px;
+            border-radius: 8px;
+            border: 1px dashed rgba(255, 255, 255, 0.18);
+            color: var(--muted);
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 720px) {
+            .site-nav,
+            .committee-header {
+                justify-content: center;
+                text-align: center;
+            }
+
+            .committee-header {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <nav class="site-nav" aria-label="Frontend navigation">
+            <a class="site-nav-btn" href="index.html">Home</a>
+            <a class="site-nav-btn" href="Player%20Introduction.html">Player Introduction</a>
+            <a class="site-nav-btn" href="Teamshowcase.html">TeamShowcase</a>
+            <a class="site-nav-btn" href="group.html">Group</a>
+            <a class="site-nav-btn" href="match%20fixture.html">Match Fixture</a>
+            <a class="site-nav-btn" href="result.html">Result</a>
+            <a class="site-nav-btn active" href="committe.html">Committee</a>
+        </nav>
+
+        <header class="brand">
+            <h1>AUCTION Football CRICKET TOURNAMENT 2K26</h1>
+            <p>Presented by ECE Sports</p>
+        </header>
+
+        <main class="committee-shell">
+            <div class="committee-header">
+                <div>
+                    <h2>COMMITTEE MEMBERS</h2>
+                    <div class="committee-subtitle" id="committeeSubtitle">Live committee list from admin panel.</div>
+                </div>
+                <div class="committee-count" id="committeeCount">0 members</div>
+            </div>
+            <div class="committee-grid" id="committeeGrid">
+                <div class="committee-empty">No committee members available to display.</div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const committeeGrid = document.getElementById("committeeGrid");
+        const committeeCount = document.getElementById("committeeCount");
+        const committeeSubtitle = document.getElementById("committeeSubtitle");
+        const defaultMemberImage = "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&q=80";
+
+        function extractGoogleDriveFileId(link) {
+            const value = String(link || "").trim().replace(/&amp;/g, "&");
+            if (/^[a-zA-Z0-9_-]{10,}$/.test(value)) {
+                return value;
+            }
+
+            const patterns = [
+                /\/file\/d\/([a-zA-Z0-9_-]{10,})/,
+                /\/d\/([a-zA-Z0-9_-]{10,})/,
+                /[?&]id=([a-zA-Z0-9_-]{10,})/,
+                /\/uc\?.*?[?&]id=([a-zA-Z0-9_-]{10,})/,
+                /\/thumbnail\?.*?[?&]id=([a-zA-Z0-9_-]{10,})/
+            ];
+
+            for (const pattern of patterns) {
+                const match = value.match(pattern);
+                if (match) {
+                    return match[1];
+                }
+            }
+
+            return "";
+        }
+
+        function getMemberImageSrc(image) {
+            const value = String(image || "").trim();
+            if (!value) {
+                return defaultMemberImage;
+            }
+
+            const driveId = extractGoogleDriveFileId(value);
+            return driveId ? `/api/drive-image?id=${encodeURIComponent(driveId)}` : value;
+        }
+
+        function renderCommitteeMembers(members) {
+            const memberItems = Array.isArray(members) ? members : [];
+            committeeCount.textContent = `${memberItems.length} member${memberItems.length === 1 ? "" : "s"}`;
+
+            if (!memberItems.length) {
+                committeeGrid.innerHTML = `<div class="committee-empty">No committee members available to display.</div>`;
+                return;
+            }
+
+            committeeGrid.innerHTML = memberItems.map(member => `
+                <article class="committee-card">
+                    <img class="committee-photo" src="${getMemberImageSrc(member.photo)}" alt="${member.name || "Committee member"}" />
+                    <div class="committee-body">
+                        <div class="committee-badge">COMMITTEE ${member.id || "-"}</div>
+                        <div class="committee-name">${member.name || "-"}</div>
+                        <div class="committee-meta">Series: ${member.series || "-"}</div>
+                        <div class="committee-meta">Phone: <a class="committee-phone" href="tel:${member.phone || ""}">${member.phone || "-"}</a></div>
+                    </div>
+                </article>
+            `).join("");
+
+            Array.from(document.querySelectorAll(".committee-photo")).forEach(image => {
+                image.onerror = () => {
+                    image.onerror = null;
+                    image.src = defaultMemberImage;
+                };
+            });
+        }
+
+        async function loadCommitteeMembers() {
+            try {
+                const response = await fetch("/api/committee", { cache: "no-store" });
+                const data = await response.json();
+                committeeSubtitle.textContent = "Live committee list from admin panel.";
+                renderCommitteeMembers(Array.isArray(data.members) ? data.members : []);
+            } catch (error) {
+                committeeSubtitle.textContent = "Could not load committee members.";
+                committeeCount.textContent = "0 members";
+                committeeGrid.innerHTML = `<div class="committee-empty">Could not load committee members.</div>`;
+            }
+        }
+
+        window.addEventListener("load", () => {
+            loadCommitteeMembers();
+            window.setInterval(loadCommitteeMembers, 10000);
+        });
+    </script>
+</body>
+
+</html>

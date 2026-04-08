@@ -8,6 +8,7 @@ const REMOTE_SHEETS = {
   "groups.json": "groups",
   "fixtures.json": "fixtures",
   "results.json": "results",
+  "committee.json": "committee",
   "sold_states.json": "sold_states",
   "current_player.json": "current_player",
   "stage_view.json": "stage_view",

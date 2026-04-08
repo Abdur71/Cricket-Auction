@@ -30,6 +30,10 @@
       "destination": "/frontend/result.html"
     },
     {
+      "source": "/committe.html",
+      "destination": "/frontend/committe.html"
+    },
+    {
       "source": "/admin",
       "destination": "/frontend/admin_login.html"
     },
