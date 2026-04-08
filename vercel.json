@@ -6,6 +6,30 @@
       "destination": "/frontend/index.html"
     },
     {
+      "source": "/index.html",
+      "destination": "/frontend/index.html"
+    },
+    {
+      "source": "/Player%20Introduction.html",
+      "destination": "/frontend/Player Introduction.html"
+    },
+    {
+      "source": "/Teamshowcase.html",
+      "destination": "/frontend/Teamshowcase.html"
+    },
+    {
+      "source": "/group.html",
+      "destination": "/frontend/group.html"
+    },
+    {
+      "source": "/match%20fixture.html",
+      "destination": "/frontend/match fixture.html"
+    },
+    {
+      "source": "/result.html",
+      "destination": "/frontend/result.html"
+    },
+    {
       "source": "/admin",
       "destination": "/frontend/admin_login.html"
     },
