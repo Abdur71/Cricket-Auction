@@ -3136,25 +3136,36 @@ function updatePreviewCard(playerData, id) {
 async function loadPlayerPreview(id) {
     if (!id) {
         resetPreviewCard();
-        return;
+        return null;
     }
 
     try {
         const response = await fetch(`/api/players/${id}`, { cache: "no-store" });
-        const data = await response.json();
-
-        if (data.error) {
+        const rawText = await response.text();
+        let data = {};
+        try {
+            data = rawText ? JSON.parse(rawText) : {};
+        } catch (error) {
             resetPreviewCard();
             previewId.textContent = String(id);
-            previewStatus.textContent = data.error;
-            return;
+            previewStatus.textContent = `Request failed (${response.status})`;
+            return null;
+        }
+
+        if (!response.ok || data.error) {
+            resetPreviewCard();
+            previewId.textContent = String(id);
+            previewStatus.textContent = data.error || `Request failed (${response.status})`;
+            return null;
         }
 
         updatePreviewCard(data, id);
+        return data;
     } catch (error) {
         resetPreviewCard();
         previewId.textContent = String(id);
         previewStatus.textContent = "Could not load";
+        return null;
     }
 }
 
@@ -3180,7 +3191,7 @@ function findPlayerById(id) {
     return allPlayers.find(player => player.id === Number(id)) || null;
 }
 
-function syncEditorFields() {
+async function syncEditorFields() {
     const playerId = Number(soldPlayerIdInput.value);
     const player = findPlayerById(playerId);
 
@@ -3189,7 +3200,15 @@ function syncEditorFields() {
         soldPlayerStatusInput.value = "";
         soldPriceInput.value = "";
         soldTeamSelect.value = "";
-        loadPlayerPreview(playerId);
+        const previewPlayer = await loadPlayerPreview(playerId);
+        if (previewPlayer) {
+            soldPlayerNameInput.value = previewPlayer.name || "-";
+            soldPlayerStatusInput.value = previewPlayer.sold
+                ? `Sold${previewPlayer.soldPrice ? ` (${previewPlayer.soldPrice})` : ""}`
+                : "Unsold";
+            soldPriceInput.value = previewPlayer.soldPrice || "";
+            soldTeamSelect.value = previewPlayer.teamName || "";
+        }
         return;
     }
 
