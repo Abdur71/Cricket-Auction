@@ -34,6 +34,10 @@
       "destination": "/frontend/committe.html"
     },
     {
+      "source": "/players_list.html",
+      "destination": "/frontend/players_list.html"
+    },
+    {
       "source": "/admin",
       "destination": "/frontend/admin_login.html"
     },

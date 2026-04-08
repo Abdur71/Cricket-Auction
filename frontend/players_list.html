@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Players List</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Rajdhani:wght@500;700&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --bg-1: #05070d;
+            --bg-2: #081226;
+            --gold: #f4c95d;
+            --neon: #00e6ff;
+            --white: #f4f8ff;
+            --muted: #b8c4d8;
+            --glass-stroke: rgba(255, 255, 255, 0.16);
+            --danger: #ff6f7d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Rajdhani', sans-serif;
+            color: var(--white);
+            background:
+                radial-gradient(1100px 500px at 12% -6%, rgba(0, 230, 255, 0.24), transparent 60%),
+                radial-gradient(900px 500px at 90% 10%, rgba(244, 201, 93, 0.16), transparent 65%),
+                linear-gradient(145deg, var(--bg-1), var(--bg-2));
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background:
+                repeating-linear-gradient(to right,
+                    rgba(255, 255, 255, 0.03) 0,
+                    rgba(255, 255, 255, 0.03) 1px,
+                    transparent 1px,
+                    transparent 120px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.06), transparent 25%, transparent 75%, rgba(255, 255, 255, 0.04));
+            opacity: 0.22;
+        }
+
+        .wrapper {
+            position: relative;
+            z-index: 1;
+            width: min(1780px, 96vw);
+            margin: 0 auto;
+            padding: clamp(18px, 2vw, 28px);
+        }
+
+        .site-nav {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+            padding: 14px;
+            border-radius: 20px;
+            background: rgba(8, 15, 31, 0.72);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .site-nav-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 999px;
+            padding: 12px 18px;
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--white);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.86rem;
+            letter-spacing: 0.08em;
+            text-decoration: none;
+            transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+        }
+
+        .site-nav-btn:hover {
+            transform: translateY(-1px);
+            background: rgba(59, 226, 255, 0.08);
+            border-color: rgba(59, 226, 255, 0.35);
+        }
+
+        .site-nav-btn.active {
+            background: linear-gradient(135deg, rgba(59, 226, 255, 0.18), rgba(244, 201, 93, 0.14));
+            border-color: rgba(244, 201, 93, 0.4);
+            color: var(--gold);
+        }
+
+        .brand {
+            margin-bottom: 22px;
+        }
+
+        .brand h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            font-size: clamp(1.5rem, 2.3vw, 2.4rem);
+            color: var(--gold);
+            text-shadow: 0 0 18px rgba(244, 201, 93, 0.4);
+        }
+
+        .brand p {
+            margin-top: 4px;
+            font-size: clamp(0.95rem, 1.2vw, 1.2rem);
+            color: var(--muted);
+            letter-spacing: 0.08em;
+        }
+
+        .players-shell {
+            width: 100%;
+            border-radius: 28px;
+            background:
+                radial-gradient(circle at top left, rgba(0, 230, 255, 0.12), transparent 35%),
+                radial-gradient(circle at top right, rgba(244, 201, 93, 0.14), transparent 38%),
+                rgba(8, 15, 31, 0.78);
+            border: 1px solid var(--glass-stroke);
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.45),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            overflow: hidden;
+        }
+
+        .players-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            padding: 22px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: linear-gradient(135deg, rgba(0, 230, 255, 0.09), rgba(244, 201, 93, 0.09));
+        }
+
+        .players-header h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.3rem, 1.9vw, 2rem);
+            letter-spacing: 0.12em;
+            color: var(--gold);
+        }
+
+        .players-subtitle,
+        .players-count {
+            color: var(--muted);
+            font-size: clamp(0.95rem, 1.1vw, 1.05rem);
+        }
+
+        .players-subtitle {
+            margin-top: 8px;
+        }
+
+        .players-count {
+            white-space: nowrap;
+        }
+
+        .players-toolbar {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(190px, 260px);
+            gap: 14px;
+            padding: 22px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .control {
+            display: flex;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 16px;
+            background: rgba(4, 10, 22, 0.75);
+            overflow: hidden;
+        }
+
+        .control input,
+        .control select {
+            width: 100%;
+            border: 0;
+            outline: none;
+            background: transparent;
+            color: var(--white);
+            font-family: inherit;
+            font-size: 1.05rem;
+            padding: 14px 16px;
+        }
+
+        .control input::placeholder {
+            color: #7f93b3;
+        }
+
+        .control select {
+            background-color: rgba(4, 10, 22, 0.92);
+        }
+
+        .control select option {
+            color: #09111f;
+            background: #f4f8ff;
+        }
+
+        .players-table-wrap {
+            overflow: auto;
+        }
+
+        .players-table {
+            width: 100%;
+            min-width: 920px;
+            border-collapse: collapse;
+        }
+
+        .players-table th {
+            padding: 16px 18px;
+            text-align: left;
+            color: var(--muted);
+            font-size: 0.95rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .players-table td {
+            padding: 16px 18px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            font-size: 1.08rem;
+        }
+
+        .players-table tr:hover {
+            background: rgba(59, 226, 255, 0.04);
+        }
+
+        .id-pill {
+            display: inline-flex;
+            min-width: 54px;
+            justify-content: center;
+            padding: 6px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(59, 226, 255, 0.26);
+            background: rgba(59, 226, 255, 0.08);
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 92px;
+            padding: 7px 14px;
+            border-radius: 999px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.88rem;
+            letter-spacing: 0.06em;
+        }
+
+        .status-pill.sold {
+            color: #fff1f4;
+            background: rgba(255, 102, 124, 0.2);
+            border: 1px solid rgba(255, 102, 124, 0.45);
+        }
+
+        .status-pill.unsold {
+            color: #eafff8;
+            background: rgba(49, 208, 161, 0.18);
+            border: 1px solid rgba(49, 208, 161, 0.4);
+        }
+
+        .empty-state,
+        .error-state {
+            padding: 40px 22px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 1.1rem;
+        }
+
+        .error-state {
+            color: var(--danger);
+        }
+
+        @media (max-width: 720px) {
+            .site-nav,
+            .players-header {
+                justify-content: center;
+                text-align: center;
+            }
+
+            .players-header {
+                flex-direction: column;
+            }
+
+            .players-toolbar {
+                grid-template-columns: 1fr;
+                padding: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <nav class="site-nav" aria-label="Frontend navigation">
+            <a class="site-nav-btn" href="index.html">Home</a>
+            <a class="site-nav-btn" href="Player%20Introduction.html">Player Introduction</a>
+            <a class="site-nav-btn" href="Teamshowcase.html">TeamShowcase</a>
+            <a class="site-nav-btn" href="group.html">Group</a>
+            <a class="site-nav-btn" href="match%20fixture.html">Match Fixture</a>
+            <a class="site-nav-btn" href="result.html">Result</a>
+            <a class="site-nav-btn" href="committe.html">Committee</a>
+            <a class="site-nav-btn active" href="players_list.html">Players List</a>
+        </nav>
+
+        <header class="brand">
+            <h1>AUCTION Football CRICKET TOURNAMENT 2K26</h1>
+            <p>Presented by ECE Sports</p>
+        </header>
+
+        <main class="players-shell">
+            <div class="players-header">
+                <div>
+                    <h2>PLAYERS LIST</h2>
+                    <div class="players-subtitle" id="playersSubtitle">Live player database from admin panel.</div>
+                </div>
+                <div class="players-count" id="playersCount">0 visible</div>
+            </div>
+
+            <div class="players-toolbar">
+                <div class="control">
+                    <input type="search" id="playersSearchInput" placeholder="Search by ID, name, series, category, status, or price" />
+                </div>
+                <div class="control">
+                    <select id="playersStatusFilter">
+                        <option value="all">All Status</option>
+                        <option value="sold">Sold</option>
+                        <option value="unsold">Unsold</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="players-table-wrap">
+                <table class="players-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Series</th>
+                            <th>Categories</th>
+                            <th>Status</th>
+                            <th>Sold Price</th>
+                        </tr>
+                    </thead>
+                    <tbody id="playersTableBody">
+                        <tr>
+                            <td colspan="6" class="empty-state">Loading player data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const playersTableBody = document.getElementById("playersTableBody");
+        const playersSearchInput = document.getElementById("playersSearchInput");
+        const playersStatusFilter = document.getElementById("playersStatusFilter");
+        const playersCount = document.getElementById("playersCount");
+        const playersSubtitle = document.getElementById("playersSubtitle");
+        let allPlayers = [];
+
+        function renderRows(players) {
+            const playerItems = Array.isArray(players) ? players : [];
+            playersCount.textContent = `${playerItems.length} visible`;
+
+            if (!playerItems.length) {
+                playersTableBody.innerHTML = `<tr><td colspan="6" class="empty-state">No players match the current filter.</td></tr>`;
+                return;
+            }
+
+            playersTableBody.innerHTML = playerItems.map(player => `
+                <tr>
+                    <td><span class="id-pill">${player.id || "-"}</span></td>
+                    <td>${player.name || "-"}</td>
+                    <td>${player.series || "-"}</td>
+                    <td>${player.category || "-"}</td>
+                    <td><span class="status-pill ${(player.status || "").toLowerCase()}">${player.status || "-"}</span></td>
+                    <td>${player.soldPrice || "-"}</td>
+                </tr>
+            `).join("");
+        }
+
+        function applyFilters() {
+            const query = playersSearchInput.value.trim().toLowerCase();
+            const statusValue = playersStatusFilter.value;
+
+            const filtered = allPlayers.filter(player => {
+                const matchesSearch = query === "" || [
+                    String(player.id || ""),
+                    player.name || "",
+                    player.series || "",
+                    player.category || "",
+                    player.status || "",
+                    player.soldPrice || ""
+                ].join(" ").toLowerCase().includes(query);
+
+                const matchesStatus = statusValue === "all" || String(player.status || "").toLowerCase() === statusValue;
+                return matchesSearch && matchesStatus;
+            });
+
+            renderRows(filtered);
+        }
+
+        async function loadPlayers() {
+            playersTableBody.innerHTML = `<tr><td colspan="6" class="empty-state">Loading player data...</td></tr>`;
+
+            try {
+                const response = await fetch("/api/players", { cache: "no-store" });
+                const data = await response.json();
+
+                if (data.error) {
+                    playersTableBody.innerHTML = `<tr><td colspan="6" class="error-state">${data.error}</td></tr>`;
+                    playersCount.textContent = "0 visible";
+                    return;
+                }
+
+                allPlayers = Array.isArray(data.players) ? data.players : [];
+                playersSubtitle.textContent = "Live player database from admin panel.";
+                applyFilters();
+            } catch (error) {
+                playersSubtitle.textContent = "Could not load player database.";
+                playersTableBody.innerHTML = `<tr><td colspan="6" class="error-state">Could not load player data.</td></tr>`;
+                playersCount.textContent = "0 visible";
+            }
+        }
+
+        playersSearchInput.addEventListener("input", applyFilters);
+        playersStatusFilter.addEventListener("change", applyFilters);
+
+        window.addEventListener("load", () => {
+            loadPlayers();
+            window.setInterval(loadPlayers, 30000);
+        });
+    </script>
+</body>
+
+</html>
