@@ -2166,6 +2166,7 @@
         const defaultFrontendSection = document.body.dataset.frontSection || "home";
         const expandedTeamCards = new Set();
         let currentFrontendSection = "home";
+        let lastPlayerIntroductionSignature = "";
 
         function isCountdownActive() {
             if (!auctionSettings.countdownEnabled) {
@@ -2436,11 +2437,14 @@
             setPlayerIntroductionStatus(`Introducing: ${data.name || `Player ${id}`}`, false);
         }
 
-        async function loadPlayerIntroduction() {
+        async function loadPlayerIntroduction(options = {}) {
             try {
-                setPlayerIntroductionStatus("Loading selected player introduction.", false);
+                const silent = Boolean(options.silent);
+                if (!silent) {
+                    setPlayerIntroductionStatus("Loading selected player introduction.", false);
+                }
 
-                let playerId = currentId;
+                let playerId = 0;
                 const stageResponse = await fetch("/api/stage-view", { cache: "no-store" });
                 const stageData = await stageResponse.json();
 
@@ -2461,6 +2465,22 @@
                     return;
                 }
 
+                const signature = JSON.stringify({
+                    playerId,
+                    name: data.name || "",
+                    role: data.role || "",
+                    series: data.series || "",
+                    price: data.price || "",
+                    image: data.image || "",
+                    sold: Boolean(data.sold),
+                    soldPrice: data.soldPrice || ""
+                });
+
+                if (silent && signature === lastPlayerIntroductionSignature) {
+                    return;
+                }
+
+                lastPlayerIntroductionSignature = signature;
                 currentId = playerId;
                 renderPlayerIntroduction(data, playerId);
             } catch (error) {
@@ -3027,6 +3047,11 @@ function renderFixturesStage(fixtures) {
             window.setInterval(() => {
                 syncStageViewFromAdmin(true);
             }, 5000);
+            if (currentFrontendSection === "playerintroduction") {
+                window.setInterval(() => {
+                    loadPlayerIntroduction({ silent: true });
+                }, 3000);
+            }
         });
 
         /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
