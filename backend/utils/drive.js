@@ -1,13 +1,19 @@
 function extractDriveId(link) {
-  const value = String(link || "").trim();
+  const value = String(link || "").trim().replace(/&amp;/g, "&");
   if (!value) {
     return "";
   }
 
+  if (/^[a-zA-Z0-9_-]{20,}$/.test(value)) {
+    return value;
+  }
+
   const patterns = [
-    /\/file\/d\/([a-zA-Z0-9_-]+)/,
-    /[?&]id=([a-zA-Z0-9_-]+)/,
-    /\/uc\?.*?[?&]id=([a-zA-Z0-9_-]+)/
+    /\/file\/d\/([a-zA-Z0-9_-]{20,})/,
+    /\/d\/([a-zA-Z0-9_-]{20,})/,
+    /[?&]id=([a-zA-Z0-9_-]{20,})/,
+    /\/uc\?.*?[?&]id=([a-zA-Z0-9_-]{20,})/,
+    /\/thumbnail\?.*?[?&]id=([a-zA-Z0-9_-]{20,})/
   ];
 
   for (const pattern of patterns) {

@@ -32,7 +32,7 @@ async function tryFetchImage(url) {
     throw new Error(`Image request failed with ${response.status}`);
   }
 
-  const contentType = response.headers.get("content-type") || "image/jpeg";
+  const rawContentType = response.headers.get("content-type") || "";
   const arrayBuffer = await response.arrayBuffer();
   const body = Buffer.from(arrayBuffer);
 
@@ -40,7 +40,39 @@ async function tryFetchImage(url) {
     throw new Error("Empty image response");
   }
 
+  const detectedContentType = detectImageContentType(body);
+  const contentType = rawContentType.toLowerCase().startsWith("image/")
+    ? rawContentType
+    : detectedContentType;
+
+  if (!contentType) {
+    throw new Error(`Drive response was not an image: ${rawContentType || "unknown content type"}`);
+  }
+
   return { body, contentType };
+}
+
+function detectImageContentType(body) {
+  if (body.length >= 8 && body[0] === 0x89 && body.slice(1, 4).toString("ascii") === "PNG") {
+    return "image/png";
+  }
+
+  if (body.length >= 3 && body[0] === 0xff && body[1] === 0xd8 && body[2] === 0xff) {
+    return "image/jpeg";
+  }
+
+  if (body.length >= 12 && body.slice(0, 4).toString("ascii") === "RIFF" && body.slice(8, 12).toString("ascii") === "WEBP") {
+    return "image/webp";
+  }
+
+  if (body.length >= 6) {
+    const header = body.slice(0, 6).toString("ascii");
+    if (header === "GIF87a" || header === "GIF89a") {
+      return "image/gif";
+    }
+  }
+
+  return "";
 }
 
 module.exports = async function handler(req, res) {
@@ -58,6 +90,7 @@ module.exports = async function handler(req, res) {
   }
 
   const driveUrls = [
+    `https://lh3.googleusercontent.com/d/${fileId}=w1200`,
     `https://drive.google.com/thumbnail?id=${fileId}&sz=w1200`,
     `https://drive.google.com/uc?export=download&id=${fileId}`,
     `https://drive.google.com/uc?export=view&id=${fileId}`

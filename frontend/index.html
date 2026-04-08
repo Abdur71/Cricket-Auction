@@ -2320,6 +2320,40 @@
             statusText.classList.toggle("error", Boolean(isError));
         }
 
+        function extractGoogleDriveFileId(link) {
+            const value = String(link || "").trim().replace(/&amp;/g, "&");
+            if (/^[a-zA-Z0-9_-]{20,}$/.test(value)) {
+                return value;
+            }
+
+            const patterns = [
+                /\/file\/d\/([a-zA-Z0-9_-]{20,})/,
+                /\/d\/([a-zA-Z0-9_-]{20,})/,
+                /[?&]id=([a-zA-Z0-9_-]{20,})/,
+                /\/uc\?.*?[?&]id=([a-zA-Z0-9_-]{20,})/,
+                /\/thumbnail\?.*?[?&]id=([a-zA-Z0-9_-]{20,})/
+            ];
+
+            for (const pattern of patterns) {
+                const match = value.match(pattern);
+                if (match) {
+                    return match[1];
+                }
+            }
+
+            return "";
+        }
+
+        function getPlayerImageSrc(image) {
+            const value = String(image || "").trim();
+            if (!value) {
+                return "image.png";
+            }
+
+            const driveId = extractGoogleDriveFileId(value);
+            return driveId ? `/api/drive-image?id=${encodeURIComponent(driveId)}` : value;
+        }
+
         function updateBreakingNewsText(messages) {
             const text = messages.length ? messages.join("  â€¢  ") : "Admin breaking news will appear here.";
             newsTickerText.textContent = `${text}  â€¢  ${text}`;
@@ -2390,7 +2424,7 @@
             introPlayerImage.onerror = () => {
                 introPlayerImage.src = "image.png";
             };
-            introPlayerImage.src = data.image && data.image.trim() !== "" ? data.image : "image.png";
+            introPlayerImage.src = getPlayerImageSrc(data.image);
             updateIntroSoldUI(Boolean(data.sold));
             setPlayerIntroductionStatus(`Introducing: ${data.name || `Player ${id}`}`, false);
         }
@@ -2897,7 +2931,7 @@ function renderFixturesStage(fixtures) {
                     playerImage.onerror = () => {
                         playerImage.src = "image.png";
                     };
-                    playerImage.src = data.image && data.image.trim() !== "" ? data.image : "image.png";
+                    playerImage.src = getPlayerImageSrc(data.image);
 
                     players[id] = {
                         name: data.name || `Player ${id}`,

@@ -2804,6 +2804,40 @@ function resetPreviewCard() {
     previewPrice.textContent = "50k";
 }
 
+function extractGoogleDriveFileId(link) {
+    const value = String(link || "").trim().replace(/&amp;/g, "&");
+    if (/^[a-zA-Z0-9_-]{20,}$/.test(value)) {
+        return value;
+    }
+
+    const patterns = [
+        /\/file\/d\/([a-zA-Z0-9_-]{20,})/,
+        /\/d\/([a-zA-Z0-9_-]{20,})/,
+        /[?&]id=([a-zA-Z0-9_-]{20,})/,
+        /\/uc\?.*?[?&]id=([a-zA-Z0-9_-]{20,})/,
+        /\/thumbnail\?.*?[?&]id=([a-zA-Z0-9_-]{20,})/
+    ];
+
+    for (const pattern of patterns) {
+        const match = value.match(pattern);
+        if (match) {
+            return match[1];
+        }
+    }
+
+    return "";
+}
+
+function getPlayerImageSrc(image) {
+    const value = String(image || "").trim();
+    if (!value) {
+        return "image.png";
+    }
+
+    const driveId = extractGoogleDriveFileId(value);
+    return driveId ? `/api/drive-image?id=${encodeURIComponent(driveId)}` : value;
+}
+
 function updatePreviewCard(playerData, id) {
     const soldPrice = (playerData.soldPrice || "").trim();
     const statusText = playerData.sold ? `Sold${soldPrice ? ` (${soldPrice})` : ""}` : "Unsold";
@@ -2814,7 +2848,7 @@ function updatePreviewCard(playerData, id) {
     };
     previewImage.classList.remove("is-empty");
     previewEmpty.classList.remove("show");
-    previewImage.src = playerData.image && playerData.image.trim() !== "" ? playerData.image : "image.png";
+    previewImage.src = getPlayerImageSrc(playerData.image);
     previewImage.alt = playerData.name || "Player preview";
     previewName.textContent = playerData.name || `Player ${id}`;
     previewRole.textContent = playerData.role || "Role";
