@@ -22,6 +22,14 @@ const dynamicRoutes = {
 };
 
 function getPathSegments(req) {
+  if (Array.isArray(req.query?.path)) {
+    return req.query.path.map((segment) => String(segment)).filter(Boolean);
+  }
+
+  if (typeof req.query?.path === "string" && req.query.path.trim()) {
+    return req.query.path.split("/").filter(Boolean);
+  }
+
   const url = new URL(req.url || "/", "http://localhost");
   const apiPath = url.pathname.replace(/^\/api\/?/, "");
   return apiPath
