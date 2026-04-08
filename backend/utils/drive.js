@@ -4,16 +4,16 @@ function extractDriveId(link) {
     return "";
   }
 
-  if (/^[a-zA-Z0-9_-]{20,}$/.test(value)) {
+  if (/^[a-zA-Z0-9_-]{10,}$/.test(value)) {
     return value;
   }
 
   const patterns = [
-    /\/file\/d\/([a-zA-Z0-9_-]{20,})/,
-    /\/d\/([a-zA-Z0-9_-]{20,})/,
-    /[?&]id=([a-zA-Z0-9_-]{20,})/,
-    /\/uc\?.*?[?&]id=([a-zA-Z0-9_-]{20,})/,
-    /\/thumbnail\?.*?[?&]id=([a-zA-Z0-9_-]{20,})/
+    /\/file\/d\/([a-zA-Z0-9_-]{10,})/,
+    /\/d\/([a-zA-Z0-9_-]{10,})/,
+    /[?&]id=([a-zA-Z0-9_-]{10,})/,
+    /\/uc\?.*?[?&]id=([a-zA-Z0-9_-]{10,})/,
+    /\/thumbnail\?.*?[?&]id=([a-zA-Z0-9_-]{10,})/
   ];
 
   for (const pattern of patterns) {

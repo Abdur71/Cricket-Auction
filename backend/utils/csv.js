@@ -194,9 +194,26 @@ function getSoldStateDetails(states, id) {
   };
 }
 
+function getPlayerImageFromRow(row) {
+  const preferredImage = String(row[4] || "").trim();
+  if (preferredImage) {
+    return preferredImage;
+  }
+
+  const imageCell = row.find((cell) => {
+    const value = String(cell || "").trim();
+    return (
+      extractDriveId(value) ||
+      /^https?:\/\/.+\.(png|jpe?g|webp|gif)(\?.*)?$/i.test(value)
+    );
+  });
+
+  return String(imageCell || "").trim();
+}
+
 function mapPlayerRow(row, id, soldStates) {
   const soldState = getSoldStateDetails(soldStates, id);
-  const rawImage = String(row[4] || "").trim();
+  const rawImage = getPlayerImageFromRow(row);
   const driveId = extractDriveId(rawImage);
   const normalizedImage = rawImage ? convertDriveLink(rawImage) : "";
   const image = driveId
