@@ -1395,9 +1395,9 @@ tbody tr:hover {
                         </div>
 
                         <div class="field-group">
-                            <label for="ownerPlayerIdInput">Owner Player ID</label>
+                            <label for="ownerNameInput">Owner Name</label>
                             <div class="control">
-                                <input type="number" id="ownerPlayerIdInput" placeholder="Enter owner player ID" min="1" />
+                                <input type="text" id="ownerNameInput" placeholder="Enter owner name" />
                             </div>
                         </div>
 
@@ -1847,7 +1847,7 @@ const enableCountdownBtn = document.getElementById("enableCountdownBtn");
 const stopCountdownBtn = document.getElementById("stopCountdownBtn");
 const dashboardStatus = document.getElementById("dashboardStatus");
 const teamNameInput = document.getElementById("teamNameInput");
-const ownerPlayerIdInput = document.getElementById("ownerPlayerIdInput");
+const ownerNameInput = document.getElementById("ownerNameInput");
 const saveTeamBtn = document.getElementById("saveTeamBtn");
 const resetTeamBtn = document.getElementById("resetTeamBtn");
 const teamStatus = document.getElementById("teamStatus");
@@ -1954,7 +1954,6 @@ const viewMeta = {
 };
 
 let allPlayers = [];
-let ownerNameFromPlayerId = "";
 let allTeams = [];
 let allGroups = [];
 let allFixtures = [];
@@ -2577,11 +2576,10 @@ async function loadCommitteeMembers() {
 
 async function saveTeam() {
     const teamName = teamNameInput.value.trim();
-    const ownerPlayerId = Number(ownerPlayerIdInput.value);
-    const ownerName = ownerNameFromPlayerId.trim();
+    const ownerName = ownerNameInput.value.trim();
 
     if (teamName === "" || ownerName === "") {
-        setTeamStatus("Enter team name and a valid owner player ID.", true);
+        setTeamStatus("Enter team name and owner name.", true);
         return;
     }
 
@@ -2593,8 +2591,7 @@ async function saveTeam() {
             },
             body: JSON.stringify({
                 team_name: teamName,
-                owner_name: ownerName,
-                owner_player_id: ownerPlayerId
+                owner_name: ownerName
             })
         });
 
@@ -2605,8 +2602,7 @@ async function saveTeam() {
         }
 
         teamNameInput.value = "";
-        ownerPlayerIdInput.value = "";
-        ownerNameFromPlayerId = "";
+        ownerNameInput.value = "";
         setTeamStatus(`${data.team.teamName} added successfully.`, false);
         await Promise.all([loadTeams(), loadGroups()]);
     } catch (error) {
@@ -3035,35 +3031,8 @@ async function showSingleTeamOnStage(teamId) {
 
 function resetTeamForm() {
     teamNameInput.value = "";
-    ownerPlayerIdInput.value = "";
-    ownerNameFromPlayerId = "";
+    ownerNameInput.value = "";
     setTeamStatus("Form cleared. Add a new team anytime.", false);
-}
-
-async function syncOwnerNameFromPlayerId() {
-    const ownerPlayerId = Number(ownerPlayerIdInput.value);
-
-    if (!ownerPlayerId) {
-        ownerNameFromPlayerId = "";
-        return;
-    }
-
-    try {
-        const response = await fetch(`/api/players/${ownerPlayerId}`, { cache: "no-store" });
-        const data = await response.json();
-
-        if (data.error) {
-            ownerNameFromPlayerId = "";
-            setTeamStatus("Owner player ID not found.", true);
-            return;
-        }
-
-        ownerNameFromPlayerId = data.name || "";
-        setTeamStatus("Owner name loaded from player ID.", false);
-    } catch (error) {
-        ownerNameFromPlayerId = "";
-        setTeamStatus("Could not load owner name from player ID.", true);
-    }
 }
 
 function resetPreviewCard() {
@@ -3428,7 +3397,6 @@ resetFixtureBtn.addEventListener("click", resetFixtureForm);
 saveResultBtn.addEventListener("click", saveResult);
 resetResultBtn.addEventListener("click", resetResultForm);
 resultFixtureSelect.addEventListener("change", syncResultFixtureSelection);
-ownerPlayerIdInput.addEventListener("input", syncOwnerNameFromPlayerId);
 soldPlayerIdInput.addEventListener("input", syncEditorFields);
 showPlayerBtn.addEventListener("click", showSelectedPlayer);
 showTableBtn.addEventListener("click", showDatabaseOnStage);
@@ -3453,3 +3421,5 @@ window.addEventListener("load", async () => {
 </script>
 </body>
 </html>
+
+
