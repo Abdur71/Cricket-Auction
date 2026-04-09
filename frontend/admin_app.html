@@ -2275,7 +2275,7 @@ function renderTeams(teams) {
             <div class="team-group-tag">${getGroupForTeam(team.id)?.groupName || "No Group"}</div>
             ${Array.isArray(team.players) && team.players.length ? `
                 <div class="team-player-list">
-                    ${team.players.map(player => `<div class="team-player-chip">${player.name || "-"}${player.soldPrice ? ` • ${player.soldPrice}` : ""}</div>`).join("")}
+                    ${team.players.map(player => `<div class="team-player-chip">${player.name || "-"}${player.soldPrice ? ` - ${player.soldPrice}` : ""}</div>`).join("")}
                 </div>
             ` : `<div class="team-player-empty">No sold players assigned yet.</div>`}
         </article>
@@ -2340,7 +2340,7 @@ function renderGroups(groups) {
                     </div>
                 </div>
                 <div class="group-name">${group.groupName || "-"}</div>
-                <div class="group-meta">Capacity: ${capacity} teams • Assigned: ${assignedIds.length} • Free: ${remaining}</div>
+                <div class="group-meta">Capacity: ${capacity} teams - Assigned: ${assignedIds.length} - Free: ${remaining}</div>
                 <div class="group-assignment">
                     <button class="action-btn secondary group-edit-btn" type="button" data-group-id="${group.id || 0}">Choose Teams</button>
                     <div class="group-team-checkboxes">
@@ -2354,7 +2354,7 @@ function renderGroups(groups) {
                                     <input type="checkbox" data-group-team="${group.id || 0}" value="${team.id || 0}" ${selected ? "checked" : ""} ${lockedByOtherGroup ? "disabled" : ""} />
                                     <div>
                                         <strong>${team.teamName || "-"}</strong>
-                                        <span>${team.ownerName || "-"}${lockedByOtherGroup ? ` • Assigned to ${currentGroup.groupName}` : ""}</span>
+                                        <span>${team.ownerName || "-"}${lockedByOtherGroup ? ` - Assigned to ${currentGroup.groupName}` : ""}</span>
                                     </div>
                                 </label>
                             `;
@@ -2424,7 +2424,7 @@ function renderFixtures(fixtures) {
                 </div>
             </div>
             <div class="fixture-title">${fixture.matchTitle || `${fixture.teamAName || "-"} vs ${fixture.teamBName || "-"}`}</div>
-            <div class="fixture-meta">${fixture.matchDate || "Date TBD"}${fixture.matchTime ? ` • ${fixture.matchTime}` : ""}${fixture.venue ? ` • ${fixture.venue}` : ""}</div>
+            <div class="fixture-meta">${fixture.matchDate || "Date TBD"}${fixture.matchTime ? ` - ${fixture.matchTime}` : ""}${fixture.venue ? ` - ${fixture.venue}` : ""}</div>
         </article>
     `).join("");
 
@@ -2480,7 +2480,7 @@ function renderResults(results) {
                 </div>
             </div>
             <div class="result-title">${result.matchTitle || `${result.teamAName || "-"} vs ${result.teamBName || "-"}`}</div>
-            <div class="result-meta">${result.matchDate || "Date TBD"}${result.matchTime ? ` • ${result.matchTime}` : ""}${result.venue ? ` • ${result.venue}` : ""}</div>
+            <div class="result-meta">${result.matchDate || "Date TBD"}${result.matchTime ? ` - ${result.matchTime}` : ""}${result.venue ? ` - ${result.venue}` : ""}</div>
             <div class="result-summary">${result.teamAName || "-"} ${result.teamAScoreLabel || "0"} - ${result.teamBScoreLabel || "0"} ${result.teamBName || "-"}</div>
             <div class="result-summary">${result.resultSummary || "Result pending"}</div>
         </article>

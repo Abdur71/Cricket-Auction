@@ -2370,8 +2370,8 @@
         }
 
         function updateBreakingNewsText(messages) {
-            const text = messages.length ? messages.join("  â€¢  ") : "Admin breaking news will appear here.";
-            newsTickerText.textContent = `${text}  â€¢  ${text}`;
+            const text = messages.length ? messages.join("  -  ") : "Admin breaking news will appear here.";
+            newsTickerText.textContent = `${text}  -  ${text}`;
         }
 
         async function refreshBreakingNews() {
@@ -2544,7 +2544,7 @@
                 });
 
                 databaseStageSubtitle.textContent = query || statusValue !== "all"
-                    ? `Filtered view from admin panel${query ? ` â€¢ Search: ${query}` : ""}${statusValue !== "all" ? ` â€¢ Status: ${statusValue}` : ""}`
+                    ? `Filtered view from admin panel${query ? ` - Search: ${query}` : ""}${statusValue !== "all" ? ` - Status: ${statusValue}` : ""}`
                     : "Live stage table from admin panel.";
                 renderStageDatabaseRows(filtered);
             } catch (error) {
@@ -2583,7 +2583,7 @@
                         ${players.map(player => `
                             <article class="team-stage-player-item">
                                 <div class="team-stage-player-item-name">${player.name || "-"}</div>
-                                <div class="team-stage-player-item-meta">Player ID: ${player.id || "-"}${player.soldPrice ? ` â€¢ ${player.soldPrice}` : ""}</div>
+                                <div class="team-stage-player-item-meta">Player ID: ${player.id || "-"}${player.soldPrice ? ` - ${player.soldPrice}` : ""}</div>
                             </article>
                         `).join("")}
                     </div>
@@ -2627,7 +2627,7 @@
             <article class="group-stage-card">
                 <div class="group-stage-badge">GROUP ${group.id || "-"}</div>
                 <div class="group-stage-name">${group.groupName || "-"}</div>
-                <div class="group-stage-meta">Capacity: ${teamLimit} teams â€¢ Assigned: ${teams.length}</div>
+                <div class="group-stage-meta">Capacity: ${teamLimit} teams - Assigned: ${teams.length}</div>
                 <div class="group-stage-teams">
                     ${teams.length
                         ? teams.map(team => `
@@ -2723,7 +2723,7 @@ function renderFixturesStage(fixtures) {
                 </div>
                 <div class="fixture-stage-detail">
                     <div class="fixture-stage-detail-label">Date & Time</div>
-                    <div class="fixture-stage-detail-value">${fixture.matchDate || "Date TBD"}${fixture.matchTime ? ` â€¢ ${fixture.matchTime}` : ""}</div>
+                    <div class="fixture-stage-detail-value">${fixture.matchDate || "Date TBD"}${fixture.matchTime ? ` - ${fixture.matchTime}` : ""}</div>
                 </div>
                 <div class="fixture-stage-detail">
                     <div class="fixture-stage-detail-label">Venue</div>
@@ -2767,7 +2767,7 @@ function renderFixturesStage(fixtures) {
                     <div class="result-stage-winner">${result.winnerName || "Awaiting Result"}</div>
                 </div>
                 <div class="result-stage-title">${result.matchTitle || `${result.teamAName || "-"} vs ${result.teamBName || "-"}`}</div>
-                <div class="result-stage-meta">${result.matchDate || "Date TBD"}${result.matchTime ? ` â€¢ ${result.matchTime}` : ""}${result.venue ? ` â€¢ ${result.venue}` : ""}</div>
+                <div class="result-stage-meta">${result.matchDate || "Date TBD"}${result.matchTime ? ` - ${result.matchTime}` : ""}${result.venue ? ` - ${result.venue}` : ""}</div>
                 <div class="result-stage-scores">
                     <div class="result-stage-team-box ${teamAWon ? "winner" : ""}">
                         <div class="result-stage-team-label">Team One</div>
@@ -2858,7 +2858,7 @@ function renderFixturesStage(fixtures) {
                 teamDetailPlayers.innerHTML = team.players.map(player => `
             <article class="team-detail-player">
                 <div class="team-detail-player-name">${player.name || "-"}</div>
-                <div class="team-detail-player-meta">Player ID: ${player.id || "-"}${player.soldPrice ? ` â€¢ ${player.soldPrice}` : ""}</div>
+                <div class="team-detail-player-meta">Player ID: ${player.id || "-"}${player.soldPrice ? ` - ${player.soldPrice}` : ""}</div>
             </article>
         `).join("");
             } catch (error) {
