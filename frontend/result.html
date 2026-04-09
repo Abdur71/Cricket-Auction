@@ -1862,7 +1862,7 @@
     <div class="wrapper">
         <nav class="site-nav" aria-label="Frontend navigation">
             <a class="site-nav-btn active" href="index.html" data-front-section="home">Home</a>
-            <a class="site-nav-btn" href="Player%20Introduction.html" data-front-section="playerintroduction">Player Introduction</a>
+            <!-- <a class="site-nav-btn" href="Player%20Introduction.html" data-front-section="playerintroduction">Player Introduction</a> -->
             <a class="site-nav-btn" href="Teamshowcase.html" data-front-section="teamshowcase">TeamShowcase</a>
             <a class="site-nav-btn" href="group.html" data-front-section="group">Group</a>
             <a class="site-nav-btn" href="match%20fixture.html" data-front-section="fixtures">Match Fixture</a>
@@ -2738,20 +2738,20 @@ function renderFixturesStage(fixtures) {
             <article class="result-stage-card">
                 <div class="result-stage-top">
                     <div class="result-stage-badge">MATCH ${result.fixtureId || result.id || "-"}</div>
-                    <div class="result-stage-winner">${result.winnerName || "Awaiting Result"}</div>
+                    <div class="result-stage-winner">${result.winnerName === "Draw" ? "Full Time Draw" : (result.winnerName || "Awaiting Result")}</div>
                 </div>
                 <div class="result-stage-title">${result.matchTitle || `${result.teamAName || "-"} vs ${result.teamBName || "-"}`}</div>
                 <div class="result-stage-meta">${result.matchDate || "Date TBD"}${result.matchTime ? ` â€¢ ${result.matchTime}` : ""}${result.venue ? ` â€¢ ${result.venue}` : ""}</div>
                 <div class="result-stage-scores">
                     <div class="result-stage-team-box ${teamAWon ? "winner" : ""}">
-                        <div class="result-stage-team-label">Team One</div>
+                        <div class="result-stage-team-label">Home</div>
                         <div class="result-stage-team-name">${result.teamAName || "-"}</div>
-                        <div class="result-stage-score">${result.teamAScoreLabel || "-"}</div>
+                        <div class="result-stage-score">${result.teamAGoals ?? result.teamAScoreLabel ?? "-"}</div>
                     </div>
                     <div class="result-stage-team-box ${teamBWon ? "winner" : ""}">
-                        <div class="result-stage-team-label">Team Two</div>
+                        <div class="result-stage-team-label">Away</div>
                         <div class="result-stage-team-name">${result.teamBName || "-"}</div>
-                        <div class="result-stage-score">${result.teamBScoreLabel || "-"}</div>
+                        <div class="result-stage-score">${result.teamBGoals ?? result.teamBScoreLabel ?? "-"}</div>
                     </div>
                 </div>
                 <div class="result-stage-summary">${result.resultSummary || "Result will appear here after admin update."}</div>

@@ -1559,7 +1559,7 @@ tbody tr:hover {
                 <section class="panel result-form-card">
                     <div class="editor-header">
                         <h3>Add Match Result</h3>
-                        <p>Select a saved fixture, enter both team scores, and the result will be generated automatically.</p>
+                        <p>Select a saved fixture and enter the number of goals for each team.</p>
                     </div>
 
                     <div class="result-entry-grid">
@@ -1576,45 +1576,21 @@ tbody tr:hover {
 
                         <div class="result-score-grid">
                             <section class="result-team-panel">
-                                <h4 id="resultTeamATitle">Team A Score</h4>
+                                <h4 id="resultTeamATitle">Team A Goals</h4>
                                 <div class="field-group">
-                                    <label for="resultTeamARunsInput">Runs</label>
+                                    <label for="resultTeamAGoalsInput">Goals</label>
                                     <div class="control">
-                                        <input type="number" id="resultTeamARunsInput" min="0" placeholder="50" />
-                                    </div>
-                                </div>
-                                <div class="field-group">
-                                    <label for="resultTeamAWicketsInput">Wickets</label>
-                                    <div class="control">
-                                        <input type="number" id="resultTeamAWicketsInput" min="0" max="10" placeholder="5" />
-                                    </div>
-                                </div>
-                                <div class="field-group">
-                                    <label for="resultTeamAOversInput">Overs</label>
-                                    <div class="control">
-                                        <input type="text" id="resultTeamAOversInput" placeholder="8.5" />
+                                        <input type="number" id="resultTeamAGoalsInput" min="0" placeholder="2" />
                                     </div>
                                 </div>
                             </section>
 
                             <section class="result-team-panel">
-                                <h4 id="resultTeamBTitle">Team B Score</h4>
+                                <h4 id="resultTeamBTitle">Team B Goals</h4>
                                 <div class="field-group">
-                                    <label for="resultTeamBRunsInput">Runs</label>
+                                    <label for="resultTeamBGoalsInput">Goals</label>
                                     <div class="control">
-                                        <input type="number" id="resultTeamBRunsInput" min="0" placeholder="48" />
-                                    </div>
-                                </div>
-                                <div class="field-group">
-                                    <label for="resultTeamBWicketsInput">Wickets</label>
-                                    <div class="control">
-                                        <input type="number" id="resultTeamBWicketsInput" min="0" max="10" placeholder="7" />
-                                    </div>
-                                </div>
-                                <div class="field-group">
-                                    <label for="resultTeamBOversInput">Overs</label>
-                                    <div class="control">
-                                        <input type="text" id="resultTeamBOversInput" placeholder="8.0" />
+                                        <input type="number" id="resultTeamBGoalsInput" min="0" placeholder="1" />
                                     </div>
                                 </div>
                             </section>
@@ -1625,7 +1601,7 @@ tbody tr:hover {
                             <button class="action-btn secondary" id="resetResultBtn" type="button">CLEAR</button>
                         </div>
 
-                        <div class="result-status" id="resultStatus">Choose a fixture and enter the scorecard.</div>
+                        <div class="result-status" id="resultStatus">Choose a fixture and enter the final goals.</div>
                     </div>
                 </section>
 
@@ -1874,12 +1850,8 @@ const fixtureList = document.getElementById("fixtureList");
 const resultFixtureSelect = document.getElementById("resultFixtureSelect");
 const resultTeamATitle = document.getElementById("resultTeamATitle");
 const resultTeamBTitle = document.getElementById("resultTeamBTitle");
-const resultTeamARunsInput = document.getElementById("resultTeamARunsInput");
-const resultTeamAWicketsInput = document.getElementById("resultTeamAWicketsInput");
-const resultTeamAOversInput = document.getElementById("resultTeamAOversInput");
-const resultTeamBRunsInput = document.getElementById("resultTeamBRunsInput");
-const resultTeamBWicketsInput = document.getElementById("resultTeamBWicketsInput");
-const resultTeamBOversInput = document.getElementById("resultTeamBOversInput");
+const resultTeamAGoalsInput = document.getElementById("resultTeamAGoalsInput");
+const resultTeamBGoalsInput = document.getElementById("resultTeamBGoalsInput");
 const saveResultBtn = document.getElementById("saveResultBtn");
 const resetResultBtn = document.getElementById("resetResultBtn");
 const resultStatus = document.getElementById("resultStatus");
@@ -1937,7 +1909,7 @@ const viewMeta = {
     },
     resultsView: {
         title: "Results",
-        subtitle: "Input scorecards from saved fixtures and publish match results automatically."
+        subtitle: "Select a fixture, enter goals, and publish the final result automatically."
     },
     committeeView: {
         title: "Committee",
@@ -2471,14 +2443,10 @@ function syncResultFixtureSelection() {
     const fixture = allFixtures.find(item => Number(item.id) === fixtureId);
     const result = allResults.find(item => Number(item.fixtureId || item.id) === fixtureId);
 
-    resultTeamATitle.textContent = `${fixture?.teamAName || "Team A"} Score`;
-    resultTeamBTitle.textContent = `${fixture?.teamBName || "Team B"} Score`;
-    resultTeamARunsInput.value = result ? String(result.teamARuns ?? "") : "";
-    resultTeamAWicketsInput.value = result ? String(result.teamAWickets ?? "") : "";
-    resultTeamAOversInput.value = result ? String(result.teamAOvers || "") : "";
-    resultTeamBRunsInput.value = result ? String(result.teamBRuns ?? "") : "";
-    resultTeamBWicketsInput.value = result ? String(result.teamBWickets ?? "") : "";
-    resultTeamBOversInput.value = result ? String(result.teamBOvers || "") : "";
+    resultTeamATitle.textContent = `${fixture?.teamAName || "Team A"} Goals`;
+    resultTeamBTitle.textContent = `${fixture?.teamBName || "Team B"} Goals`;
+    resultTeamAGoalsInput.value = result ? String(result.teamAGoals ?? result.teamARuns ?? "") : "";
+    resultTeamBGoalsInput.value = result ? String(result.teamBGoals ?? result.teamBRuns ?? "") : "";
 }
 
 function renderResults(results) {
@@ -2501,6 +2469,7 @@ function renderResults(results) {
             </div>
             <div class="result-title">${result.matchTitle || `${result.teamAName || "-"} vs ${result.teamBName || "-"}`}</div>
             <div class="result-meta">${result.matchDate || "Date TBD"}${result.matchTime ? ` • ${result.matchTime}` : ""}${result.venue ? ` • ${result.venue}` : ""}</div>
+            <div class="result-summary">${result.teamAName || "-"} ${result.teamAScoreLabel || "0"} - ${result.teamBScoreLabel || "0"} ${result.teamBName || "-"}</div>
             <div class="result-summary">${result.resultSummary || "Result pending"}</div>
         </article>
     `).join("");
@@ -2816,20 +2785,16 @@ async function deleteFixture(fixtureId) {
 
 async function saveResult() {
     const fixtureId = Number(resultFixtureSelect.value);
-    const teamARuns = Number(resultTeamARunsInput.value);
-    const teamAWickets = Number(resultTeamAWicketsInput.value);
-    const teamAOvers = resultTeamAOversInput.value.trim();
-    const teamBRuns = Number(resultTeamBRunsInput.value);
-    const teamBWickets = Number(resultTeamBWicketsInput.value);
-    const teamBOvers = resultTeamBOversInput.value.trim();
+    const teamAGoals = Number(resultTeamAGoalsInput.value);
+    const teamBGoals = Number(resultTeamBGoalsInput.value);
 
     if (!fixtureId) {
         setResultStatus("Select a fixture first.", true);
         return;
     }
 
-    if ([teamARuns, teamAWickets, teamBRuns, teamBWickets].some(value => Number.isNaN(value) || value < 0)) {
-        setResultStatus("Enter valid non-negative runs and wickets for both teams.", true);
+    if ([teamAGoals, teamBGoals].some(value => Number.isNaN(value) || value < 0)) {
+        setResultStatus("Enter valid non-negative goals for both teams.", true);
         return;
     }
 
@@ -2840,12 +2805,8 @@ async function saveResult() {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                team_a_runs: teamARuns,
-                team_a_wickets: teamAWickets,
-                team_a_overs: teamAOvers,
-                team_b_runs: teamBRuns,
-                team_b_wickets: teamBWickets,
-                team_b_overs: teamBOvers
+                team_a_goals: teamAGoals,
+                team_b_goals: teamBGoals
             })
         });
 
@@ -2864,14 +2825,10 @@ async function saveResult() {
 
 function resetResultForm() {
     resultFixtureSelect.value = "";
-    resultTeamARunsInput.value = "";
-    resultTeamAWicketsInput.value = "";
-    resultTeamAOversInput.value = "";
-    resultTeamBRunsInput.value = "";
-    resultTeamBWicketsInput.value = "";
-    resultTeamBOversInput.value = "";
+    resultTeamAGoalsInput.value = "";
+    resultTeamBGoalsInput.value = "";
     syncResultFixtureSelection();
-    setResultStatus("Form cleared. Select any fixture to add the score.", false);
+    setResultStatus("Form cleared. Select any fixture to add the goals.", false);
 }
 
 async function deleteResult(resultId) {

@@ -186,15 +186,11 @@ module.exports = async function handler(req, res) {
     }
 
     if (resource === "results") {
-      const teamARuns = Number(payload.team_a_runs);
-      const teamAWickets = Number(payload.team_a_wickets);
-      const teamAOvers = String(payload.team_a_overs || "").trim();
-      const teamBRuns = Number(payload.team_b_runs);
-      const teamBWickets = Number(payload.team_b_wickets);
-      const teamBOvers = String(payload.team_b_overs || "").trim();
+      const teamAGoals = Number(payload.team_a_goals);
+      const teamBGoals = Number(payload.team_b_goals);
 
-      if ([teamARuns, teamAWickets, teamBRuns, teamBWickets].some((value) => Number.isNaN(value) || value < 0)) {
-        sendJson(res, 400, { error: "Runs and wickets must be valid non-negative numbers" });
+      if ([teamAGoals, teamBGoals].some((value) => Number.isNaN(value) || value < 0)) {
+        sendJson(res, 400, { error: "Goals must be valid non-negative numbers" });
         return;
       }
 
@@ -213,12 +209,8 @@ module.exports = async function handler(req, res) {
       const nextResult = {
         id,
         fixtureId: id,
-        teamARuns,
-        teamAWickets,
-        teamAOvers,
-        teamBRuns,
-        teamBWickets,
-        teamBOvers,
+        teamAGoals,
+        teamBGoals,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };

@@ -77,21 +77,16 @@ function normalizeFixture(fixture, teams) {
   };
 }
 
-function formatOversLabel(overs) {
-  const clean = String(overs || "").trim();
-  return clean ? `${clean} ov` : "-";
-}
-
-function buildResultSummary(teamAName, teamBName, teamAScore, teamBScore) {
-  if (teamAScore.runs === teamBScore.runs) {
-    return "Match tied";
+function buildFootballResultSummary(teamAName, teamBName, teamAGoals, teamBGoals) {
+  if (teamAGoals === teamBGoals) {
+    return `Draw ${teamAGoals}-${teamBGoals}`;
   }
 
-  if (teamAScore.runs > teamBScore.runs) {
-    return `${teamAName} won by ${teamAScore.runs - teamBScore.runs} runs`;
+  if (teamAGoals > teamBGoals) {
+    return `${teamAName} won ${teamAGoals}-${teamBGoals}`;
   }
 
-  return `${teamBName} won by ${Math.max(10 - teamBScore.wickets, 0)} wickets`;
+  return `${teamBName} won ${teamBGoals}-${teamAGoals}`;
 }
 
 function normalizeResult(result, fixtures, teams) {
@@ -99,16 +94,17 @@ function normalizeResult(result, fixtures, teams) {
   const fixtureId = Number(safeResult.fixtureId || safeResult.id) || 0;
   const fixture = (Array.isArray(fixtures) ? fixtures : []).find((item) => Number(item.id) === fixtureId) || {};
   const baseFixture = normalizeFixture(fixture, teams);
-  const teamARuns = Number(safeResult.teamARuns) || 0;
-  const teamAWickets = Number(safeResult.teamAWickets) || 0;
-  const teamAOvers = String(safeResult.teamAOvers || "").trim();
-  const teamBRuns = Number(safeResult.teamBRuns) || 0;
-  const teamBWickets = Number(safeResult.teamBWickets) || 0;
-  const teamBOvers = String(safeResult.teamBOvers || "").trim();
+  const hasFootballGoals = safeResult.teamAGoals !== undefined || safeResult.teamBGoals !== undefined;
+  const teamAGoals = hasFootballGoals
+    ? Number(safeResult.teamAGoals) || 0
+    : Number(safeResult.teamARuns) || 0;
+  const teamBGoals = hasFootballGoals
+    ? Number(safeResult.teamBGoals) || 0
+    : Number(safeResult.teamBRuns) || 0;
   const winnerName =
-    teamARuns === teamBRuns
-      ? "Match Tied"
-      : teamARuns > teamBRuns
+    teamAGoals === teamBGoals
+      ? "Draw"
+      : teamAGoals > teamBGoals
         ? baseFixture.teamAName
         : baseFixture.teamBName;
 
@@ -123,19 +119,15 @@ function normalizeResult(result, fixtures, teams) {
     venue: baseFixture.venue,
     matchDate: baseFixture.matchDate,
     matchTime: baseFixture.matchTime,
-    teamARuns,
-    teamAWickets,
-    teamAOvers,
-    teamBRuns,
-    teamBWickets,
-    teamBOvers,
-    teamAScoreLabel: `${teamARuns}/${teamAWickets} (${formatOversLabel(teamAOvers)})`,
-    teamBScoreLabel: `${teamBRuns}/${teamBWickets} (${formatOversLabel(teamBOvers)})`,
-    resultSummary: buildResultSummary(
+    teamAGoals,
+    teamBGoals,
+    teamAScoreLabel: String(teamAGoals),
+    teamBScoreLabel: String(teamBGoals),
+    resultSummary: buildFootballResultSummary(
       baseFixture.teamAName || "Team A",
       baseFixture.teamBName || "Team B",
-      { runs: teamARuns, wickets: teamAWickets },
-      { runs: teamBRuns, wickets: teamBWickets }
+      teamAGoals,
+      teamBGoals
     ),
     winnerName,
     createdAt: String(safeResult.createdAt || "").trim(),
