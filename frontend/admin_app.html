@@ -2228,6 +2228,18 @@ function setResultStatus(message, isError = false) {
     resultStatus.classList.toggle("error", Boolean(isError));
 }
 
+async function readApiPayload(response) {
+    const raw = await response.text();
+
+    try {
+        return raw ? JSON.parse(raw) : {};
+    } catch (_error) {
+        return {
+            error: raw || `Request failed with status ${response.status}`
+        };
+    }
+}
+
 function setCommitteeStatus(message, isError = false) {
     committeeStatus.textContent = message;
     committeeStatus.classList.toggle("error", Boolean(isError));
@@ -2709,6 +2721,10 @@ async function saveFixture() {
     }
 
     try {
+        if (window.location.protocol === "file:") {
+            throw new Error("Open the admin panel through the app server, not as a file. Run `npm run local` or use the deployed site.");
+        }
+
         const response = await fetch("/api/groups?resource=fixtures", {
             method: "POST",
             headers: {
@@ -2728,7 +2744,7 @@ async function saveFixture() {
             })
         });
 
-        const data = await response.json();
+        const data = await readApiPayload(response);
         if (data.error) {
             setFixtureStatus(data.error, true);
             return;
@@ -2744,7 +2760,7 @@ async function saveFixture() {
         setFixtureStatus("Fixture added successfully.", false);
         await loadFixtures();
     } catch (error) {
-        setFixtureStatus("Could not save fixture.", true);
+        setFixtureStatus(error?.message || "Could not save fixture.", true);
     }
 }
 
@@ -2799,6 +2815,10 @@ async function saveResult() {
     }
 
     try {
+        if (window.location.protocol === "file:") {
+            throw new Error("Open the admin panel through the app server, not as a file. Run `npm run local` or use the deployed site.");
+        }
+
         const response = await fetch(`/api/group/${fixtureId}?resource=results`, {
             method: "PUT",
             headers: {
@@ -2810,7 +2830,7 @@ async function saveResult() {
             })
         });
 
-        const data = await response.json();
+        const data = await readApiPayload(response);
         if (data.error) {
             setResultStatus(data.error, true);
             return;
@@ -2819,7 +2839,7 @@ async function saveResult() {
         setResultStatus("Result saved successfully.", false);
         await loadResults();
     } catch (error) {
-        setResultStatus("Could not save result.", true);
+        setResultStatus(error?.message || "Could not save result.", true);
     }
 }
 
