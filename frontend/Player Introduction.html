@@ -2665,7 +2665,7 @@ function getFixtureMatchTypeLabel(fixture) {
     }
 
     const savedTitle = String(fixture?.matchTitle || "").trim();
-    const knownMatchTypes = ["Qualifier 1", "Qualifier 2", "Eliminator", "Final"];
+    const knownMatchTypes = ["Qualifier 1", "Qualifier 2", "Semi-1", "Semi-2", "3rd Place", "Eliminator", "Final"];
     return knownMatchTypes.find(matchType => savedTitle.startsWith(`${matchType} - `)) || "";
 }
 
