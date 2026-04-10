@@ -1934,31 +1934,32 @@ let allCommitteeMembers = [];
 let countdownEnabled = false;
 const defaultPlayerImage = "https://images.unsplash.com/photo-1543357480-c60d40007a3f?auto=format&fit=crop&w=1200&q=80";
 
-const KNOCKOUT_MATCH_TEAM_OPTIONS = {
-    "Qualifier 1": [
-        { value: "slot:group-a-champion", label: "Group-A Champion" },
-        { value: "slot:group-b-champion", label: "Group-B Champion" }
-    ],
-    "Eliminator": [
-        { value: "slot:group-b-runners-up", label: "Group-B Runners Up" },
-        { value: "slot:group-a-runners-up", label: "Group-A Runners Up" }
-    ],
-    "Qualifier 2": [
-        { value: "slot:q1-runners-up", label: "Q-1 Runners Up" },
-        { value: "slot:eliminator-champion", label: "Eliminator Champion" }
-    ]
-};
+const FIXTURE_SPECIAL_TEAM_OPTIONS = [
+    { value: "slot:q1-winner", label: "Q-1 Winner" },
+    { value: "slot:q2-winner", label: "Q-2 Winner" },
+    { value: "slot:q1-losser", label: "Q-1 Losser" },
+    { value: "slot:q2-losser", label: "Q-2 Losser" },
+    { value: "slot:group-a-champion", label: "G-A Champion" },
+    { value: "slot:group-b-champion", label: "G-B Champion" },
+    { value: "slot:group-a-runners-up", label: "G-A Runners Up" },
+    { value: "slot:group-b-runners-up", label: "G-B Runners Up" }
+];
 
-function getFixtureTeamOptions(matchType = "") {
-    const normalizedMatchType = String(matchType || "").trim();
-    if (normalizedMatchType !== "Final" && KNOCKOUT_MATCH_TEAM_OPTIONS[normalizedMatchType]) {
-        return KNOCKOUT_MATCH_TEAM_OPTIONS[normalizedMatchType];
-    }
-
-    return allTeams.map(team => ({
+function getFixtureTeamOptions() {
+    const teamOptions = allTeams.map(team => ({
         value: String(team.id || ""),
         label: team.teamName || "-"
     }));
+
+    const seenValues = new Set();
+    return [...teamOptions, ...FIXTURE_SPECIAL_TEAM_OPTIONS].filter(option => {
+        const optionValue = String(option.value || "").trim();
+        if (!optionValue || seenValues.has(optionValue)) {
+            return false;
+        }
+        seenValues.add(optionValue);
+        return true;
+    });
 }
 
 function buildFixtureTeamOptionsHtml(options, placeholderText) {
@@ -1968,11 +1969,10 @@ function buildFixtureTeamOptionsHtml(options, placeholderText) {
 }
 
 function populateFixtureTeamSelects() {
-    const matchType = fixtureMatchTypeSelect.value.trim();
-    const teamOptions = getFixtureTeamOptions(matchType);
+    const teamOptions = getFixtureTeamOptions();
     const teamAValue = fixtureTeamASelect.value;
     const teamBValue = fixtureTeamBSelect.value;
-    const placeholderText = matchType !== "Final" && KNOCKOUT_MATCH_TEAM_OPTIONS[matchType] ? "Select slot" : "Select team";
+    const placeholderText = "Select team or slot";
 
     fixtureTeamASelect.innerHTML = buildFixtureTeamOptionsHtml(teamOptions, placeholderText);
     fixtureTeamBSelect.innerHTML = buildFixtureTeamOptionsHtml(teamOptions, placeholderText);
