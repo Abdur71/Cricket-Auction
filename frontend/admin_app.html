@@ -1937,27 +1937,18 @@ let allCommitteeMembers = [];
 let countdownEnabled = false;
 const defaultPlayerImage = "https://images.unsplash.com/photo-1543357480-c60d40007a3f?auto=format&fit=crop&w=1200&q=80";
 
-const FIXTURE_SPECIAL_TEAM_OPTIONS_BY_MATCH_TYPE = {
-    "Qualifier 1": [
-        { value: "slot:group-a-champion", label: "G-A Champion" },
-        { value: "slot:group-b-champion", label: "G-B Champion" }
-    ],
-    "Qualifier 2": [
-        { value: "slot:group-a-runners-up", label: "G-A Runners Up" },
-        { value: "slot:group-b-runners-up", label: "G-B Runners Up" }
-    ],
-    "Semi-1": [
-        { value: "slot:q1-winner", label: "Q-1 Winner" },
-        { value: "slot:q2-losser", label: "Q-2 Losser" }
-    ],
-    "Semi-2": [
-        { value: "slot:q2-winner", label: "Q-2 Winner" },
-        { value: "slot:q1-losser", label: "Q-1 Losser" }
-    ],
-    "Eliminator": [
-        { value: "slot:q1-losser", label: "Q-1 Losser" },
-        { value: "slot:q2-losser", label: "Q-2 Losser" }
-    ],
+const FIXTURE_SPECIAL_TEAM_OPTIONS = [
+    { value: "slot:q1-winner", label: "Q-1 Winner" },
+    { value: "slot:q2-winner", label: "Q-2 Winner" },
+    { value: "slot:q1-losser", label: "Q-1 Losser" },
+    { value: "slot:q2-losser", label: "Q-2 Losser" },
+    { value: "slot:group-a-champion", label: "G-A Champion" },
+    { value: "slot:group-b-champion", label: "G-B Champion" },
+    { value: "slot:group-a-runners-up", label: "G-A Runners Up" },
+    { value: "slot:group-b-runners-up", label: "G-B Runners Up" }
+];
+
+const EXTRA_FIXTURE_SPECIAL_TEAM_OPTIONS_BY_MATCH_TYPE = {
     "3rd Place": [
         { value: "slot:semi-1-losser", label: "Semi-1 Losser" },
         { value: "slot:semi-2-losser", label: "Semi-2 Losser" }
@@ -1974,7 +1965,10 @@ function getFixtureTeamOptions(matchType = "") {
         label: team.teamName || "-"
     }));
     const normalizedMatchType = String(matchType || "").trim();
-    const slotOptions = FIXTURE_SPECIAL_TEAM_OPTIONS_BY_MATCH_TYPE[normalizedMatchType] || [];
+    const slotOptions = [
+        ...FIXTURE_SPECIAL_TEAM_OPTIONS,
+        ...(EXTRA_FIXTURE_SPECIAL_TEAM_OPTIONS_BY_MATCH_TYPE[normalizedMatchType] || [])
+    ];
 
     const seenValues = new Set();
     return [...teamOptions, ...slotOptions].filter(option => {
